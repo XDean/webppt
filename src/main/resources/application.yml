@@ -1,0 +1,4 @@
+server:
+  port: 11078
+  tomcat:
+    relaxed-query-chars: \

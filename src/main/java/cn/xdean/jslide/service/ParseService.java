@@ -1,12 +1,10 @@
 package cn.xdean.jslide.service;
 
 import cn.xdean.jslide.model.Element;
-import cn.xdean.jslide.model.Slide;
 import cn.xdean.jslide.model.SlideSource;
 import cn.xdean.jslide.model.error.ParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.StringTokenizer;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +13,12 @@ import java.util.Deque;
 
 @Service
 public class ParseService {
-    public Slide parse(SlideSource source) {
+    public Element parse(SlideSource source) {
         return new Parser(source).parse();
     }
 
     private class Parser {
         final SlideSource source;
-        final Slide.SlideBuilder slideBuilder = Slide.builder();
         final String[] lines;
 
         int index;
@@ -32,9 +29,10 @@ public class ParseService {
         Parser(SlideSource source) {
             this.source = source;
             this.lines = source.getContent().split("\\R");
+            this.elemStack.addLast(Element.builder().name("root").lineIndex(0));
         }
 
-        Slide parse() {
+        Element parse() {
             while (nextLine()) {
                 if (line.isEmpty()) {
                     continue;
@@ -65,7 +63,13 @@ public class ParseService {
                     }
                 }
             }
-            return slideBuilder.build();
+            if (elemStack.size() > 1) {
+                throw ParseException.builder()
+                        .index(index)
+                        .message("unclosed tag: " + elemStack.getLast().build().getName())
+                        .build();
+            }
+            return elemStack.getLast().build();
         }
 
         boolean nextLine() {
@@ -81,25 +85,21 @@ public class ParseService {
 
         void parseParameter() {
             Pair<String, String> parameter = ParseService.parseParameter(line.substring(1));
-            if (elemStack.isEmpty()) {
-                slideBuilder.parameter(parameter.getKey(), parameter.getValue());
-            } else {
-                elemStack.getLast().parameter(parameter.getKey(), parameter.getValue());
-            }
+            elemStack.getLast().parameter(parameter.getKey(), parameter.getValue());
             consumed = true;
         }
 
         void parseComponent() {
-            int index = StringUtils.indexOfAny(line, "{ ");
-            Element.ElementBuilder elem = Element.builder();
-            if (index == -1) {
+            Element.ElementBuilder elem = Element.builder().lineIndex(index);
+            int splitIndex = StringUtils.indexOfAny(line, "{ ");
+            if (splitIndex == -1) {
                 elem.name(line.substring(1));
             } else {
-                elem.name(line.substring(1, index));
+                elem.name(line.substring(1, splitIndex));
             }
-            if (index != -1) {
-                if (line.charAt(index) == ' ') {
-                    StringTokenizer t = new StringTokenizer(line.substring(index + 1), ' ', '"');
+            if (splitIndex != -1) {
+                if (line.charAt(splitIndex) == ' ') {
+                    StringTokenizer t = new StringTokenizer(line.substring(splitIndex + 1), ' ', '"');
                     while (t.hasNext()) {
                         String next = t.next();
                         if (next.startsWith("@")) {
@@ -109,11 +109,7 @@ public class ParseService {
                             elem.line(next);
                         }
                     }
-                    if (elemStack.isEmpty()) {
-                        slideBuilder.element(elem.build());
-                    } else {
-                        elemStack.getLast().element(elem.build());
-                    }
+                    elemStack.getLast().child(elem.build());
                 } else {
                     if (!line.endsWith("{")) {
                         throw ParseException.builder()
@@ -130,7 +126,7 @@ public class ParseService {
 
         void parseEndTag() {
             if (line.equals("}")) {
-                if (elemStack.isEmpty()) {
+                if (elemStack.size() == 1) {
                     throw ParseException.builder()
                             .index(index)
                             .line(line)
@@ -138,11 +134,7 @@ public class ParseService {
                             .build();
                 }
                 Element elem = elemStack.removeLast().build();
-                if (elemStack.isEmpty()) {
-                    slideBuilder.element(elem);
-                } else {
-                    elemStack.getLast().element(elem);
-                }
+                elemStack.getLast().child(elem);
                 consumed = true;
             }
         }
