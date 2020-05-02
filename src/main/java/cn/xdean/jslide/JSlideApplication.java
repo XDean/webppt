@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class JslideApplication {
+public class JSlideApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(JslideApplication.class, args);
+        SpringApplication.run(JSlideApplication.class, args);
     }
 
 }
