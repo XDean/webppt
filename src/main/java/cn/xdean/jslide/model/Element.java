@@ -1,17 +1,18 @@
 package cn.xdean.jslide.model;
 
-import lombok.Builder;
-import lombok.Setter;
-import lombok.Singular;
-import lombok.Value;
+import lombok.*;
 import lombok.experimental.NonFinal;
 import org.springframework.util.Assert;
+import xdean.jex.extra.collection.Either;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Value
+@ToString(exclude = "parent")
+@EqualsAndHashCode(exclude = "parent")
 public class Element {
     int lineIndex;
 
@@ -24,19 +25,25 @@ public class Element {
 
     Map<String, String> parameters;
 
-    List<Element> children;
-
-    List<String> lines;
+    List<Either<Element, String>> children;
 
     @Builder
     public Element(int lineIndex, String name, @Singular Map<String, String> parameters,
-                   @Singular List<Element> children, @Singular List<String> lines) {
+                   @Singular List<Either<Element, String>> children) {
         this.lineIndex = lineIndex;
         this.name = name;
         this.parameters = parameters;
         this.children = children;
-        this.lines = lines;
-        children.forEach(e -> e.setParent(this));
+        children.forEach(c -> c.ifLeft(e -> e.setParent(this)));
+    }
+
+    public Map<String, String> resolveParameters() {
+        Map<String, String> res = new HashMap<>();
+        if (parent != null) {
+            res.putAll(parent.resolveParameters());
+        }
+        res.putAll(this.parameters);
+        return res;
     }
 
     public String getValue(String key) {
@@ -62,5 +69,15 @@ public class Element {
             return isRoot();
         }
         return parent != null && parent.isDeep(i - 1);
+    }
+
+    public static class ElementBuilder {
+        public ElementBuilder line(String line) {
+            return child(Either.right(line));
+        }
+
+        public ElementBuilder element(Element element) {
+            return child(Either.left(element));
+        }
     }
 }

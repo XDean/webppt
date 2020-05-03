@@ -109,7 +109,7 @@ public class ParseService {
                             elem.line(next);
                         }
                     }
-                    elemStack.getLast().child(elem.build());
+                    elemStack.getLast().element(elem.build());
                 } else {
                     if (!line.endsWith("{")) {
                         throw ParseException.builder()
@@ -134,7 +134,7 @@ public class ParseService {
                             .build();
                 }
                 Element elem = elemStack.removeLast().build();
-                elemStack.getLast().child(elem);
+                elemStack.getLast().element(elem);
                 consumed = true;
             }
         }

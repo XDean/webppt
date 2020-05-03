@@ -34,7 +34,9 @@ public class RenderController {
         return slide;
     }
 
+
     @GetMapping("/render")
+    @ResponseBody
     public String render(@RequestParam("path") String path,
                          ModelMap modelMap) throws IOException {
         Resource resource = resourceService.resolve(path).orElseThrow(() -> new IllegalArgumentException("Can't resolve the path"));
@@ -42,8 +44,6 @@ public class RenderController {
                 .resource(resource)
                 .content(resource.getContent())
                 .build());
-        modelMap.addAttribute("slide", slide);
-        modelMap.addAttribute("service", renderService);
-        return "slide";
+        return renderService.renderElement(slide);
     }
 }
