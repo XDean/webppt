@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Value
 @ToString(exclude = "parent")
@@ -48,17 +49,45 @@ public class Element {
         return res;
     }
 
-    public String getValue(String key) {
+    @Nullable
+    public String resolveParameter(String key) {
         String value = parameters.get(key);
         if (value == null) {
             if (parent == null) {
-                return "";
+                return null;
             } else {
-                return parent.getValue(key);
+                return parent.resolveParameter(key);
             }
         } else {
             return value;
         }
+    }
+
+    public String resolveParameter(String key, String defaultValue) {
+        String value = parameters.get(key);
+        if (value == null) {
+            if (parent == null) {
+                return defaultValue;
+            } else {
+                return parent.resolveParameter(key, defaultValue);
+            }
+        } else {
+            return value;
+        }
+    }
+
+    public List<String> getLines() {
+        return children.stream()
+                .filter(e -> e.isRight())
+                .map(e -> e.getRight())
+                .collect(Collectors.toList());
+    }
+
+    public List<Element> getElements() {
+        return children.stream()
+                .filter(e -> e.isLeft())
+                .map(e -> e.getLeft())
+                .collect(Collectors.toList());
     }
 
     public boolean isRoot() {

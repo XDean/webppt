@@ -40,7 +40,7 @@ public class HttpResourceResolver implements ResourceResolver {
         }
 
         @Override
-        public String getAbsPath() {
+        public String getPath() {
             return path;
         }
 

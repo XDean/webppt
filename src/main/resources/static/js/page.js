@@ -3,6 +3,7 @@ let currentPage = 0;
 
 document.addEventListener("DOMContentLoaded", function () {
     pages = document.querySelectorAll(".root > .page");
+    currentPage = (parseInt(location.hash.substr(1)) || 2) - 1;
 
     document.addEventListener('keydown', handleBodyKeyDown);
 
@@ -60,4 +61,5 @@ function updatePages() {
             page.classList.add("far-next")
         }
     });
+    location.replace('#' + (currentPage + 1));
 }

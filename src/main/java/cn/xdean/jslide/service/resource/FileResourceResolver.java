@@ -40,8 +40,8 @@ public class FileResourceResolver implements ResourceResolver {
         }
 
         @Override
-        public String getAbsPath() {
-            return filepath;
+        public String getPath() {
+            return "file://" + filepath;
         }
 
         @Override

@@ -35,8 +35,7 @@ public abstract class AbstractRender implements Render, BeanFactoryAware, Initia
     protected ModelMap getDefaultModelMap(Element element) {
         return new ModelMap()
                 .addAttribute(RenderKeys.ELEMENT, element)
-                .addAttribute(RenderKeys.CHILDREN, processChildren(element))
-                .addAllAttributes(element.resolveParameters());
+                .addAttribute(RenderKeys.CHILDREN, processChildren(element));
     }
 
     protected List<RenderLine> processChildren(Element element) {

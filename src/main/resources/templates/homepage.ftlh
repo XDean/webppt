@@ -1,14 +1,15 @@
+<#-- @ftlvariable name="_model" type="cn.xdean.jslide.service.render.provider.HomePageRender.HomePageModel" -->
 <div class="homepage">
-    <h1 class="homepage-title">${title!"Define @title as Slide title"}</h1>
-    <#if subtitle??>
-        <h2 class="homepage-subtitle">${subtitle}</h2>
+    <h1 class="homepage-title">${_model.title!"Define @title as Slide title"}</h1>
+    <#if _model.subtitle??>
+        <h2 class="homepage-subtitle">${_model.subtitle}</h2>
     </#if>
-    <#if date??>
-        <h2 class="homepage-date">${date}</h2>
+    <#if _model.date??>
+        <h2 class="homepage-date">${_model.date}</h2>
     </#if>
-    <#if author??>
+    <#if _model.author??>
         <div class="homepage-author">
-            ${author}
+            ${_model.author}
         </div>
     </#if>
 </div>

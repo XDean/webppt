@@ -1,12 +1,11 @@
 package cn.xdean.jslide.service;
 
 import cn.xdean.jslide.model.Element;
-import cn.xdean.jslide.model.SlideSource;
 import cn.xdean.jslide.model.error.ParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.StringTokenizer;
+import org.apache.commons.text.matcher.StringMatcherFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayDeque;
@@ -14,12 +13,11 @@ import java.util.Deque;
 
 @Service
 public class ParseService {
-    public Element parse(SlideSource source) {
+    public Element parse(String source) {
         return new Parser(source).parse();
     }
 
     private class Parser {
-        final SlideSource source;
         final String[] lines;
 
         int index = -1;
@@ -27,9 +25,8 @@ public class ParseService {
         boolean consumed;
         Deque<Element.ElementBuilder> elemStack = new ArrayDeque<>();
 
-        Parser(SlideSource source) {
-            this.source = source;
-            this.lines = source.getContent().split("\\R");
+        Parser(String source) {
+            this.lines = source.split("\\R");
             this.elemStack.addLast(Element.builder().name("root").lineIndex(0));
         }
 
@@ -82,7 +79,7 @@ public class ParseService {
                 return false;
             }
             index++;
-            line = lines[index].trim();
+            line = lines[index];
             consumed = false;
             return true;
         }

@@ -3,7 +3,7 @@ package cn.xdean.jslide.service.resource;
 import java.io.IOException;
 
 public interface Resource {
-    String getAbsPath();
+    String getPath();
 
     String getContent() throws IOException;
 
