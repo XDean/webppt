@@ -1,4 +1,4 @@
-package cn.xdean.jslide.model.error;
+package cn.xdean.jslide.core.error;
 
 import lombok.Builder;
 import lombok.Getter;

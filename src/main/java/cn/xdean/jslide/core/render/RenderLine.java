@@ -1,4 +1,4 @@
-package cn.xdean.jslide.service.render;
+package cn.xdean.jslide.core.render;
 
 import lombok.Builder;
 import lombok.Value;

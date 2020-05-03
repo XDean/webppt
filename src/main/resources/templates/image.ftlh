@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="_model" type="cn.xdean.jslide.service.render.provider.ImageRender.ImageModel" -->
+<#-- @ftlvariable name="_model" type="cn.xdean.jslide.core.render.provider.ImageRender.ImageModel" -->
 <div class="image">
     <#switch _model.type>
         <#case "URL">

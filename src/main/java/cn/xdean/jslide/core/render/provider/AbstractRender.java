@@ -1,7 +1,7 @@
-package cn.xdean.jslide.service.render.provider;
+package cn.xdean.jslide.core.render.provider;
 
-import cn.xdean.jslide.model.Element;
-import cn.xdean.jslide.service.render.*;
+import cn.xdean.jslide.core.model.Element;
+import cn.xdean.jslide.core.render.*;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;

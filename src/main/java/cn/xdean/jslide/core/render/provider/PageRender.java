@@ -1,9 +1,9 @@
-package cn.xdean.jslide.service.render.provider;
+package cn.xdean.jslide.core.render.provider;
 
-import cn.xdean.jslide.model.Element;
-import cn.xdean.jslide.model.error.RenderException;
-import cn.xdean.jslide.service.render.RenderContext;
-import cn.xdean.jslide.service.render.RenderKeys;
+import cn.xdean.jslide.core.model.Element;
+import cn.xdean.jslide.core.error.RenderException;
+import cn.xdean.jslide.core.render.RenderContext;
+import cn.xdean.jslide.core.render.RenderKeys;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;

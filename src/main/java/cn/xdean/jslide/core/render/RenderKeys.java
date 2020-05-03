@@ -1,4 +1,4 @@
-package cn.xdean.jslide.service.render;
+package cn.xdean.jslide.core.render;
 
 public interface RenderKeys {
     String ELEMENT = "_element";

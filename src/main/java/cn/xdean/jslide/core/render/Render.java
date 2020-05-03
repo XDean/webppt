@@ -1,6 +1,6 @@
-package cn.xdean.jslide.service.render;
+package cn.xdean.jslide.core.render;
 
-import cn.xdean.jslide.model.Element;
+import cn.xdean.jslide.core.model.Element;
 
 public interface Render {
     boolean support(String name);

@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="_model" type="cn.xdean.jslide.service.render.provider.HomePageRender.HomePageModel" -->
+<#-- @ftlvariable name="_model" type="cn.xdean.jslide.core.render.provider.HomePageRender.HomePageModel" -->
 <div class="homepage">
     <h1 class="homepage-title">${_model.title!"Define @title as Slide title"}</h1>
     <#if _model.subtitle??>

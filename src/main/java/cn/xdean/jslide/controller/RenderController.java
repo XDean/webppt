@@ -1,8 +1,8 @@
 package cn.xdean.jslide.controller;
 
-import cn.xdean.jslide.model.Element;
-import cn.xdean.jslide.service.ParseService;
-import cn.xdean.jslide.service.render.RenderService;
+import cn.xdean.jslide.core.model.Element;
+import cn.xdean.jslide.core.parse.ParseService;
+import cn.xdean.jslide.core.render.RenderService;
 import com.google.common.base.Splitter;
 import com.google.common.io.CharStreams;
 import org.springframework.beans.factory.annotation.Autowired;

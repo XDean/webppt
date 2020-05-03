@@ -1,11 +1,8 @@
-package cn.xdean.jslide.service.render;
+package cn.xdean.jslide.core.render;
 
-import lombok.Builder;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter

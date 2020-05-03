@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="_model" type="cn.xdean.jslide.service.render.provider.PageRender.PageModel" -->
+<#-- @ftlvariable name="_model" type="cn.xdean.jslide.core.render.provider.PageRender.PageModel" -->
 <div class="page">
     <div class="page-content">
         <#list _children as child>

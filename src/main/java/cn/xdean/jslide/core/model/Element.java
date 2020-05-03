@@ -1,4 +1,4 @@
-package cn.xdean.jslide.model;
+package cn.xdean.jslide.core.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;

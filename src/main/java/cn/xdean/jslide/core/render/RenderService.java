@@ -1,9 +1,9 @@
-package cn.xdean.jslide.service.render;
+package cn.xdean.jslide.core.render;
 
-import cn.xdean.jslide.model.Element;
-import cn.xdean.jslide.model.error.ParseException;
-import cn.xdean.jslide.model.error.RenderException;
-import cn.xdean.jslide.service.render.provider.RootRender;
+import cn.xdean.jslide.core.model.Element;
+import cn.xdean.jslide.core.error.ParseException;
+import cn.xdean.jslide.core.error.RenderException;
+import cn.xdean.jslide.core.render.provider.RootRender;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;

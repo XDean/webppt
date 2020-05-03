@@ -1,11 +1,10 @@
-package cn.xdean.jslide.service;
+package cn.xdean.jslide.core.parse;
 
-import cn.xdean.jslide.model.Element;
-import cn.xdean.jslide.model.error.ParseException;
+import cn.xdean.jslide.core.model.Element;
+import cn.xdean.jslide.core.error.ParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.StringTokenizer;
-import org.apache.commons.text.matcher.StringMatcherFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayDeque;

@@ -1,8 +1,8 @@
-package cn.xdean.jslide.service.render.provider;
+package cn.xdean.jslide.core.render.provider;
 
-import cn.xdean.jslide.model.Element;
-import cn.xdean.jslide.service.render.RenderContext;
-import cn.xdean.jslide.service.render.RenderLine;
+import cn.xdean.jslide.core.model.Element;
+import cn.xdean.jslide.core.render.RenderContext;
+import cn.xdean.jslide.core.render.RenderLine;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.parser.ParserEmulationProfile;
