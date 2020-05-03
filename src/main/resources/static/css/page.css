@@ -1,5 +1,12 @@
 .root {
     overflow: hidden;
+    background-color: #cccccc;
+    box-sizing: border-box;
+}
+
+.root.outline {
+    overflow-y: auto;
+    padding: 80px 5%;
 }
 
 .page {
@@ -33,33 +40,38 @@
     color: #8c8c8c;
     font-size: 75%;
     position: absolute;
-    bottom: 0;
-    right: 10px;
+    bottom: 5px;
+    right: 20px;
     pointer-events: none;
+}
+
+.root.outline .page {
+    position: relative;
+    zoom: 20%;
+    display: inline-block;
+    border-radius: 10px;
+    margin: 10px 1%;
 }
 
 .page.far-prev {
     transform: translate(-200vw);
-    z-index: -10;
 }
 
 .page.prev {
     transform: translate(-100vw);
-    z-index: -5
 }
 
 .page.current {
     transform: translate(0);
+    z-index: 1;
 }
 
 .page.next {
     transform: translate(100vw);
-    z-index: -5;
 }
 
 .page.far-next {
     transform: translate(200vw);
-    z-index: -10;
 }
 
 /********************************** Navigator ***********************************/
@@ -71,6 +83,11 @@
     border-radius: 50%;
     background-color: #f1f1f1;
     color: black;
+    z-index: 100;
+}
+
+.root.outline .page-navigator {
+    display: none;
 }
 
 .page-navigator:hover {
@@ -105,4 +122,52 @@
 .page-arrow.left {
     transform: translateX(1px) translateY(-1px) rotate(135deg);
     -webkit-transform: translateX(1px) translateY(-1px) rotate(135deg);
+}
+
+/*********************************Tool Bar********************************/
+body {
+    margin: 0;
+}
+
+.page-tool-bar {
+    position: absolute;
+    top: 20px;
+    left: 50vw;
+    transform: translateX(-50%);
+    border-radius: 5px;
+    padding: 0 5px;
+
+    background-color: #cacaca;
+    opacity: 0;
+    z-index: 100;
+}
+
+.root.outline .page-tool-bar {
+    opacity: 1;
+    background-color: #dddddd;
+    border-color: #aaaaaa;
+}
+
+.page-tool-bar.lock {
+    opacity: 0.5;
+}
+
+.page-tool-bar:hover {
+    opacity: 1;
+}
+
+.page-tool-bar a {
+    text-align: center;
+    transition: all 0.3s ease;
+    color: white;
+    cursor: pointer;
+    font-size: 30px;
+}
+
+.page-tool-bar a:hover {
+    background-color: #aaaaaa;
+}
+
+.page-tool-bar a.active {
+    color: #444444;
 }
