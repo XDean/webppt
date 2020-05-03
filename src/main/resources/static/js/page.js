@@ -1,14 +1,35 @@
-var pages = [];
-var currentPage = 0;
+let pages = [];
+let currentPage = 0;
 
 document.addEventListener("DOMContentLoaded", function () {
     pages = document.querySelectorAll(".root > .page");
+
+    document.addEventListener('keydown', handleBodyKeyDown);
 
     document.getElementById("page-navigator-left").addEventListener('click', prevPage);
     document.getElementById("page-navigator-right").addEventListener('click', nextPage);
 
     updatePages();
 });
+
+function handleBodyKeyDown(event) {
+    switch (event.keyCode) {
+        case 37:// left arrow
+        case 8: // backspace
+        case 33:// PgDn
+        case 38:// up arrow
+            prevPage();
+            event.preventDefault();
+            break;
+        case 39:// right arrow
+        case 32:// space
+        case 34:// PgDn
+        case 40:// down arrow
+            nextPage();
+            event.preventDefault();
+            break;
+    }
+}
 
 function prevPage() {
     if (currentPage > 0) {

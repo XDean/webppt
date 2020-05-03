@@ -21,7 +21,7 @@ public class ParseService {
         final SlideSource source;
         final String[] lines;
 
-        int index;
+        int index = -1;
         String line;
         boolean consumed;
         Deque<Element.ElementBuilder> elemStack = new ArrayDeque<>();
@@ -94,10 +94,9 @@ public class ParseService {
             int splitIndex = StringUtils.indexOfAny(line, "{ ");
             if (splitIndex == -1) {
                 elem.name(line.substring(1));
+                elemStack.getLast().element(elem.build());
             } else {
                 elem.name(line.substring(1, splitIndex));
-            }
-            if (splitIndex != -1) {
                 if (line.charAt(splitIndex) == ' ') {
                     StringTokenizer t = new StringTokenizer(line.substring(splitIndex + 1), ' ', '"');
                     while (t.hasNext()) {

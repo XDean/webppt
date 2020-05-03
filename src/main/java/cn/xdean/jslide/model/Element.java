@@ -1,5 +1,6 @@
 package cn.xdean.jslide.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.NonFinal;
 import org.springframework.util.Assert;
@@ -18,6 +19,7 @@ public class Element {
 
     String name;
 
+    @JsonIgnore
     @Nullable
     @NonFinal
     @Setter
