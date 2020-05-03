@@ -7,4 +7,5 @@ public interface RenderKeys {
 
     String CONTEXT = "_context";
 
+    String MODEL = "_model";
 }

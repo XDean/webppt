@@ -13,8 +13,7 @@ import org.springframework.ui.ModelMap;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class RenderService {
@@ -22,17 +21,24 @@ public class RenderService {
     @Autowired Configuration freemarkerConfiguration;
     @Autowired RootRenderProvider rootRenderProvider;
 
-    public RenderProvider getProvider(String name) {
+    public RenderProvider getProvider(Element element) {
         for (RenderProvider provider : providers) {
-            if (provider.support(name)) {
+            if (provider.support(element.getName())) {
                 return provider;
             }
         }
-        throw ParseException.builder().message("Can't render element: " + name).build();
+        throw ParseException.builder().message("Can't render element: " + element.getName()).build();
+    }
+
+    public Collection<RenderProvider> getAllProviders(Element element) {
+        Set<RenderProvider> renderProviders = new HashSet<>();
+        renderProviders.add(getProvider(element));
+        element.getChildren().forEach(c -> c.ifLeft(e -> renderProviders.addAll(getAllProviders(e))));
+        return renderProviders;
     }
 
     public String renderElement(Element element) {
-        return getProvider(element.getName()).render(element);
+        return getProvider(element).render(element);
     }
 
     public String renderView(String template, Map<String, Object> model) {

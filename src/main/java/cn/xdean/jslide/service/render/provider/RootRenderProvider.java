@@ -4,6 +4,7 @@ import cn.xdean.jslide.model.Element;
 import cn.xdean.jslide.model.error.RenderException;
 import cn.xdean.jslide.service.render.RenderContext;
 import cn.xdean.jslide.service.render.RenderKeys;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,13 +22,17 @@ public class RootRenderProvider extends AbstractRenderProvider {
                     .build();
         }
         RenderContext context = new RenderContext();
-        initContext(context, element);
+
+        renderService.getAllProviders(element).stream()
+                .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                .forEach(p -> p.initContext(context));
+
         return renderService.renderView("root.ftlh", getDefaultModelMap(element)
                 .addAttribute(RenderKeys.CONTEXT, context));
     }
 
     @Override
-    protected void actualInitContext(RenderContext context, Element element) {
-        super.actualInitContext(context, element);
+    public void initContext(RenderContext context) {
+        context.styles.add("/static/css/root.css");
     }
 }

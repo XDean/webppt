@@ -13,4 +13,6 @@ public class RenderContext {
     public final Set<String> scripts = new LinkedHashSet<>();
 
     public final Set<String> styles = new LinkedHashSet<>();
+
+    public final Set<String> globalElements = new LinkedHashSet<>();
 }

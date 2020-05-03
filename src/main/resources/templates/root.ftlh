@@ -13,7 +13,7 @@
 </head>
 
 <body>
-<slide>
+<div id="root" class="root">
     <#list _children as child>
         <#if child.isElement()>
             ${child.content?no_esc}
@@ -21,6 +21,9 @@
             <p>${child.content}</p>
         </#if>
     </#list>
-</slide>
+    <#list _context.globalElements as re>
+        ${re?no_esc}
+    </#list>
+</div>
 </body>
 </html>

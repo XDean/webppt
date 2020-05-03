@@ -1,4 +1,5 @@
-<page class="page">
+<#-- @ftlvariable name="_model" type="cn.xdean.jslide.service.render.provider.PageRenderProvider.PageModel" -->
+<div class="page">
     <#list _children as child>
         <#if child.isElement()>
             ${child.content?no_esc}
@@ -6,4 +7,7 @@
             <p>${child.content}</p>
         </#if>
     </#list>
-</page>
+    <div class="page-footer">
+        ${_model.page + 1} / ${_model.pageCount}
+    </div>
+</div>

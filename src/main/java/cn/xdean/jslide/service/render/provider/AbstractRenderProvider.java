@@ -32,16 +32,6 @@ public abstract class AbstractRenderProvider implements RenderProvider, BeanFact
         return names.contains(name);
     }
 
-    @Override
-    public final void initContext(RenderContext context, Element element) {
-        this.actualInitContext(context, element);
-        element.getChildren().forEach(c -> c.ifLeft(e -> renderService.getProvider(e.getName()).initContext(context, e)));
-    }
-
-    protected void actualInitContext(RenderContext context, Element element) {
-
-    }
-
     protected ModelMap getDefaultModelMap(Element element) {
         return new ModelMap()
                 .addAttribute(RenderKeys.ELEMENT, element)
