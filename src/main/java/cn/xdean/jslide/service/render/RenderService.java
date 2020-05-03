@@ -3,13 +3,12 @@ package cn.xdean.jslide.service.render;
 import cn.xdean.jslide.model.Element;
 import cn.xdean.jslide.model.error.ParseException;
 import cn.xdean.jslide.model.error.RenderException;
-import cn.xdean.jslide.service.render.provider.RootRenderProvider;
+import cn.xdean.jslide.service.render.provider.RootRender;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.ModelMap;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -17,12 +16,12 @@ import java.util.*;
 
 @Service
 public class RenderService {
-    @Autowired List<RenderProvider> providers;
+    @Autowired List<Render> providers;
     @Autowired Configuration freemarkerConfiguration;
-    @Autowired RootRenderProvider rootRenderProvider;
+    @Autowired RootRender rootRenderProvider;
 
-    public RenderProvider getProvider(Element element) {
-        for (RenderProvider provider : providers) {
+    public Render getProvider(Element element) {
+        for (Render provider : providers) {
             if (provider.support(element.getName())) {
                 return provider;
             }
@@ -30,11 +29,11 @@ public class RenderService {
         throw ParseException.builder().message("Can't render element: " + element.getName()).build();
     }
 
-    public Collection<RenderProvider> getAllProviders(Element element) {
-        Set<RenderProvider> renderProviders = new HashSet<>();
-        renderProviders.add(getProvider(element));
-        element.getChildren().forEach(c -> c.ifLeft(e -> renderProviders.addAll(getAllProviders(e))));
-        return renderProviders;
+    public Collection<Render> getAllProviders(Element element) {
+        Set<Render> renders = new HashSet<>();
+        renders.add(getProvider(element));
+        element.getChildren().forEach(c -> c.ifLeft(e -> renders.addAll(getAllProviders(e))));
+        return renders;
     }
 
     public String renderElement(Element element) {

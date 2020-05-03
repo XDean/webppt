@@ -16,11 +16,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-public class PageRenderProvider extends AbstractRenderProvider {
+public class PageRender extends AbstractRender {
 
     @Autowired FreeMarkerViewResolver viewResolver;
 
-    public PageRenderProvider() {
+    public PageRender() {
         super("page");
     }
 

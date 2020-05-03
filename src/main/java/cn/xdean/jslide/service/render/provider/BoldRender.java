@@ -1,13 +1,13 @@
 package cn.xdean.jslide.service.render.provider;
 
 import cn.xdean.jslide.model.Element;
-import cn.xdean.jslide.service.render.RenderProvider;
+import cn.xdean.jslide.service.render.Render;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
-public class BoldRenderProvider implements RenderProvider {
+public class BoldRender implements Render {
     @Override
     public boolean support(String name) {
         return name.equals("bold");

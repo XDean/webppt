@@ -5,8 +5,8 @@ import cn.xdean.jslide.service.render.RenderContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HomePageRenderProvider extends AbstractRenderProvider {
-    public HomePageRenderProvider() {
+public class HomePageRender extends AbstractRender {
+    public HomePageRender() {
         super("homepage");
     }
 

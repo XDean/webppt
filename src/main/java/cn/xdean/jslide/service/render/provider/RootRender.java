@@ -8,8 +8,8 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RootRenderProvider extends AbstractRenderProvider {
-    public RootRenderProvider() {
+public class RootRender extends AbstractRender {
+    public RootRender() {
         super("root");
     }
 

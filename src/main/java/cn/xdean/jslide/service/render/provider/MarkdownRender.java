@@ -6,25 +6,21 @@ import cn.xdean.jslide.service.render.RenderLine;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.parser.ParserEmulationProfile;
-import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
 import com.vladsch.flexmark.util.data.MutableDataSet;
-import io.reactivex.Observable;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import xdean.jex.extra.collection.Either;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MarkdownRenderProvider extends AbstractRenderProvider {
+public class MarkdownRender extends AbstractRender {
 
     Parser parser;
     HtmlRenderer renderer;
 
-    public MarkdownRenderProvider() {
+    public MarkdownRender() {
         super("md", "markdown");
 
         MutableDataHolder options = new MutableDataSet();
