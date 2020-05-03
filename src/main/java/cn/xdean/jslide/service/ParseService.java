@@ -5,6 +5,7 @@ import cn.xdean.jslide.model.SlideSource;
 import cn.xdean.jslide.model.error.ParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.StringTokenizer;
 import org.springframework.stereotype.Service;
 
@@ -34,22 +35,26 @@ public class ParseService {
 
         Element parse() {
             while (nextLine()) {
-                if (line.isEmpty()) {
-                    continue;
-                }
-                switch (line.charAt(0)) {
-                    case '.':
-                        parseComponent();
-                        break;
-                    case '@':
-                        parseParameter();
-                        break;
-                    case '}':
-                        parseEndTag();
-                        break;
-                    case '#': // comment
-                        consumed = true;
-                        break;
+                if (!line.isEmpty()) {
+                    switch (line.charAt(0)) {
+                        case '.':
+                            parseComponent();
+                            break;
+                        case '@':
+                            parseParameter();
+                            break;
+                        case '}':
+                            parseEndTag();
+                            break;
+                        case '/':
+                            if (line.startsWith("//")) { // comment
+                                consumed = true;
+                            }
+                            break;
+                        case '\\':
+                            line = line.substring(1);
+                            break;
+                    }
                 }
                 if (!consumed) {
                     if (elemStack.isEmpty()) {

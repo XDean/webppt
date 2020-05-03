@@ -8,8 +8,6 @@
     height: 100vh;
     left: 0;
     top: 0;
-    padding: 40px 60px;
-    box-sizing: border-box;
 
     color: black;
     background-color: white;
@@ -21,6 +19,14 @@
     letter-spacing: -1px;
 
     transition: transform .3s ease-out;
+}
+
+.page-content {
+    overflow: auto;
+    width: 100vw;
+    height: 100vh;
+    padding: 40px 60px;
+    box-sizing: border-box;
 }
 
 .page-footer {

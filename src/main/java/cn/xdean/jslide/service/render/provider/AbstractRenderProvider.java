@@ -2,6 +2,7 @@ package cn.xdean.jslide.service.render.provider;
 
 import cn.xdean.jslide.model.Element;
 import cn.xdean.jslide.service.render.*;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -35,13 +36,17 @@ public abstract class AbstractRenderProvider implements RenderProvider, BeanFact
     protected ModelMap getDefaultModelMap(Element element) {
         return new ModelMap()
                 .addAttribute(RenderKeys.ELEMENT, element)
-                .addAttribute(RenderKeys.CHILDREN, element.getChildren()
-                        .stream()
-                        .map(c -> c.unify(
-                                e -> RenderLine.element(renderService.renderElement(e)),
-                                e -> RenderLine.line(e)))
-                        .collect(Collectors.toList()))
+                .addAttribute(RenderKeys.CHILDREN, processChildren(element))
                 .addAllAttributes(element.resolveParameters());
+    }
+
+    protected List<RenderLine> processChildren(Element element) {
+        return element.getChildren()
+                .stream()
+                .map(c -> c.unify(
+                        e -> RenderLine.element(renderService.renderElement(e)),
+                        e -> RenderLine.line(e)))
+                .collect(Collectors.toList());
     }
 
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {

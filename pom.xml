@@ -51,6 +51,10 @@
             <artifactId>flexmark-all</artifactId>
             <version>0.61.24</version>
         </dependency>
+        <dependency>
+            <groupId>io.reactivex.rxjava2</groupId>
+            <artifactId>rxjava</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
