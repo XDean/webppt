@@ -8,4 +8,6 @@ public interface RenderKeys {
     String CONTEXT = "_context";
 
     String MODEL = "_model";
+
+    String TEXT_TYPE = "text";
 }

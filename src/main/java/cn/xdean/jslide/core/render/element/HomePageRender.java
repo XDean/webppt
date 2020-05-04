@@ -1,4 +1,4 @@
-package cn.xdean.jslide.core.render.provider;
+package cn.xdean.jslide.core.render.element;
 
 import cn.xdean.jslide.core.model.Element;
 import cn.xdean.jslide.core.render.RenderContext;
@@ -8,7 +8,7 @@ import lombok.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HomePageRender extends AbstractRender {
+public class HomePageRender extends AbstractElementRender {
     public HomePageRender() {
         super("homepage");
     }

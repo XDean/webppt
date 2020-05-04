@@ -1,4 +1,4 @@
-package cn.xdean.jslide.core.render.provider;
+package cn.xdean.jslide.core.render.element;
 
 import cn.xdean.jslide.core.model.Element;
 import cn.xdean.jslide.core.error.RenderException;
@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @Component
-public class ImageRender extends AbstractRender {
+public class ImageRender extends AbstractElementRender {
     public ImageRender() {
         super("img", "image");
     }

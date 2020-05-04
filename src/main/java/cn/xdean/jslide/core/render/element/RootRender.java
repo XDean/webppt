@@ -1,4 +1,4 @@
-package cn.xdean.jslide.core.render.provider;
+package cn.xdean.jslide.core.render.element;
 
 import cn.xdean.jslide.core.model.Element;
 import cn.xdean.jslide.core.error.RenderException;
@@ -8,7 +8,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RootRender extends AbstractRender {
+public class RootRender extends AbstractElementRender {
     public RootRender() {
         super("root");
     }
@@ -23,7 +23,10 @@ public class RootRender extends AbstractRender {
         }
         RenderContext context = new RenderContext();
 
-        renderService.getAllProviders(element).stream()
+        renderService.getElementRenders(element).stream()
+                .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                .forEach(p -> p.initContext(context));
+        renderService.getTextRenders(element).stream()
                 .sorted(AnnotationAwareOrderComparator.INSTANCE)
                 .forEach(p -> p.initContext(context));
 

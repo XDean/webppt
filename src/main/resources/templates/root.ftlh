@@ -15,11 +15,7 @@
 <body>
 <div id="root" class="root">
     <#list _children as child>
-        <#if child.isElement()>
-            ${child.content?no_esc}
-        <#elseif child.content?has_content>
-            <p>${child.content}</p>
-        </#if>
+        ${child?no_esc}
     </#list>
     <#list _context.globalElements as re>
         ${re?no_esc}

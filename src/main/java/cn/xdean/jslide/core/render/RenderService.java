@@ -3,7 +3,7 @@ package cn.xdean.jslide.core.render;
 import cn.xdean.jslide.core.model.Element;
 import cn.xdean.jslide.core.error.ParseException;
 import cn.xdean.jslide.core.error.RenderException;
-import cn.xdean.jslide.core.render.provider.RootRender;
+import cn.xdean.jslide.core.render.element.RootRender;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -16,28 +16,53 @@ import java.util.*;
 
 @Service
 public class RenderService {
-    @Autowired List<Render> providers;
+    @Autowired List<ElementRender> elementRenders;
+    @Autowired List<TextRender> textRenders;
     @Autowired Configuration freemarkerConfiguration;
     @Autowired RootRender rootRenderProvider;
 
-    public Render getProvider(Element element) {
-        for (Render provider : providers) {
-            if (provider.support(element.getName())) {
-                return provider;
+    public ElementRender getElementRender(Element element) {
+        for (ElementRender render : elementRenders) {
+            if (render.support(element.getName())) {
+                return render;
             }
         }
         throw ParseException.builder().message("Can't render element: " + element.getName()).build();
     }
 
-    public Collection<Render> getAllProviders(Element element) {
-        Set<Render> renders = new HashSet<>();
-        renders.add(getProvider(element));
-        element.getChildren().forEach(c -> c.ifLeft(e -> renders.addAll(getAllProviders(e))));
+    public Collection<ElementRender> getElementRenders(Element element) {
+        Set<ElementRender> renders = new HashSet<>();
+        renders.add(getElementRender(element));
+        element.getChildren().forEach(c -> c.ifLeft(e -> renders.addAll(getElementRenders(e))));
         return renders;
     }
 
     public String renderElement(Element element) {
-        return getProvider(element).render(element);
+        return getElementRender(element).render(element);
+    }
+
+    public TextRender getTextRender(Element element) {
+        String type = element.resolveParameter(RenderKeys.TEXT_TYPE);
+        if (type == null) {
+            return textRenders.get(0);
+        }
+        for (TextRender render : textRenders) {
+            if (render.support(type)) {
+                return render;
+            }
+        }
+        throw ParseException.builder().message("Can't render text type: " + type).build();
+    }
+
+    public Collection<TextRender> getTextRenders(Element element) {
+        Set<TextRender> renders = new HashSet<>();
+        renders.add(getTextRender(element));
+        element.getChildren().forEach(c -> c.ifLeft(e -> renders.addAll(getTextRenders(e))));
+        return renders;
+    }
+
+    public String renderText(Element parent, List<String> lines) {
+        return getTextRender(parent).render(parent, lines);
     }
 
     public String renderView(String template, Map<String, Object> model) {

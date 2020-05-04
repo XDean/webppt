@@ -1,4 +1,4 @@
-package cn.xdean.jslide.core.render.provider;
+package cn.xdean.jslide.core.render.element;
 
 import cn.xdean.jslide.core.model.Element;
 import cn.xdean.jslide.core.error.RenderException;
@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-public class PageRender extends AbstractRender {
+public class PageRender extends AbstractElementRender {
 
     @Autowired FreeMarkerViewResolver viewResolver;
 

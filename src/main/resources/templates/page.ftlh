@@ -1,12 +1,8 @@
-<#-- @ftlvariable name="_model" type="cn.xdean.jslide.core.render.provider.PageRender.PageModel" -->
+<#-- @ftlvariable name="_model" type="cn.xdean.jslide.core.render.element.PageRender.PageModel" -->
 <div class="page">
     <div class="page-content">
         <#list _children as child>
-            <#if child.isElement()>
-                ${child.content?no_esc}
-            <#else >
-                <p>${child.content}</p>
-            </#if>
+            ${child?no_esc}
         </#list>
     </div>
     <div class="page-footer">
