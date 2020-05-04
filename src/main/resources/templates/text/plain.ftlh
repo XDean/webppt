@@ -2,7 +2,7 @@
 <#list _model.paragraphs as paragraph>
     <p>
         <#list paragraph as line>
-            ${line}<br/>
+            ${line?no_esc}<br/>
         </#list>
     </p>
 </#list>

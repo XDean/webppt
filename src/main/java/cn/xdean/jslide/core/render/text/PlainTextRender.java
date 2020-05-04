@@ -5,6 +5,7 @@ import cn.xdean.jslide.core.render.RenderKeys;
 import cn.xdean.jslide.core.render.TextRender;
 import lombok.Builder;
 import lombok.Value;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
 
@@ -28,7 +29,7 @@ public class PlainTextRender extends AbstractTextRender {
                     pendingLines = new ArrayList<>();
                 }
             } else {
-                pendingLines.add(line);
+                pendingLines.add(StringEscapeUtils.escapeHtml4(line.replace(' ', '\u00A0')));
             }
         }
         if (!pendingLines.isEmpty()) {
