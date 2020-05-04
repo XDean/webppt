@@ -11,8 +11,10 @@ let lock = true;
 let lockButton;
 
 document.addEventListener("DOMContentLoaded", function () {
-    pages = document.querySelectorAll(".root > .page");
+    pages = Array.from(document.querySelectorAll(".root > .page"));
     currentPage = (parseInt(location.hash.substr(1)) || 2) - 1;
+
+    pages.forEach(page => page.addEventListener("click", e => onPageClick(page)));
 
     document.addEventListener('keydown', handleBodyKeyDown);
 
@@ -48,6 +50,15 @@ function handleBodyKeyDown(event) {
             nextPage();
             event.preventDefault();
             break;
+    }
+}
+
+function onPageClick(page) {
+    if (outline) {
+        outline = false;
+        currentPage = pages.indexOf(page);
+        updatePages();
+        updateToolBars();
     }
 }
 

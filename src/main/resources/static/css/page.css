@@ -22,7 +22,6 @@
     font-family: "Times New Roman", sans-serif;
     font-size: 26px;
     text-shadow: 0 1px 1px rgba(0, 0, 0, .1);
-    line-height: 36px;
     letter-spacing: -1px;
 
     transition: transform .3s ease-out;
@@ -36,6 +35,27 @@
     box-sizing: border-box;
 }
 
+.root.outline .page {
+    position: relative;
+    display: inline-block;
+    border-radius: 10px;
+    margin: 15px 0.5%;
+
+    width: 20vw;
+    height: 20vh;
+}
+
+.root.outline .page:hover {
+    box-shadow: 0 0 3px 4px #accaff;
+    cursor: pointer;
+}
+
+.root.outline .page-content {
+    position: absolute;
+    transform: scale(0.2);
+    transform-origin: 0 0;
+}
+
 .page-footer {
     color: #8c8c8c;
     font-size: 75%;
@@ -45,12 +65,10 @@
     pointer-events: none;
 }
 
-.root.outline .page {
-    position: relative;
-    zoom: 20%;
-    display: inline-block;
-    border-radius: 10px;
-    margin: 30px 1%;
+.root.outline .page-footer {
+    position: absolute;
+    bottom: 0;
+    right: 10px;
 }
 
 .page.far-prev {
