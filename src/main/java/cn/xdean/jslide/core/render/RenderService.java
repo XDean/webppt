@@ -18,6 +18,7 @@ import java.util.*;
 public class RenderService {
     @Autowired List<ElementRender> elementRenders;
     @Autowired List<TextRender> textRenders;
+    @Autowired TextRender primaryTextRender;
     @Autowired Configuration freemarkerConfiguration;
     @Autowired RootRender rootRenderProvider;
 
@@ -44,7 +45,7 @@ public class RenderService {
     public TextRender getTextRender(Element element) {
         String type = element.resolveParameter(RenderKeys.TEXT_TYPE);
         if (type == null) {
-            return textRenders.get(0);
+            return primaryTextRender;
         }
         for (TextRender render : textRenders) {
             if (render.support(type)) {

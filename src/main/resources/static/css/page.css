@@ -31,7 +31,7 @@
     overflow: auto;
     width: 100vw;
     height: 100vh;
-    padding: 40px 60px;
+    padding: 5vh 5vw;
     box-sizing: border-box;
 }
 
@@ -148,7 +148,7 @@ body {
 }
 
 .page-tool-bar {
-    position: absolute;
+    position: fixed;
     top: 20px;
     left: 50vw;
     transform: translateX(-50%);

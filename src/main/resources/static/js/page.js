@@ -7,6 +7,9 @@ let toolBar;
 let outline = false;
 let outlineButton;
 
+let fullScreen = false;
+let fullScreenButton;
+
 let lock = true;
 let lockButton;
 
@@ -14,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     pages = Array.from(document.querySelectorAll(".root > .page"));
     currentPage = (parseInt(location.hash.substr(1)) || 2) - 1;
 
-    pages.forEach(page => page.addEventListener("click", e => onPageClick(page)));
+    pages.forEach(page => page.addEventListener("click", e => onPageClick(e, page), true));
 
     document.addEventListener('keydown', handleBodyKeyDown);
 
@@ -29,6 +32,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     lockButton = document.getElementById("page-lock-button");
     lockButton.addEventListener("click", switchLock);
+
+    fullScreenButton = document.getElementById("page-fullscreen-button");
+    fullScreenButton.addEventListener("click", switchFullScreen);
+    document.onfullscreenchange = ev => {fullScreen = document.fullscreenElement === root; updateToolBars()};
 
     updatePages();
     updateToolBars();
@@ -53,12 +60,13 @@ function handleBodyKeyDown(event) {
     }
 }
 
-function onPageClick(page) {
+function onPageClick(evt, page) {
     if (outline) {
         outline = false;
         currentPage = pages.indexOf(page);
         updatePages();
         updateToolBars();
+        evt.stopPropagation();
     }
 }
 
@@ -95,10 +103,16 @@ function updatePages() {
     });
     toggleClass(root, outline, "outline");
     location.replace('#' + (currentPage + 1));
+    if (fullScreen) {
+        root.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
 }
 
 function updateToolBars() {
     toggleClass(outlineButton, outline, "active");
+    toggleClass(fullScreenButton, fullScreen, "active");
     toggleClass(lockButton, lock, "active");
     toggleClass(toolBar, lock, "lock");
 }
@@ -111,6 +125,12 @@ function switchOutline() {
 
 function switchLock() {
     lock = !lock;
+    updatePages();
+    updateToolBars();
+}
+
+function switchFullScreen() {
+    fullScreen = !fullScreen;
     updatePages();
     updateToolBars();
 }
