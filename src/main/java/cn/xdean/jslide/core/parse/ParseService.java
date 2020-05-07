@@ -1,14 +1,17 @@
 package cn.xdean.jslide.core.parse;
 
+import cn.xdean.jslide.core.error.JSlideException;
 import cn.xdean.jslide.core.model.Element;
-import cn.xdean.jslide.core.error.ParseException;
+import cn.xdean.jslide.core.model.Node;
+import cn.xdean.jslide.core.model.Parameter;
+import cn.xdean.jslide.core.model.Text;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.StringTokenizer;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Objects;
 
 @Service
 public class ParseService {
@@ -22,11 +25,14 @@ public class ParseService {
         int index = -1;
         String line;
         boolean consumed;
-        Deque<Element.ElementBuilder> elemStack = new ArrayDeque<>();
+        Deque<Node> elemStack = new ArrayDeque<>();
 
         Parser(String source) {
             this.lines = source.split("\\R");
-            this.elemStack.addLast(Element.builder().name("root").lineIndex(0));
+            Element root = new Element();
+            root.setName("root");
+            root.getRawInfo().setStartLineIndex(0);
+            this.elemStack.addLast(root);
         }
 
         Element parse() {
@@ -34,7 +40,7 @@ public class ParseService {
                 if (!line.isEmpty()) {
                     switch (line.charAt(0)) {
                         case '.':
-                            parseComponent();
+                            parseElement();
                             break;
                         case '@':
                             parseParameter();
@@ -54,23 +60,35 @@ public class ParseService {
                 }
                 if (!consumed) {
                     if (elemStack.isEmpty()) {
-                        throw ParseException.builder()
-                                .index(index)
-                                .line(line)
+                        throw JSlideException.builder()
+                                .line(index)
                                 .message("plain text content must be in component")
                                 .build();
                     } else {
-                        elemStack.getLast().line(line);
+                        Node node = elemStack.getLast();
+                        if (node instanceof Text) {
+                            ((Text) node).getLines().add(line);
+                            node.getRawInfo().setEndLineIndex(index);
+                        } else if (node instanceof Element) {
+                            Text newText = new Text();
+                            newText.getLines().add(line);
+                            newText.setParent((Element) node);
+                            newText.getRawInfo().setStartLineIndex(index);
+                            newText.getRawInfo().setEndLineIndex(index);
+                            ((Element) node).getChildren().add(newText);
+                            elemStack.addLast(newText);
+                        }
                     }
                 }
             }
             if (elemStack.size() > 1) {
-                throw ParseException.builder()
-                        .index(index)
-                        .message("unclosed tag: " + elemStack.getLast().build().getName())
+                int startLine = elemStack.getLast().getRawInfo().getStartLineIndex();
+                throw JSlideException.builder()
+                        .line(startLine)
+                        .message("unclosed tag")
                         .build();
             }
-            return elemStack.getLast().build();
+            return (Element) elemStack.getLast();
         }
 
         boolean nextLine() {
@@ -83,38 +101,63 @@ public class ParseService {
             return true;
         }
 
+        void addToLast(Node node) {
+            Node last = elemStack.getLast();
+            if (last instanceof Text) {
+                elemStack.removeLast();
+                if (((Text) last).getLines().stream().allMatch(l->l.trim().isEmpty())){
+                    Objects.requireNonNull(last.getParent()).getChildren().remove(last);
+                }
+                addToLast(node);
+            } else if (last instanceof Element) {
+                ((Element) last).getChildren().add(node);
+                node.setParent((Element) last);
+            }
+        }
 
         void parseParameter() {
-            Pair<String, String> parameter = ParseService.parseParameter(line.substring(1));
-            elemStack.getLast().parameter(parameter.getKey(), parameter.getValue());
+            Parameter parameter = parseParameter(line.substring(1));
+            parameter.getRawInfo().setStartLineIndex(index);
+            parameter.getRawInfo().setEndLineIndex(index);
+            addToLast(parameter);
             consumed = true;
         }
 
-        void parseComponent() {
-            Element.ElementBuilder elem = Element.builder().lineIndex(index);
+        void parseElement() {
+            Element elem = new Element();
+            elem.getRawInfo().setStartLineIndex(index);
+            addToLast(elem);
             int splitIndex = StringUtils.indexOfAny(line, "{ ");
             if (splitIndex == -1) {
-                elem.name(line.substring(1));
-                elemStack.getLast().element(elem.build());
+                elem.setName(line.substring(1));
+                elem.getRawInfo().setEndLineIndex(index);
             } else {
-                elem.name(line.substring(1, splitIndex));
+                elem.setName(line.substring(1, splitIndex));
                 if (line.charAt(splitIndex) == ' ') {
                     StringTokenizer t = new StringTokenizer(line.substring(splitIndex + 1), ' ', '"');
                     while (t.hasNext()) {
                         String next = t.next();
                         if (next.startsWith("@")) {
-                            Pair<String, String> parameter = ParseService.parseParameter(next.substring(1));
-                            elem.parameter(parameter.getKey(), parameter.getValue());
+                            Parameter parameter = parseParameter(next.substring(1));
+                            parameter.setParent(elem);
+                            elem.getChildren().add(parameter);
                         } else {
-                            elem.line(next);
+                            if (!elem.getChildren().isEmpty() && (elem.getChildren().getLast() instanceof Text)) {
+                                ((Text) elem.getChildren().getLast()).getLines().add(next);
+                            } else {
+                                Text text = new Text();
+                                text.setParent(elem);
+                                text.getRawInfo().setStartLineIndex(index);
+                                text.getRawInfo().setEndLineIndex(index);
+                                text.getLines().add(next);
+                                elem.getChildren().add(text);
+                            }
                         }
                     }
-                    elemStack.getLast().element(elem.build());
                 } else {
                     if (!line.endsWith("{")) {
-                        throw ParseException.builder()
-                                .index(index)
-                                .line(line)
+                        throw JSlideException.builder()
+                                .line(index)
                                 .message("multi line element start tag can't has content")
                                 .build();
                     }
@@ -126,27 +169,34 @@ public class ParseService {
 
         void parseEndTag() {
             if (line.equals("}")) {
-                if (elemStack.size() == 1) {
-                    throw ParseException.builder()
-                            .index(index)
-                            .line(line)
-                            .message("no element to close")
-                            .build();
+                while (true) {
+                    if (elemStack.size() == 1) {
+                        throw JSlideException.builder()
+                                .line(index)
+                                .message("no element to close")
+                                .build();
+                    }
+                    Node node = elemStack.removeLast();
+                    if (node instanceof Element) {
+                        node.getRawInfo().setEndLineIndex(index);
+                        break;
+                    }
                 }
-                Element elem = elemStack.removeLast().build();
-                elemStack.getLast().element(elem);
                 consumed = true;
             }
         }
-    }
 
-    private static Pair<String, String> parseParameter(String line) {
-        String[] split = line.split("=", 2);
-        String key = split[0].trim();
-        String value = "_";
-        if (split.length == 2) {
-            value = split[1].trim();
+        Parameter parseParameter(String line) {
+            String[] split = line.split("=", 2);
+            String key = split[0].trim();
+            String value = "_";
+            if (split.length == 2) {
+                value = split[1].trim();
+            }
+            Parameter parameter = Parameter.builder().key(key).value(value).build();
+            parameter.getRawInfo().setStartLineIndex(index);
+            parameter.getRawInfo().setEndLineIndex(index);
+            return parameter;
         }
-        return Pair.of(key, value);
     }
 }

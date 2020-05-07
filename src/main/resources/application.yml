@@ -2,6 +2,10 @@ server:
   port: 11078
   tomcat:
     relaxed-query-chars: \
+  error:
+    whitelabel:
+      enabled: false
+    include-stacktrace: on_trace_param
 spring:
   mvc:
     static-path-pattern: /static/**

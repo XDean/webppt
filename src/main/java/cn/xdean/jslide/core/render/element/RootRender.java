@@ -1,7 +1,7 @@
 package cn.xdean.jslide.core.render.element;
 
 import cn.xdean.jslide.core.model.Element;
-import cn.xdean.jslide.core.error.RenderException;
+import cn.xdean.jslide.core.error.JSlideException;
 import cn.xdean.jslide.core.render.RenderContext;
 import cn.xdean.jslide.core.render.RenderKeys;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -16,8 +16,8 @@ public class RootRender extends AbstractElementRender {
     @Override
     public String render(Element element) {
         if (!element.isRoot()) {
-            throw RenderException.builder()
-                    .index(element.getLineIndex())
+            throw JSlideException.builder()
+                    .line(element.getRawInfo().getStartLineIndex())
                     .message("can't define root element")
                     .build();
         }

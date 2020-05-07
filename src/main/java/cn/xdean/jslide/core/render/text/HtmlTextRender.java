@@ -1,6 +1,7 @@
 package cn.xdean.jslide.core.render.text;
 
 import cn.xdean.jslide.core.model.Element;
+import cn.xdean.jslide.core.model.Text;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public class HtmlTextRender extends AbstractTextRender {
     }
 
     @Override
-    public String render(Element element, List<String> lines) {
-        return String.join("\n", lines);
+    public String render(Text text) {
+        return String.join("\n", text.getLines());
     }
 }

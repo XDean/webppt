@@ -1,6 +1,7 @@
 package cn.xdean.jslide.core.render.text;
 
 import cn.xdean.jslide.core.model.Element;
+import cn.xdean.jslide.core.model.Text;
 import cn.xdean.jslide.core.render.RenderKeys;
 import cn.xdean.jslide.core.render.TextRender;
 import lombok.Builder;
@@ -19,10 +20,10 @@ public class PlainTextRender extends AbstractTextRender {
     }
 
     @Override
-    public String render(Element element, List<String> lines) {
+    public String render(Text text) {
         List<List<String>> paragraphs = new ArrayList<>();
         List<String> pendingLines = new ArrayList<>();
-        for (String line : lines) {
+        for (String line : text.getLines()) {
             if (line.trim().isEmpty()) {
                 if (!pendingLines.isEmpty()) {
                     paragraphs.add(pendingLines);

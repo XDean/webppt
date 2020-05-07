@@ -17,10 +17,10 @@ public class HomePageRender extends AbstractElementRender {
     public String render(Element element) {
         return renderService.renderView("homepage.ftlh", getDefaultModelMap(element)
                 .addAttribute(RenderKeys.MODEL, HomePageModel.builder()
-                        .title(element.resolveParameter("title"))
-                        .subtitle(element.resolveParameter("subtitle"))
-                        .date(element.resolveParameter("date"))
-                        .author(element.resolveParameter("author"))
+                        .title(resolveParameter(element, "title", null))
+                        .subtitle(resolveParameter(element, "subtitle", null))
+                        .date(resolveParameter(element, "date", null))
+                        .author(resolveParameter(element, "author", null))
                         .build()));
     }
 

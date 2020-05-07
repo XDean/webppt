@@ -29,11 +29,11 @@ public class RenderController {
 
     @GetMapping("/parse/")
     @ResponseBody
-    public Element parse(@RequestParam("path") String path) throws IOException {
+    public ElementDTO parse(@RequestParam("path") String path) throws IOException {
         Resource resource = resourceLoader.getResource(path);
         String content = CharStreams.toString(new InputStreamReader(resource.getInputStream()));
         Element slide = parseService.parse(content);
-        return slide;
+        return ElementDTO.from(slide);
     }
 
     @GetMapping("/render/")

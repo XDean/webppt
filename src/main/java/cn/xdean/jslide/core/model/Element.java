@@ -1,97 +1,94 @@
 package cn.xdean.jslide.core.model;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
-import lombok.experimental.NonFinal;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.reactivex.Observable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.util.Assert;
-import xdean.jex.extra.collection.Either;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-@Value
+@Data
 @ToString(exclude = "parent")
 @EqualsAndHashCode(exclude = "parent")
-public class Element {
-    int lineIndex;
+public class Element implements Node {
 
     String name;
 
-    @JsonIgnore
-    @Nullable
-    @NonFinal
-    @Setter
-    Element parent;
+    Element parent = this;
 
-    Map<String, String> parameters;
+    final Deque<Node> children = new ArrayDeque<>();
 
-    List<Either<Element, String>> children;
+    final RawInfo rawInfo = new RawInfo();
 
-    @Builder
-    public Element(int lineIndex, String name, @Singular Map<String, String> parameters,
-                   @Singular List<Either<Element, String>> children) {
-        this.lineIndex = lineIndex;
-        this.name = name;
-        this.parameters = parameters;
-        this.children = children;
-        children.forEach(c -> c.ifLeft(e -> e.setParent(this)));
+    @Override
+    public Parameter getParameter(String key) {
+        return getParameter(key, (Node) null);
     }
 
-    public Map<String, String> resolveParameters() {
-        Map<String, String> res = new HashMap<>();
-        if (parent != null) {
-            res.putAll(parent.resolveParameters());
-        }
-        res.putAll(this.parameters);
-        return res;
+    public String getParameter(String key, String defaultValue) {
+        return getParameter(key, null, defaultValue);
     }
 
     @Nullable
-    public String resolveParameter(String key) {
-        String value = parameters.get(key);
-        if (value == null) {
-            if (parent == null) {
+    public Parameter getParameter(String key, Node pos) {
+        Parameter parameter = Observable.fromIterable(children)
+                .takeUntil(e -> e == pos)
+                .filter(n -> n instanceof Parameter)
+                .cast(Parameter.class)
+                .filter(e -> e.getKey().equals(key))
+                .lastElement()
+                .blockingGet();
+        if (parameter == null) {
+            if (parent == this) {
                 return null;
             } else {
-                return parent.resolveParameter(key);
+                return parent.getParameter(key, this);
             }
         } else {
-            return value;
+            return parameter;
         }
     }
 
-    public String resolveParameter(String key, String defaultValue) {
-        String value = parameters.get(key);
-        if (value == null) {
-            if (parent == null) {
-                return defaultValue;
-            } else {
-                return parent.resolveParameter(key, defaultValue);
-            }
+    public String getParameter(String key, Node pos, String defaultValue) {
+        Parameter parameter = getParameter(key, pos);
+        if (parameter == null) {
+            return defaultValue;
         } else {
-            return value;
+            return parameter.getValue();
         }
     }
 
-    public List<String> getLines() {
+    public List<Text> getTexts() {
         return children.stream()
-                .filter(e -> e.isRight())
-                .map(e -> e.getRight())
+                .filter(e -> e instanceof Text)
+                .map(e -> (Text) e)
                 .collect(Collectors.toList());
     }
 
     public List<Element> getElements() {
         return children.stream()
-                .filter(e -> e.isLeft())
-                .map(e -> e.getLeft())
+                .filter(e -> e instanceof Element)
+                .map(e -> (Element) e)
+                .collect(Collectors.toList());
+    }
+
+    public List<Parameter> getParameters() {
+        return children.stream()
+                .filter(e -> e instanceof Parameter)
+                .map(e -> (Parameter) e)
                 .collect(Collectors.toList());
     }
 
     public boolean isRoot() {
-        return name.equals("root");
+        return name.equals("root") && parent == this;
     }
 
     public boolean isDeep(int i) {
@@ -99,16 +96,6 @@ public class Element {
         if (i == 0) {
             return isRoot();
         }
-        return parent != null && parent.isDeep(i - 1);
-    }
-
-    public static class ElementBuilder {
-        public ElementBuilder line(String line) {
-            return child(Either.right(line));
-        }
-
-        public ElementBuilder element(Element element) {
-            return child(Either.left(element));
-        }
+        return parent != this && parent.isDeep(i - 1);
     }
 }

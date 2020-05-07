@@ -1,11 +1,10 @@
 package cn.xdean.jslide.core.render.element;
 
+import cn.xdean.jslide.core.error.JSlideException;
 import cn.xdean.jslide.core.model.Element;
-import cn.xdean.jslide.core.error.RenderException;
 import cn.xdean.jslide.core.render.RenderKeys;
 import lombok.Builder;
 import lombok.Value;
-import org.apache.commons.lang3.EnumUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -19,31 +18,20 @@ public class ImageRender extends AbstractElementRender {
 
     @Override
     public String render(Element element) {
-        List<Element> elements = element.getElements();
-        if (!elements.isEmpty()) {
-            throw RenderException.builder()
-                    .index(elements.get(0).getLineIndex())
-                    .message("image can't have child element")
-                    .build();
-        }
-        String typeName = element.resolveParameter("type", ImageType.URL.toString());
-        ImageType type = EnumUtils.getEnum(ImageType.class, typeName);
-        if (type == null) {
-            throw RenderException.builder()
-                    .index(element.getLineIndex())
-                    .message("unknown image type: " + typeName)
-                    .build();
-        }
+        assertNoChildElement(element);
+        assertParameterFirst(element);
+        assertSingleText(element);
+        ImageType type = resolveParameter(element, ImageType.class, "type", ImageType.URL);
         String content = type.resolve(element);
         return renderService.renderView("image.ftlh", getDefaultModelMap(element)
                 .addAttribute(RenderKeys.MODEL, ImageModel.builder()
                         .type(type)
                         .content(content)
-                        .width(element.resolveParameter("width"))
-                        .height(element.resolveParameter("height"))
-                        .style(element.resolveParameter("style"))
-                        .alt(element.resolveParameter("alt"))
-                        .attributes(element.resolveParameter("attributes"))
+                        .width(resolveParameter(element, "width", null))
+                        .height(resolveParameter(element, "height", null))
+                        .style(resolveParameter(element, "style", null))
+                        .alt(resolveParameter(element, "alt", null))
+                        .attributes(resolveParameter(element, "attributes", null))
                         .build()));
     }
 
@@ -51,11 +39,11 @@ public class ImageRender extends AbstractElementRender {
         URL {
             @Override
             public String resolve(Element element) {
-                List<String> lines = element.getLines();
+                List<String> lines = element.getTexts().get(0).getLines();
                 if (lines.size() != 1) {
-                    throw RenderException.builder()
-                            .index(element.getLineIndex())
-                            .message("image(type=url) must provide exact 1 url")
+                    throw JSlideException.builder()
+                            .line(element.getRawInfo().getStartLineIndex())
+                            .message("image(type=url) must has exact 1 line url")
                             .build();
                 }
                 return lines.get(0);
@@ -64,7 +52,7 @@ public class ImageRender extends AbstractElementRender {
         BASE64 {
             @Override
             public String resolve(Element element) {
-                return String.join("", element.getLines());
+                return String.join("", element.getTexts().get(0).getLines());
             }
         };
 

@@ -1,8 +1,10 @@
 package cn.xdean.jslide.core.render;
 
+import cn.xdean.jslide.core.error.JSlideException;
 import cn.xdean.jslide.core.model.Element;
-import cn.xdean.jslide.core.error.ParseException;
-import cn.xdean.jslide.core.error.RenderException;
+import cn.xdean.jslide.core.error.JSlideException;
+import cn.xdean.jslide.core.model.Parameter;
+import cn.xdean.jslide.core.model.Text;
 import cn.xdean.jslide.core.render.element.RootRender;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -28,13 +30,16 @@ public class RenderService {
                 return render;
             }
         }
-        throw ParseException.builder().message("Can't render element: " + element.getName()).build();
+        throw JSlideException.builder().message("Can't render element: " + element.getName()).build();
     }
 
     public Collection<ElementRender> getElementRenders(Element element) {
         Set<ElementRender> renders = new HashSet<>();
         renders.add(getElementRender(element));
-        element.getChildren().forEach(c -> c.ifLeft(e -> renders.addAll(getElementRenders(e))));
+        element.getChildren()
+                .stream()
+                .filter(n -> n instanceof Element)
+                .forEach(e -> renders.addAll(getElementRenders((Element) e)));
         return renders;
     }
 
@@ -42,28 +47,34 @@ public class RenderService {
         return getElementRender(element).render(element);
     }
 
-    public TextRender getTextRender(Element element) {
-        String type = element.resolveParameter(RenderKeys.TEXT_TYPE);
-        if (type == null) {
+    public TextRender getTextRender(Text text) {
+        Parameter parameter = text.getParameter(RenderKeys.TEXT_TYPE);
+        if (parameter == null) {
             return primaryTextRender;
         }
+        String type = parameter.getValue();
         for (TextRender render : textRenders) {
             if (render.support(type)) {
                 return render;
             }
         }
-        throw ParseException.builder().message("Can't render text type: " + type).build();
+        throw JSlideException.builder().message("Can't render text type: " + type).build();
     }
 
     public Collection<TextRender> getTextRenders(Element element) {
         Set<TextRender> renders = new HashSet<>();
-        renders.add(getTextRender(element));
-        element.getChildren().forEach(c -> c.ifLeft(e -> renders.addAll(getTextRenders(e))));
+        element.getChildren().forEach(n -> {
+            if (n instanceof Text) {
+                renders.add(getTextRender((Text) n));
+            } else if (n instanceof Element) {
+                renders.addAll(getTextRenders((Element) n));
+            }
+        });
         return renders;
     }
 
-    public String renderText(Element parent, List<String> lines) {
-        return getTextRender(parent).render(parent, lines);
+    public String renderText(Text text) {
+        return getTextRender(text).render(text);
     }
 
     public String renderView(String template, Map<String, Object> model) {
@@ -73,7 +84,7 @@ public class RenderService {
             t.process(model, out);
             return out.toString();
         } catch (TemplateException | IOException e) {
-            throw RenderException.builder()
+            throw JSlideException.builder()
                     .message("Fail to render view: " + template)
                     .cause(e)
                     .build();

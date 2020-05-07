@@ -1,7 +1,7 @@
 package cn.xdean.jslide.core.render.element;
 
 import cn.xdean.jslide.core.model.Element;
-import cn.xdean.jslide.core.error.RenderException;
+import cn.xdean.jslide.core.error.JSlideException;
 import cn.xdean.jslide.core.render.RenderContext;
 import cn.xdean.jslide.core.render.RenderKeys;
 import lombok.Builder;
@@ -27,14 +27,12 @@ public class PageRender extends AbstractElementRender {
     @Override
     public String render(Element element) {
         if (!element.isDeep(1)) {
-            throw RenderException.builder()
-                    .index(element.getLineIndex())
+            throw JSlideException.builder()
+                    .line(element.getRawInfo().getStartLineIndex())
                     .message("page must be top level element")
                     .build();
         }
-        List<Element> pages = Objects.requireNonNull(element.getParent()).getChildren().stream()
-                .map(e -> e.asLeft().orElse(null))
-                .filter(e -> e != null)
+        List<Element> pages = Objects.requireNonNull(element.getParent()).getElements().stream()
                 .filter(e -> this.support(e.getName()))
                 .collect(Collectors.toList());
         return renderService.renderView("page.ftlh", getDefaultModelMap(element)

@@ -1,6 +1,7 @@
 package cn.xdean.jslide.core.render.text;
 
 import cn.xdean.jslide.core.model.Element;
+import cn.xdean.jslide.core.model.Text;
 import cn.xdean.jslide.core.render.RenderContext;
 import cn.xdean.jslide.core.render.RenderKeys;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -34,8 +35,8 @@ public class MarkdownTextRender extends AbstractTextRender {
     }
 
     @Override
-    public String render(Element element, List<String> lines) {
-        String content = String.join("\n", lines);
+    public String render(Text text) {
+        String content = String.join("\n", text.getLines());
         return renderService.renderView("text/md.ftlh", new ModelMap()
                 .addAttribute(RenderKeys.MODEL, MarkdownTextModel.builder().content(renderer.render(parser.parse(content))).build()));
     }
