@@ -189,7 +189,7 @@ public class ParseService {
         Parameter parseParameter(String line) {
             String[] split = line.split("=", 2);
             String key = split[0].trim();
-            String value = "_";
+            String value = null;
             if (split.length == 2) {
                 value = split[1].trim();
             }
