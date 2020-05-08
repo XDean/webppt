@@ -47,7 +47,7 @@ public class RenderService {
     }
 
     public String renderElement(RenderContext ctx, Element element) {
-        return getElementRender(element).render(new RenderContext(), element);
+        return getElementRender(element).render(ctx, element);
     }
 
     public TextRender getTextRender(Text text) {

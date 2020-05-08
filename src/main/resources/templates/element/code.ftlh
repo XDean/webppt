@@ -6,10 +6,11 @@
 <script>
     let content = String.raw`${_model.content?no_esc}`;
     let element = document.getElementById("element-code-${_model.id}");
-    CodeMirror(element, {
+    let codeMirror = CodeMirror(element, {
         value: content,
         lineNumbers: true,
         activeLines: true,
-        theme: 'idea',
+        theme: '${_model.theme}',
+        scrollbarStyle: "overlay",
     });
 </script>

@@ -1,0 +1,8 @@
+.element-code {
+    width: 70%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+
+    border: 1px solid rgb(224, 224, 224);
+}

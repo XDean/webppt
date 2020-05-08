@@ -47,7 +47,7 @@ public abstract class TemplateElementRender extends AbstractElementRender {
         for (Node node : element.getChildren()) {
             if (node instanceof Element) {
                 if (renderChildElement) {
-                    res.add(renderService.renderElement((Element) node));
+                    res.add(renderService.renderElement(ctx, (Element) node));
                 }
             } else if (node instanceof Text) {
                 if (renderChildText) {
