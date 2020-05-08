@@ -2,20 +2,14 @@ package cn.xdean.jslide.core.render.element;
 
 import cn.xdean.jslide.core.error.JSlideException;
 import cn.xdean.jslide.core.model.Element;
-import cn.xdean.jslide.core.model.Node;
 import cn.xdean.jslide.core.model.Parameter;
-import cn.xdean.jslide.core.model.Text;
 import cn.xdean.jslide.core.render.ElementRender;
-import cn.xdean.jslide.core.render.RenderKeys;
 import cn.xdean.jslide.core.render.RenderService;
 import io.reactivex.Observable;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionException;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.ui.ModelMap;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,8 +18,6 @@ public abstract class AbstractElementRender implements ElementRender {
     protected final List<String> names;
     protected @Autowired RenderService renderService;
     protected @Autowired ConversionService conversionService;
-    protected @Setter boolean renderChildElement = true;
-    protected @Setter boolean renderChildText = true;
 
     public AbstractElementRender(String... names) {
         this.names = Arrays.asList(names);
@@ -36,25 +28,13 @@ public abstract class AbstractElementRender implements ElementRender {
         return names.contains(name);
     }
 
-    protected ModelMap getDefaultModelMap(Element element) {
-        return new ModelMap()
-                .addAttribute(RenderKeys.ELEMENT, element).addAttribute(RenderKeys.CHILDREN, processChildren(element));
-    }
-
-    protected List<String> processChildren(Element element) {
-        List<String> res = new ArrayList<>();
-        for (Node node : element.getChildren()) {
-            if (node instanceof Element) {
-                if (renderChildElement) {
-                    res.add(renderService.renderElement((Element) node));
-                }
-            } else if (node instanceof Text) {
-                if (renderChildText) {
-                    res.add(renderService.renderText((Text) node));
-                }
-            }
+    protected void assertTopLevel(Element element) {
+        if (!element.isDeep(1)) {
+            throw JSlideException.builder()
+                    .line(element.getRawInfo().getStartLineIndex())
+                    .message(String.format("'%s' must be top level element", element.getName()))
+                    .build();
         }
-        return res;
     }
 
     protected void assertNoChildElement(Element element) {
@@ -71,7 +51,16 @@ public abstract class AbstractElementRender implements ElementRender {
         if (element.getTexts().size() != 1) {
             throw JSlideException.builder()
                     .line(element.getRawInfo().getStartLineIndex())
-                    .message(String.format("'%s' can't have multiple text part", element.getName()))
+                    .message(String.format("'%s' can't have multiple text", element.getName()))
+                    .build();
+        }
+    }
+
+    protected void assertNoText(Element element) {
+        if (!element.getTexts().isEmpty()) {
+            throw JSlideException.builder()
+                    .line(element.getRawInfo().getStartLineIndex())
+                    .message(String.format("'%s' can't have text", element.getName()))
                     .build();
         }
     }

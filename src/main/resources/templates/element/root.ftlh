@@ -1,13 +1,13 @@
-<#-- @ftlvariable name="title" type="String" -->
+<#-- @ftlvariable name="_model" type="cn.xdean.jslide.core.render.element.RootRender.RootModel" -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>${title!"JSlide"}</title>
+    <title>${_model.title!"JSlide"}</title>
     <meta charset='utf-8'>
-    <#list _context.scripts as script>
+    <#list _model.context.scripts as script>
         <script src='${script}'></script>
     </#list>
-    <#list _context.styles as style>
+    <#list _model.context.styles as style>
         <link rel="stylesheet" href="${style}">
     </#list>
 </head>
@@ -17,7 +17,7 @@
     <#list _children as child>
         ${child?no_esc}
     </#list>
-    <#list _context.globalElements as re>
+    <#list _model.context.globalElements as re>
         ${re?no_esc}
     </#list>
 </div>

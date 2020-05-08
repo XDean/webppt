@@ -2,7 +2,6 @@ package cn.xdean.jslide.core.render;
 
 import cn.xdean.jslide.core.error.JSlideException;
 import cn.xdean.jslide.core.model.Element;
-import cn.xdean.jslide.core.error.JSlideException;
 import cn.xdean.jslide.core.model.Parameter;
 import cn.xdean.jslide.core.model.Text;
 import cn.xdean.jslide.core.render.element.RootRender;
@@ -44,7 +43,11 @@ public class RenderService {
     }
 
     public String renderElement(Element element) {
-        return getElementRender(element).render(element);
+        return renderElement(new RenderContext(), element);
+    }
+
+    public String renderElement(RenderContext ctx, Element element) {
+        return getElementRender(element).render(new RenderContext(), element);
     }
 
     public TextRender getTextRender(Text text) {

@@ -2,6 +2,7 @@ package cn.xdean.jslide.core.render.element;
 
 import cn.xdean.jslide.core.error.JSlideException;
 import cn.xdean.jslide.core.model.Element;
+import cn.xdean.jslide.core.render.RenderContext;
 import cn.xdean.jslide.core.render.RenderKeys;
 import lombok.Builder;
 import lombok.Value;
@@ -11,28 +12,31 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @Component
-public class ImageRender extends AbstractElementRender {
+public class ImageRender extends TemplateElementRender {
     public ImageRender() {
-        super("img", "image");
+        super("image", "img");
     }
 
     @Override
-    public String render(Element element) {
+    protected void preRenderCheck(Element element) {
         assertNoChildElement(element);
         assertParameterFirst(element);
         assertSingleText(element);
+    }
+
+    @Override
+    protected ImageModel generateModel(RenderContext ctx, Element element) {
         ImageType type = resolveParameter(element, ImageType.class, "type", ImageType.URL);
         String content = type.resolve(element);
-        return renderService.renderView("image.ftlh", getDefaultModelMap(element)
-                .addAttribute(RenderKeys.MODEL, ImageModel.builder()
-                        .type(type)
-                        .content(content)
-                        .width(resolveParameter(element, "width", null))
-                        .height(resolveParameter(element, "height", null))
-                        .style(resolveParameter(element, "style", null))
-                        .alt(resolveParameter(element, "alt", null))
-                        .attributes(resolveParameter(element, "attributes", null))
-                        .build()));
+        return ImageModel.builder()
+                .type(type)
+                .content(content)
+                .width(resolveParameter(element, "width", null))
+                .height(resolveParameter(element, "height", null))
+                .style(resolveParameter(element, "style", null))
+                .alt(resolveParameter(element, "alt", null))
+                .attributes(resolveParameter(element, "attributes", null))
+                .build();
     }
 
     public enum ImageType {

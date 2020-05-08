@@ -8,20 +8,24 @@ import lombok.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HomePageRender extends AbstractElementRender {
+public class HomePageRender extends TemplateElementRender {
     public HomePageRender() {
         super("homepage");
     }
 
     @Override
-    public String render(Element element) {
-        return renderService.renderView("homepage.ftlh", getDefaultModelMap(element)
-                .addAttribute(RenderKeys.MODEL, HomePageModel.builder()
-                        .title(resolveParameter(element, "title", null))
-                        .subtitle(resolveParameter(element, "subtitle", null))
-                        .date(resolveParameter(element, "date", null))
-                        .author(resolveParameter(element, "author", null))
-                        .build()));
+    protected void preRenderCheck(Element element) {
+        assertNoText(element);
+    }
+
+    @Override
+    protected HomePageModel generateModel(RenderContext ctx, Element element) {
+        return HomePageModel.builder()
+                .title(resolveParameter(element, "title", null))
+                .subtitle(resolveParameter(element, "subtitle", null))
+                .date(resolveParameter(element, "date", null))
+                .author(resolveParameter(element, "author", null))
+                .build();
     }
 
     @Override

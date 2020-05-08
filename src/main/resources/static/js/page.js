@@ -35,25 +35,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fullScreenButton = document.getElementById("page-fullscreen-button");
     fullScreenButton.addEventListener("click", switchFullScreen);
-    document.onfullscreenchange = ev => {fullScreen = document.fullscreenElement === root; updateToolBars()};
+    document.onfullscreenchange = ev => {
+        fullScreen = document.fullscreenElement === root;
+        updateToolBars()
+    };
 
     updatePages();
     updateToolBars();
 });
 
 function handleBodyKeyDown(event) {
+    let edit = event.target.type === "textarea";
     switch (event.keyCode) {
         case 37:// left arrow
         case 8: // backspace
-        case 33:// PgDn
         case 38:// up arrow
+            if (edit) {
+                break;
+            }
+        // fallthrough
+        case 33:// PgDn
             prevPage();
             event.preventDefault();
             break;
         case 39:// right arrow
         case 32:// space
-        case 34:// PgDn
         case 40:// down arrow
+            if (edit) {
+                break;
+            }
+        // fallthrough
+        case 34:// PgDn
             nextPage();
             event.preventDefault();
             break;

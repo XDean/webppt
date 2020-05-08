@@ -60,6 +60,11 @@
             <artifactId>fontawesome</artifactId>
             <version>4.7.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>codemirror</artifactId>
+            <version>5.53.2</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
