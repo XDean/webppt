@@ -7,11 +7,10 @@ import cn.xdean.jslide.core.model.Parameter;
 import cn.xdean.jslide.core.model.Text;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringTokenizer;
+import org.apache.commons.text.matcher.StringMatcherFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class ParseService {
@@ -19,7 +18,7 @@ public class ParseService {
         return new Parser(source).parse();
     }
 
-    private class Parser {
+    private static class Parser {
         final String[] lines;
 
         int index = -1;
@@ -105,7 +104,7 @@ public class ParseService {
             Node last = elemStack.getLast();
             if (last instanceof Text) {
                 elemStack.removeLast();
-                if (((Text) last).getLines().stream().allMatch(l->l.trim().isEmpty())){
+                if (((Text) last).getLines().stream().allMatch(l -> l.trim().isEmpty())) {
                     Objects.requireNonNull(last.getParent()).getChildren().remove(last);
                 }
                 addToLast(node);
@@ -134,26 +133,8 @@ public class ParseService {
             } else {
                 elem.setName(line.substring(1, splitIndex));
                 if (line.charAt(splitIndex) == ' ') {
-                    StringTokenizer t = new StringTokenizer(line.substring(splitIndex + 1), ' ', '"');
-                    while (t.hasNext()) {
-                        String next = t.next();
-                        if (next.startsWith("@")) {
-                            Parameter parameter = parseParameter(next.substring(1));
-                            parameter.setParent(elem);
-                            elem.getChildren().add(parameter);
-                        } else {
-                            if (!elem.getChildren().isEmpty() && (elem.getChildren().getLast() instanceof Text)) {
-                                ((Text) elem.getChildren().getLast()).getLines().add(next);
-                            } else {
-                                Text text = new Text();
-                                text.setParent(elem);
-                                text.getRawInfo().setStartLineIndex(index);
-                                text.getRawInfo().setEndLineIndex(index);
-                                text.getLines().add(next);
-                                elem.getChildren().add(text);
-                            }
-                        }
-                    }
+                    String args = line.substring(splitIndex + 1);
+                    parseSingleLineElement(elem, args);
                 } else {
                     if (!line.endsWith("{")) {
                         throw JSlideException.builder()
@@ -165,6 +146,47 @@ public class ParseService {
                 }
             }
             consumed = true;
+        }
+
+        void parseSingleLineElement(Element elem, String args) {
+            StringTokenizer t = new StringTokenizer(args, ' ', '"');
+            while (t.hasNext()) {
+                String next = t.next();
+                if (next.startsWith("@")) {
+                    int i = next.indexOf('=');
+                    if (i != -1 && i != next.length() - 1 && next.charAt(i + 1) == '\"') {
+                        next = next.substring(0, i + 1) + next.substring(i + 2);
+                        while (t.hasNext()) {
+                            String pending = t.next();
+                            next += " " + pending;
+                            if (next.endsWith("\"")) {
+                                break;
+                            }
+                        }
+                        if (!next.endsWith("\"")) {
+                            throw JSlideException.builder()
+                                    .line(index)
+                                    .message("quote not closed")
+                                    .build();
+                        }
+                        next = next.substring(0, next.length() - 1);
+                    }
+                    Parameter parameter = parseParameter(next.substring(1));
+                    parameter.setParent(elem);
+                    elem.getChildren().add(parameter);
+                } else {
+                    if (!elem.getChildren().isEmpty() && (elem.getChildren().getLast() instanceof Text)) {
+                        ((Text) elem.getChildren().getLast()).getLines().add(next);
+                    } else {
+                        Text text = new Text();
+                        text.setParent(elem);
+                        text.getRawInfo().setStartLineIndex(index);
+                        text.getRawInfo().setEndLineIndex(index);
+                        text.getLines().add(next);
+                        elem.getChildren().add(text);
+                    }
+                }
+            }
         }
 
         void parseEndTag() {
@@ -192,7 +214,7 @@ public class ParseService {
             String[] keyElement = key.split("@", 2);
             key = keyElement[0];
             String element = null;
-            if (keyElement.length==2){
+            if (keyElement.length == 2) {
                 element = keyElement[1].trim();
             }
             String value = null;

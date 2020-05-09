@@ -118,7 +118,9 @@ function updatePages() {
     if (fullScreen) {
         root.requestFullscreen();
     } else {
-        document.exitFullscreen();
+        if (document.fullscreenElement !== null) {
+            document.exitFullscreen();
+        }
     }
 }
 

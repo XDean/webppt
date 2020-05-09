@@ -5,6 +5,7 @@ import cn.xdean.jslide.core.parse.ParseService;
 import cn.xdean.jslide.core.render.RenderService;
 import com.google.common.base.Splitter;
 import com.google.common.io.CharStreams;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -14,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.HandlerMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -46,10 +49,20 @@ public class RenderController {
         return renderService.renderElement(slide);
     }
 
-    @GetMapping("/render/{path}")
-    public ResponseEntity<?> render(@PathVariable("path") String path,
-                                    @RequestHeader(HttpHeaders.REFERER) URL referer,
-                                    ModelMap modelMap) throws IOException {
+    @GetMapping("/render/**")
+    public ResponseEntity<?> render(HttpServletRequest request,
+                                    @RequestHeader(HttpHeaders.REFERER) URL referer) throws IOException {
+        String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        return resolveResource(path.substring("/render/".length()), referer);
+    }
+
+    @GetMapping("/resource")
+    public ResponseEntity<?> redirect(@RequestParam("path") String path,
+                                      @RequestHeader(HttpHeaders.REFERER) URL referer) throws IOException {
+        return resolveResource(path, referer);
+    }
+
+    private ResponseEntity<?> resolveResource(String path, URL referer) throws IOException {
         String query = referer.getQuery();
         Map<String, String> params = Splitter.on('&').trimResults().withKeyValueSeparator('=').split(query);
         String originPath = params.get("path");
