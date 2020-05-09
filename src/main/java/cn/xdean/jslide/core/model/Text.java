@@ -17,6 +17,11 @@ public class Text implements Node {
 
     final RawInfo rawInfo = new RawInfo();
 
+    @Override
+    public String getName() {
+        return "text";
+    }
+
     public Parameter getParameter(String key) {
         return parent.getParameter(key, this);
     }

@@ -187,13 +187,23 @@ public class ParseService {
         }
 
         Parameter parseParameter(String line) {
-            String[] split = line.split("=", 2);
-            String key = split[0].trim();
-            String value = null;
-            if (split.length == 2) {
-                value = split[1].trim();
+            String[] keyValue = line.split("=", 2);
+            String key = keyValue[0].trim();
+            String[] keyElement = key.split("@", 2);
+            key = keyElement[0];
+            String element = null;
+            if (keyElement.length==2){
+                element = keyElement[1].trim();
             }
-            Parameter parameter = Parameter.builder().key(key).value(value).build();
+            String value = null;
+            if (keyValue.length == 2) {
+                value = keyValue[1].trim();
+            }
+            Parameter parameter = Parameter.builder()
+                    .element(element)
+                    .key(key)
+                    .value(value)
+                    .build();
             parameter.getRawInfo().setStartLineIndex(index);
             parameter.getRawInfo().setEndLineIndex(index);
             return parameter;

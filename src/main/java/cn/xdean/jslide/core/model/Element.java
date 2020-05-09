@@ -30,20 +30,20 @@ public class Element implements Node {
 
     @Override
     public Parameter getParameter(String key) {
-        return getParameter(key, (Node) null);
+        return getParameter(key, this);
     }
 
     public String getParameter(String key, String defaultValue) {
-        return getParameter(key, null, defaultValue);
+        return getParameter(key, this, defaultValue);
     }
 
     @Nullable
-    public Parameter getParameter(String key, Node pos) {
+    public Parameter getParameter(String key, Node node) {
         Parameter parameter = Observable.fromIterable(children)
-                .takeUntil(e -> e == pos)
+                .takeUntil(e -> e == node)
                 .filter(n -> n instanceof Parameter)
                 .cast(Parameter.class)
-                .filter(e -> e.getKey().equals(key))
+                .filter(e -> e.support(node) && e.getKey().equals(key))
                 .lastElement()
                 .blockingGet();
         if (parameter == null) {

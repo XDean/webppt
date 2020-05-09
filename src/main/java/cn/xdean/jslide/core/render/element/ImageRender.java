@@ -14,7 +14,7 @@ import java.util.List;
 @Component
 public class ImageRender extends TemplateElementRender {
     public ImageRender() {
-        super("image", "img");
+        super("image");
     }
 
     @Override

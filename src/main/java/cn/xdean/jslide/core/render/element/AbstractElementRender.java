@@ -10,22 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionException;
 import org.springframework.core.convert.ConversionService;
 
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractElementRender implements ElementRender {
 
-    protected final List<String> names;
+    protected final String name;
     protected @Autowired RenderService renderService;
     protected @Autowired ConversionService conversionService;
 
-    public AbstractElementRender(String... names) {
-        this.names = Arrays.asList(names);
+    public AbstractElementRender(String name) {
+        this.name = name;
     }
 
     @Override
     public boolean support(String name) {
-        return names.contains(name);
+        return this.name.equals(name);
     }
 
     protected void assertTopLevel(Element element) {

@@ -17,9 +17,9 @@ public abstract class TemplateElementRender extends AbstractElementRender {
     protected @Setter boolean renderChildElement = true;
     protected @Setter boolean renderChildText = true;
 
-    public TemplateElementRender(String... names) {
-        super(names);
-        setTemplate("element/" + names[0] + ".ftlh");
+    public TemplateElementRender(String name) {
+        super(name);
+        setTemplate("element/" + name + ".ftlh");
     }
 
     @Override
