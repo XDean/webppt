@@ -28,6 +28,7 @@ public class CodeRender extends TemplateElementRender {
                 .id(element.getRawInfo().getStartLineIndex())
                 .content(code)
                 .theme(theme)
+                .common(CommonElementModel.from(element))
                 .build();
     }
 
@@ -51,5 +52,6 @@ public class CodeRender extends TemplateElementRender {
         int id;
         String content;
         String theme;
+        CommonElementModel common;
     }
 }

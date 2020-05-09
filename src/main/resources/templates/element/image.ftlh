@@ -1,4 +1,5 @@
 <#-- @ftlvariable name="_model" type="cn.xdean.jslide.core.render.element.ImageRender.ImageModel" -->
+<#assign common = _model.common/>
 <div class="image">
     <img
             <#switch _model.type>
@@ -9,10 +10,10 @@
                     src="data:image/jpeg;base64,${_model.content}"
                     <#break >
             </#switch>
-            <#if _model.width??>width="${_model.width}"</#if>
-            <#if _model.height??>height="${_model.height}"</#if>
-            <#if _model.style??>style="${_model.style}"</#if>
-            <#if _model.alt??>alt="${_model.alt}"</#if>
-            <#if _model.attributes??>${_model.attributes?no_esc}</#if>
+            <#if common.width??>width="${common.width}"</#if>
+            <#if common.height??>height="${common.height}"</#if>
+            <#if common.style??>style="${common.style}"</#if>
+            <#if common.classes??>class="${common.classes}"</#if>
+            <#if common.attributes??>${common.attributes?no_esc}</#if>
     >
 </div>

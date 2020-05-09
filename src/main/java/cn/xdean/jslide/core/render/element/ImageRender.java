@@ -31,11 +31,7 @@ public class ImageRender extends TemplateElementRender {
         return ImageModel.builder()
                 .type(type)
                 .content(content)
-                .width(resolveParameter(element, "width", null))
-                .height(resolveParameter(element, "height", null))
-                .style(resolveParameter(element, "style", null))
-                .alt(resolveParameter(element, "alt", null))
-                .attributes(resolveParameter(element, "attributes", null))
+                .common(CommonElementModel.from(element))
                 .build();
     }
 
@@ -68,10 +64,6 @@ public class ImageRender extends TemplateElementRender {
     public static class ImageModel {
         ImageType type;
         String content;
-        @Nullable String width;
-        @Nullable String height;
-        @Nullable String style;
-        @Nullable String alt;
-        @Nullable String attributes;
+        CommonElementModel common;
     }
 }
