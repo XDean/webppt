@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.reactivex.Observable;
+import io.reactivex.functions.Predicate;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -40,7 +41,7 @@ public class Element implements Node {
     @Nullable
     public Parameter getParameter(String key, Node node) {
         Parameter parameter = Observable.fromIterable(children)
-                .takeUntil(e -> e == node)
+                .takeUntil((Predicate<Node>) e -> e.contains(node))
                 .filter(n -> n instanceof Parameter)
                 .cast(Parameter.class)
                 .filter(e -> e.support(node) && e.getKey().equals(key))
@@ -50,7 +51,7 @@ public class Element implements Node {
             if (parent == this) {
                 return null;
             } else {
-                return parent.getParameter(key, this);
+                return parent.getParameter(key, node);
             }
         } else {
             return parameter;
@@ -97,5 +98,10 @@ public class Element implements Node {
             return isRoot();
         }
         return parent != this && parent.isDeep(i - 1);
+    }
+
+    @Override
+    public boolean contains(Node node) {
+        return node == this || this.getChildren().stream().anyMatch(e -> e.contains(node));
     }
 }

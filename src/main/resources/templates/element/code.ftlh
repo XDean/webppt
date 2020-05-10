@@ -41,7 +41,10 @@
             value: content,
             lineNumbers: true,
             theme: '${_model.theme}',
-            scrollbarStyle: "overlay"
+            scrollbarStyle: "overlay",
+            <#if _model.readonly>
+            readOnly: true,
+            </#if>
         });
     }
 

@@ -26,14 +26,17 @@ public class CodeRender extends TemplateElementRender {
     protected CodeModel generateModel(RenderContext ctx, Element element) {
         CodeType type = resolveParameter(element, CodeType.class, "type", CodeType.URL);
         String code = type.resolve(element);
+
         String theme = resolveParameter(element, "theme", "idea");
         ctx.styles.add(String.format("/static/webjars/codemirror/5.53.2/theme/%s.css", theme));
+
         return CodeModel.builder()
                 .id(element.getRawInfo().getStartLineIndex())
                 .type(type)
                 .content(code)
                 .theme(theme)
                 .common(CommonElementModel.from(element))
+                .readonly(resolveParameter(element, boolean.class, "readonly", false))
                 .build();
     }
 
@@ -77,6 +80,7 @@ public class CodeRender extends TemplateElementRender {
     @Builder
     public static class CodeModel {
         int id;
+        boolean readonly;
         CodeType type;
         String content;
         String theme;

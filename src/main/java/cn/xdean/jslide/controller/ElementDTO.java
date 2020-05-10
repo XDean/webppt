@@ -1,12 +1,13 @@
 package cn.xdean.jslide.controller;
 
-import cn.xdean.jslide.core.model.*;
+import cn.xdean.jslide.core.model.Element;
+import cn.xdean.jslide.core.model.Parameter;
+import cn.xdean.jslide.core.model.RawInfo;
+import cn.xdean.jslide.core.model.Text;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
 

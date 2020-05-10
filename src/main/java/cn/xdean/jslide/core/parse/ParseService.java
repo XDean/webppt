@@ -217,7 +217,7 @@ public class ParseService {
             if (keyElement.length == 2) {
                 element = keyElement[1].trim();
             }
-            String value = null;
+            String value = "true";
             if (keyValue.length == 2) {
                 value = keyValue[1].trim();
             }

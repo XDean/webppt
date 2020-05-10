@@ -15,4 +15,8 @@ public interface Node {
 
     @Nullable
     Parameter getParameter(String key);
+
+    default boolean contains(Node node) {
+        return node == this;
+    }
 }

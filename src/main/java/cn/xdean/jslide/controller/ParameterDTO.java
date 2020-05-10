@@ -8,6 +8,8 @@ import lombok.Value;
 @Value
 @Builder
 public class ParameterDTO {
+    String element;
+
     String key;
 
     String value;
@@ -16,6 +18,7 @@ public class ParameterDTO {
 
     public static ParameterDTO from(Parameter p) {
         return ParameterDTO.builder()
+                .element(p.getElement())
                 .key(p.getKey())
                 .value(p.getValue())
                 .rawInfo(p.getRawInfo())
