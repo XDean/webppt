@@ -1,4 +1,4 @@
-package cn.xdean.jslide.suuport.convert;
+package cn.xdean.jslide.support.convert;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;

@@ -1,6 +1,6 @@
 package cn.xdean.jslide.config;
 
-import cn.xdean.jslide.suuport.convert.StringToEnumConverterFactory;
+import cn.xdean.jslide.support.convert.StringToEnumConverterFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
