@@ -18,7 +18,7 @@
         return String.raw`${_model.content?no_esc}`;
         <#break />
         <#case "URL">
-        return fetch("/resource?path=${_model.content}")
+        return fetch("/resource/?path=${_model.content}")
             .then(res => {
                 if (res.ok) {
                     return res.text();
@@ -44,6 +44,11 @@
             scrollbarStyle: "overlay",
             <#if _model.readonly>
             readOnly: true,
+            </#if>
+            <#if _model.language??>
+            mode: "${_model.language.mime}",
+            <#else >
+            mode: null,
             </#if>
         });
     }

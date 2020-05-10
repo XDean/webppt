@@ -1,14 +1,11 @@
-package cn.xdean.jslide.core.play;
+package cn.xdean.jslide.core.code.play;
 
 import cn.xdean.jslide.support.IOUtil;
-import com.google.common.io.CharStreams;
-import com.google.common.io.LineReader;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 

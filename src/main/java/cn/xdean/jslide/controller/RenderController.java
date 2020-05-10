@@ -46,7 +46,7 @@ public class RenderController {
         Resource resource = resourceLoader.getResource(path);
         String content = CharStreams.toString(new InputStreamReader(resource.getInputStream()));
         Element slide = parseService.parse(content);
-        return renderService.renderElement(slide);
+        return renderService.renderElement(resource, slide);
     }
 
     @GetMapping("/render/**")
@@ -56,7 +56,7 @@ public class RenderController {
         return resolveResource(path.substring("/render/".length()), referer);
     }
 
-    @GetMapping("/resource")
+    @GetMapping("/resource/")
     public ResponseEntity<?> redirect(@RequestParam("path") String path,
                                       @RequestHeader(HttpHeaders.REFERER) URL referer) throws IOException {
         return resolveResource(path, referer);

@@ -9,6 +9,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -42,8 +43,8 @@ public class RenderService {
         return renders;
     }
 
-    public String renderElement(Element element) {
-        return renderElement(new RenderContext(), element);
+    public String renderElement(Resource resource, Element element) {
+        return renderElement(RenderContext.builder().resource(resource).build(), element);
     }
 
     public String renderElement(RenderContext ctx, Element element) {

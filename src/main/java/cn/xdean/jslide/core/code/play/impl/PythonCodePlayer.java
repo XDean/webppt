@@ -1,6 +1,6 @@
-package cn.xdean.jslide.core.play.impl;
+package cn.xdean.jslide.core.code.play.impl;
 
-import cn.xdean.jslide.core.play.ScriptCodePlayer;
+import cn.xdean.jslide.core.code.play.ScriptCodePlayer;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
