@@ -1,8 +1,8 @@
-<#-- @ftlvariable name="_model" type="cn.xdean.jslide.core.render.element.RootRender.RootModel" -->
+<#-- @ftlvariable name="_model" type="cn.xdean.webppt.core.render.element.RootRender.RootModel" -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>${_model.title!"JSlide"}</title>
+    <title>${_model.title!"Web PPT"}</title>
     <meta charset='utf-8'>
     <#list _model.context.scripts as script>
         <script src='${script}'></script>

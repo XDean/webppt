@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="_model" type="cn.xdean.jslide.core.render.element.ImageRender.ImageModel" -->
+<#-- @ftlvariable name="_model" type="cn.xdean.webppt.core.render.element.ImageRender.ImageModel" -->
 <#assign common = _model.common/>
 <div class="image">
     <img

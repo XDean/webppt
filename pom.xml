@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>cn.xdean</groupId>
-    <artifactId>jslide</artifactId>
+    <artifactId>webppt</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>jslide</name>
-    <description>Java Web Slide</description>
+    <name>WebPPT</name>
+    <description>Web PPT</description>
 
     <properties>
         <java.version>1.8</java.version>

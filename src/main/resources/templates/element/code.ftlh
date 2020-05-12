@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="_model" type="cn.xdean.jslide.core.render.element.CodeRender.CodeModel" -->
+<#-- @ftlvariable name="_model" type="cn.xdean.webppt.core.render.element.CodeRender.CodeModel" -->
 <#assign common = _model.common/>
 <div
         id="element-code-${_model.id}"
