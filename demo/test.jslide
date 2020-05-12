@@ -1,0 +1,154 @@
+@title    =  Welcome to JSlide
+@subtitle =  Playground for Beginner
+@date     =  2020-05-03
+@author   =  XDean
+
+.page{
+.homepage
+}
+
+.page{
+# Test Text
+
+**bold**
+
+_italic_
+
+[MD Link](https://google.com)
+
+@text=plain
+Hello World!
+
+- 1
+    - 2
+        -3
+```go
+    package main
+
+    func main(){
+        print("Hello World")
+    }
+```
+
+@text=md
+- item 1
+    - sub 1
+    - sub 2
+    - sub 3
+- item 2
+- item 3
+}
+
+.page{
+# Test Image
+
+.image @width=10% @attributes="title='google icon'" google.png
+.image https://user-images.githubusercontent.com/9050713/39107515-619773e0-46f5-11e8-9fa9-2859816f1c42.png
+}
+
+.page{
+# Test Code
+
+.code{
+@lang=go
+@type=text
+@width=40%
+@attributes=title="what"
+    package main
+
+    func main(){
+        print("Hello World")
+    }
+}
+
+.code @type=url code/java.java
+
+.code @type=url @readonly https://raw.githubusercontent.com/XDean/Java-EX/master/pom.xml
+}
+
+.page{
+@text=html
+<div id="myContainer">
+
+    <div id="mySidepanel" class="sidepanel">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <a href="#">About</a>
+        <a href="#">Services</a>
+        <a href="#">Clients</a>
+        <a href="#">Contact</a>
+    </div>
+
+</div>
+}
+
+.page{
+page 5
+}
+
+.page{
+page 6
+}
+
+.page{
+page 7
+}
+
+.page{
+page 8
+}
+
+.page{
+page 9
+}
+
+.page{
+page 10
+}
+
+.page{
+page 11
+}
+
+.page{
+page 12
+}
+
+.page{
+page 13
+}
+
+.page{
+page 14
+}
+
+.page{
+page 15
+}
+
+.page{
+page 16
+}
+
+.page{
+page 17
+}
+
+.page{
+page 18
+}
+
+.page{
+page 19
+}
+
+.page{
+page 20
+}
+
+.page{
+page 21
+}
+
+.page{
+page 22
+}
