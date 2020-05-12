@@ -1,4 +1,4 @@
-@title    =  Welcome to JSlide
+@title    =  Welcome to WebPPT
 @subtitle =  Playground for Beginner
 @date     =  2020-05-03
 @author   =  XDean
@@ -71,7 +71,6 @@ Hello World!
 <div id="myContainer">
 
     <div id="mySidepanel" class="sidepanel">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
         <a href="#">About</a>
         <a href="#">Services</a>
         <a href="#">Clients</a>

@@ -18,7 +18,7 @@
         return String.raw`${_model.content?no_esc}`;
         <#break />
         <#case "URL">
-        return fetch("/resource/?path=${_model.content}")
+        return fetch("../resource/?path=${_model.content}")
             .then(res => {
                 if (res.ok) {
                     return res.text();
