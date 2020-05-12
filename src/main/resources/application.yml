@@ -9,3 +9,8 @@ server:
 spring:
   mvc:
     static-path-pattern: /static/**
+  main:
+    banner-mode: log
+logging:
+  file:
+    name: ${logfile:}
