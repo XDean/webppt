@@ -1,4 +1,4 @@
-package cn.xdean.webppt.core.code.play;
+package cn.xdean.webppt.core.code.run;
 
 import io.reactivex.Observable;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Value;
 
 import java.util.List;
 
-public interface CodePlayer {
+public interface CodeRunner {
 
     String getName();
 

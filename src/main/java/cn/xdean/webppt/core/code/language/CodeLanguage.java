@@ -5,7 +5,6 @@ import lombok.Singular;
 import lombok.Value;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 @Value
 @Builder
@@ -18,8 +17,5 @@ public class CodeLanguage {
     String mime;
 
     String codeMirrorJs;
-
-    @Builder.Default
-    Predicate<String> contentMatch = s -> false;
 
 }

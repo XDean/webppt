@@ -18,12 +18,7 @@ public class LanguageService {
     public Optional<CodeLanguage> getLanguageByResource(Resource resource) {
         String filename = resource.getFilename();
         if (filename == null) {
-            try {
-                String content = CharStreams.toString(new InputStreamReader(resource.getInputStream()));
-                return getLanguageByContent(content);
-            } catch (IOException e) {
-                return Optional.empty();
-            }
+            return Optional.empty();
         } else {
             String ext = Files.getFileExtension(filename);
             if (ext.isEmpty()) {
@@ -32,12 +27,6 @@ public class LanguageService {
                 return getLanguageByExt(ext);
             }
         }
-    }
-
-    public Optional<CodeLanguage> getLanguageByContent(String content) {
-        return languages.stream()
-                .filter(c -> c.getContentMatch().test(content))
-                .findFirst();
     }
 
     public Optional<CodeLanguage> getLanguageByExt(String ext) {

@@ -1,11 +1,11 @@
-package cn.xdean.webppt.core.code.play;
+package cn.xdean.webppt.core.code.run;
 
 import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AbstractCodePlayer implements CodePlayer {
+public abstract class AbstractCodeRunner implements CodeRunner {
 
     @Getter
     private final String name;
@@ -13,7 +13,7 @@ public abstract class AbstractCodePlayer implements CodePlayer {
     @Getter
     private final List<String> extensions;
 
-    public AbstractCodePlayer(String name, String... extensions) {
+    public AbstractCodeRunner(String name, String... extensions) {
         this.name = name;
         this.extensions = Arrays.asList(extensions);
     }

@@ -1,13 +1,13 @@
-package cn.xdean.webppt.core.code.play.impl;
+package cn.xdean.webppt.core.code.run.impl;
 
-import cn.xdean.webppt.core.code.play.ScriptCodePlayer;
+import cn.xdean.webppt.core.code.run.ScriptCodeRunner;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
 
 @Component
-public class PythonCodePlayer extends ScriptCodePlayer {
-    public PythonCodePlayer() {
+public class PythonCodeRunner extends ScriptCodeRunner {
+    public PythonCodeRunner() {
         super("python", "py");
     }
 

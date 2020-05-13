@@ -1,4 +1,4 @@
-package cn.xdean.webppt.core.code.play;
+package cn.xdean.webppt.core.code.run;
 
 import cn.xdean.webppt.support.IOUtil;
 import io.reactivex.Observable;
@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public abstract class ScriptCodePlayer extends AbstractCodePlayer {
-    public ScriptCodePlayer(String name, String... extensions) {
+public abstract class ScriptCodeRunner extends AbstractCodeRunner {
+    public ScriptCodeRunner(String name, String... extensions) {
         super(name, extensions);
     }
 
