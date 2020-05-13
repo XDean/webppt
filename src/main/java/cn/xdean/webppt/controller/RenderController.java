@@ -1,5 +1,6 @@
 package cn.xdean.webppt.controller;
 
+import cn.xdean.webppt.core.error.AppException;
 import cn.xdean.webppt.core.model.Element;
 import cn.xdean.webppt.core.parse.ParseService;
 import cn.xdean.webppt.core.render.RenderService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -31,21 +33,28 @@ public class RenderController {
 
     @GetMapping("/parse/")
     @ResponseBody
-    public ElementDTO parse(@RequestParam("path") String path) throws IOException {
-        Resource resource = resourceLoader.getResource(path);
-        String content = CharStreams.toString(new InputStreamReader(resource.getInputStream()));
-        Element slide = parseService.parse(content);
-        return ElementDTO.from(slide);
+    public ElementDTO parse(@RequestParam("path") String path) {
+        try {
+            Resource resource = resourceLoader.getResource(path);
+            String content = CharStreams.toString(new InputStreamReader(resource.getInputStream()));
+            Element slide = parseService.parse(content);
+            return ElementDTO.from(slide);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Resource can't be load", e);
+        }
     }
 
     @GetMapping("/render/")
     @ResponseBody
-    public String render(@RequestParam("path") String path,
-                         ModelMap modelMap) throws IOException {
-        Resource resource = resourceLoader.getResource(path);
-        String content = CharStreams.toString(new InputStreamReader(resource.getInputStream()));
-        Element slide = parseService.parse(content);
-        return renderService.renderElement(resource, slide);
+    public String render(@RequestParam("path") String path) {
+        try {
+            Resource resource = resourceLoader.getResource(path);
+            String content = CharStreams.toString(new InputStreamReader(resource.getInputStream()));
+            Element slide = parseService.parse(content);
+            return renderService.renderElement(resource, slide);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Resource can't be load", e);
+        }
     }
 
     @GetMapping("/render/**")
