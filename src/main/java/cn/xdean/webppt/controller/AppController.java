@@ -1,6 +1,6 @@
 package cn.xdean.webppt.controller;
 
-import cn.xdean.webppt.core.error.AppException;
+import cn.xdean.webppt.controller.model.ElementDTO;
 import cn.xdean.webppt.core.model.Element;
 import cn.xdean.webppt.core.parse.ParseService;
 import cn.xdean.webppt.core.render.RenderService;
@@ -13,19 +13,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Map;
 
 @Controller
-public class RenderController {
+public class AppController {
 
     @Autowired ParseService parseService;
     @Autowired ResourceLoader resourceLoader;

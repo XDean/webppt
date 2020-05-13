@@ -1,5 +1,6 @@
 package cn.xdean.webppt.core.code.language;
 
+import cn.xdean.webppt.core.code.run.CodeRunner;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
@@ -18,4 +19,5 @@ public class CodeLanguage {
 
     String codeMirrorJs;
 
+    CodeRunner runner;
 }

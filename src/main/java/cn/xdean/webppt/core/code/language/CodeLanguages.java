@@ -1,5 +1,6 @@
 package cn.xdean.webppt.core.code.language;
 
+import cn.xdean.webppt.core.code.run.impl.PythonCodeRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,12 +27,13 @@ public class CodeLanguages {
     }
 
     @Bean
-    public CodeLanguage python() {
+    public CodeLanguage python(PythonCodeRunner runner) {
         return CodeLanguage.builder()
                 .name("python")
                 .extension("py")
                 .mime("text/x-python")
                 .codeMirrorJs("python/python.js")
+                .runner(runner)
                 .build();
     }
 }

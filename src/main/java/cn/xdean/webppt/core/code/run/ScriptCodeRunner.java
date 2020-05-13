@@ -9,11 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public abstract class ScriptCodeRunner extends AbstractCodeRunner {
-    public ScriptCodeRunner(String name, String... extensions) {
-        super(name, extensions);
-    }
-
+public abstract class ScriptCodeRunner implements CodeRunner {
     @Override
     public Observable<Line> run(String code) {
         return Single.fromCallable(() -> {
@@ -31,7 +27,7 @@ public abstract class ScriptCodeRunner extends AbstractCodeRunner {
     }
 
     protected Path createScriptFile(String code) throws IOException {
-        Path folder = Files.createTempDirectory(String.format("code-%s-", getName()));
+        Path folder = Files.createTempDirectory("code-script-");
         Path file = Files.createFile(folder.resolve(scriptFileName()));
         return Files.write(file, code.getBytes());
     }

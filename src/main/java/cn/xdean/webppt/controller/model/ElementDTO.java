@@ -1,4 +1,4 @@
-package cn.xdean.webppt.controller;
+package cn.xdean.webppt.controller.model;
 
 import cn.xdean.webppt.core.model.Element;
 import cn.xdean.webppt.core.model.Parameter;

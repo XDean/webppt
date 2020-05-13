@@ -7,10 +7,6 @@ import java.nio.file.Path;
 
 @Component
 public class PythonCodeRunner extends ScriptCodeRunner {
-    public PythonCodeRunner() {
-        super("python", "py");
-    }
-
     @Override
     protected String[] scriptCommand(Path script) {
         return new String[]{"python", "main.py"};
