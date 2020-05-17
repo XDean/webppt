@@ -6,6 +6,10 @@ import lombok.Value;
 
 public interface CodeRunner {
 
+    default boolean available() {
+        return true;
+    }
+
     Observable<Line> run(String code);
 
     @Value

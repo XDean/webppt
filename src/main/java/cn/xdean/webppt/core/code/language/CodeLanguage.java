@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 @Value
@@ -19,5 +20,6 @@ public class CodeLanguage {
 
     String codeMirrorJs;
 
+    @Nullable
     CodeRunner runner;
 }

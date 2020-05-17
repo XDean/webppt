@@ -1,7 +1,7 @@
 package cn.xdean.webppt.core.render.element;
 
 import cn.xdean.webppt.core.code.language.CodeLanguage;
-import cn.xdean.webppt.core.code.language.LanguageService;
+import cn.xdean.webppt.core.code.language.CodeLanguageService;
 import cn.xdean.webppt.core.error.AppException;
 import cn.xdean.webppt.core.model.Element;
 import cn.xdean.webppt.core.render.RenderContext;
@@ -18,7 +18,7 @@ import java.util.List;
 public class CodeRender extends TemplateElementRender {
 
     @Autowired ResourceLoader resourceLoader;
-    @Autowired LanguageService languageService;
+    @Autowired CodeLanguageService codeLanguageService;
 
     public CodeRender() {
         super("code");
@@ -45,19 +45,18 @@ public class CodeRender extends TemplateElementRender {
             switch (type) {
                 case URL:
                     try {
-                        language = languageService.getLanguageByResource(ctx.resource.createRelative(content)).orElse(null);
+                        language = codeLanguageService.getLanguageByResource(ctx.resource.createRelative(content)).orElse(null);
                     } catch (IOException e) {
                         ctx.warnings.add(e);
                     }
                     break;
                 case TEXT:
-                    language = languageService.getLanguageByContent(content).orElse(null);
                     break;
                 default:
                     throw new UnsupportedOperationException();
             }
         } else {
-            language = languageService.getLanguageByName(lang).orElse(null);
+            language = codeLanguageService.getLanguageByName(lang).orElse(null);
         }
         if (language == null) {
             ctx.warnings.add(AppException.builder()

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class LanguageService {
+public class CodeLanguageService {
     @Autowired List<CodeLanguage> languages;
 
     public Optional<CodeLanguage> getLanguageByResource(Resource resource) {
