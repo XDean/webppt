@@ -2,7 +2,7 @@
 <#assign common = _model.common/>
 <div
         id="element-code-${_model.id}"
-        class="element-code<#if common.classes??> ${common.classes}</#if>"
+        class="element-code<#if common.classes??> ${common.classes}</#if><#if _model.resize> resize</#if>"
         style="<#if common.width??>width:${common.width};</#if>
                 height:${common.height!"300px"};
         <#if common.style??>${common.style}</#if>"

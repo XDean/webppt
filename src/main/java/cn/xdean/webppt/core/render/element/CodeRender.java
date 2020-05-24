@@ -75,6 +75,8 @@ public class CodeRender extends TemplateElementRender {
                 .theme(theme)
                 .common(CommonElementModel.from(element))
                 .readonly(resolveParameter(element, boolean.class, "readonly", false))
+                .play(resolveParameter(element, boolean.class, "play", false))
+                .resize(resolveParameter(element, boolean.class, "resize", false))
                 .build();
     }
 
@@ -120,6 +122,8 @@ public class CodeRender extends TemplateElementRender {
     public static class CodeModel {
         int id;
         boolean readonly;
+        boolean resize;
+        boolean play;
         CodeType type;
         CodeLanguage language;
         String content;

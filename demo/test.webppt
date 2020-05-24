@@ -61,7 +61,7 @@ Hello World!
     }
 }
 
-.code @type=url code/java.java
+.code @theme=blackboard @type=url @resize @play code/java.java
 
 .code @type=url @readonly https://raw.githubusercontent.com/XDean/Java-EX/master/pom.xml
 }
