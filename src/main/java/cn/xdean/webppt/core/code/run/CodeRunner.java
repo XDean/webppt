@@ -6,6 +6,10 @@ import lombok.Value;
 
 public interface CodeRunner {
 
+    String name();
+
+    boolean isSupport();
+
     default boolean available() {
         return true;
     }

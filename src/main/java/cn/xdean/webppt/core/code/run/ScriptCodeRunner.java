@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public abstract class ScriptCodeRunner implements CodeRunner {
+public abstract class ScriptCodeRunner extends AbstractCodeRunner {
     @Override
     public Observable<Line> run(String code) {
         return Single.fromCallable(() -> {

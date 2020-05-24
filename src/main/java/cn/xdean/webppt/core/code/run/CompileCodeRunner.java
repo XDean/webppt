@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public abstract class CompileCodeRunner implements CodeRunner {
+public abstract class CompileCodeRunner extends AbstractCodeRunner {
     @Override
     public Observable<Line> run(String code) {
         return Single.fromCallable(() -> createSourceFile(code))
