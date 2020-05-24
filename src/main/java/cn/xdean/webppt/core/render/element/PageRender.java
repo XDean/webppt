@@ -41,7 +41,7 @@ public class PageRender extends TemplateElementRender {
     @Override
     public void initContext(RenderContext context) {
         context.scripts.add("/static/js/page.js");
-        context.styles.add("/static/webjars/fontawesome/4.7.0/css/font-awesome.css");
+        context.styles.add("/static/webjars/fontawesome/4.7.0/css/font-awesome.min.css");
         context.styles.add("/static/css/page.css");
         context.globalElements.add(renderService.renderView("element/page_global.ftlh", Collections.emptyMap()));
     }

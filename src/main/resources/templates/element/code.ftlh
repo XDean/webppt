@@ -42,6 +42,7 @@
             lineNumbers: true,
             theme: '${_model.theme}',
             scrollbarStyle: "overlay",
+            play: ${_model.play?string},
             <#if _model.readonly>
             readOnly: true,
             </#if>

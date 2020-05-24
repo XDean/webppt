@@ -41,6 +41,11 @@ public class RootRender extends TemplateElementRender {
     @Override
     public void initContext(RenderContext context) {
         context.styles.add("/static/css/root.css");
+
+        context.scripts.add("/static/webjars/jquery/3.5.1/jquery.min.js");
+
+        context.scripts.add("/static/webjars/jquery-ui/1.12.1/jquery-ui.min.js");
+        context.styles.add("/static/webjars/jquery-ui/1.12.1/jquery-ui.min.css");
     }
 
     @Value

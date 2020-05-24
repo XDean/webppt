@@ -2,6 +2,7 @@
 @subtitle =  Playground for Beginner
 @date     =  2020-05-03
 @author   =  XDean
+@play@code
 
 .page{
 .homepage

@@ -88,6 +88,8 @@ public class CodeRender extends TemplateElementRender {
         context.scripts.add("/static/webjars/codemirror/5.53.2/addon/scroll/simplescrollbars.js");
         context.styles.add("/static/webjars/codemirror/5.53.2/addon/scroll/simplescrollbars.css");
 
+        context.scripts.add("/static/webjars/codemirror/5.53.2/addon/display/panel.js");
+
         context.scripts.add("/static/js/code.js");
         context.styles.add("/static/css/code.css");
     }
