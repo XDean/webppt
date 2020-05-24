@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static xdean.jex.util.lang.ExceptionUtil.uncheck;
 
 @Component

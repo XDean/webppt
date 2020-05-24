@@ -19,7 +19,13 @@ public interface CodeRunner {
         public enum Type {
             STDOUT,
             STDERR,
-            SYSTEM;
+
+            SYSTEM,
+            STATUS;
+
+            public Line of(String message) {
+                return Line.builder().type(this).message(message).build();
+            }
         }
 
         Type type;

@@ -19,11 +19,15 @@ public abstract class ScriptCodeRunner implements CodeRunner {
         })
                 .flatMapObservable(p -> Observable.merge(
                         IOUtil.readLines(p.getInputStream())
-                                .map(s -> Line.builder().message(s).type(Line.Type.STDOUT).build())
+                                .map(s -> Line.Type.STDOUT.of(s))
                                 .subscribeOn(Schedulers.io()),
                         IOUtil.readLines(p.getErrorStream())
-                                .map(s -> Line.builder().message(s).type(Line.Type.STDERR).build())
-                                .subscribeOn(Schedulers.io())));
+                                .map(s -> Line.Type.STDERR.of(s))
+                                .subscribeOn(Schedulers.io()))
+                        .concatWith(Observable.fromCallable(() -> Line.Type.SYSTEM.of("Exit Code: " + p.waitFor()))))
+                .startWith(Line.Type.STATUS.of("running"))
+                .concatWith(Single.just(Line.Type.STATUS.of("done")))
+                .onErrorReturn(e -> Line.Type.SYSTEM.of(e.getMessage()));
     }
 
     protected Path createScriptFile(String code) throws IOException {
