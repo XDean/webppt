@@ -16,7 +16,7 @@ public interface CodeRunner {
     @Builder
     class Line {
 
-        enum Type {
+        public enum Type {
             STDOUT,
             STDERR,
             SYSTEM;
