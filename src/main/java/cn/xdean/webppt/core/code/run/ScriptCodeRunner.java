@@ -1,9 +1,7 @@
 package cn.xdean.webppt.core.code.run;
 
-import cn.xdean.webppt.support.IOUtil;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,17 +15,11 @@ public abstract class ScriptCodeRunner implements CodeRunner {
             ProcessBuilder pb = createProcess(file);
             return pb.start();
         })
-                .flatMapObservable(p -> Observable.merge(
-                        IOUtil.readLines(p.getInputStream())
-                                .map(s -> Line.Type.STDOUT.of(s))
-                                .subscribeOn(Schedulers.io()),
-                        IOUtil.readLines(p.getErrorStream())
-                                .map(s -> Line.Type.STDERR.of(s))
-                                .subscribeOn(Schedulers.io()))
+                .flatMapObservable(p -> CodeRunnerUtil.processToLineObservable(p)
                         .concatWith(Observable.fromCallable(() -> Line.Type.SYSTEM.of("Exit Code: " + p.waitFor()))))
-                .startWith(Line.Type.STATUS.of("running"))
-                .concatWith(Single.just(Line.Type.STATUS.of("done")))
-                .onErrorReturn(e -> Line.Type.SYSTEM.of(e.getMessage()));
+                .startWith(Line.Type.STATUS.of("Running"))
+                .concatWith(Single.just(Line.Type.STATUS.of("Done")))
+                .onErrorReturn(e -> Line.Type.SYSTEM.of("Error Happened: " + e.getMessage()));
     }
 
     protected Path createScriptFile(String code) throws IOException {
@@ -39,10 +31,10 @@ public abstract class ScriptCodeRunner implements CodeRunner {
     protected ProcessBuilder createProcess(Path script) {
         return new ProcessBuilder()
                 .directory(script.getParent().toFile())
-                .command(scriptCommand(script));
+                .command(scriptCommand());
     }
 
-    protected abstract String[] scriptCommand(Path script);
+    protected abstract String[] scriptCommand();
 
     protected abstract String scriptFileName();
 }

@@ -1,5 +1,6 @@
 package cn.xdean.webppt.core.code.language;
 
+import cn.xdean.webppt.core.code.run.impl.JavaCodeRunner;
 import cn.xdean.webppt.core.code.run.impl.PythonCodeRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,12 +8,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CodeLanguages {
     @Bean
-    public CodeLanguage java() {
+    public CodeLanguage java(JavaCodeRunner runner) {
         return CodeLanguage.builder()
                 .name("java")
                 .extension("java")
                 .mime("text/x-java")
                 .codeMirrorJs("clike/clike.js")
+                .runner(runner)
                 .build();
     }
 
