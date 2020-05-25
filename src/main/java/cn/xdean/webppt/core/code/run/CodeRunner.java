@@ -10,10 +10,6 @@ public interface CodeRunner {
 
     boolean isSupport();
 
-    default boolean available() {
-        return true;
-    }
-
     Observable<Line> run(String code);
 
     @Value

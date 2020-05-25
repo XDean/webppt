@@ -1,5 +1,6 @@
 package cn.xdean.webppt.core.code.language;
 
+import cn.xdean.webppt.core.code.run.impl.GoCodeRunner;
 import cn.xdean.webppt.core.code.run.impl.JavaCodeRunner;
 import cn.xdean.webppt.core.code.run.impl.PythonCodeRunner;
 import org.springframework.context.annotation.Bean;
@@ -19,12 +20,13 @@ public class CodeLanguages {
     }
 
     @Bean
-    public CodeLanguage golang() {
+    public CodeLanguage golang(GoCodeRunner runner) {
         return CodeLanguage.builder()
                 .name("go")
                 .extension("go")
                 .mime("text/x-go")
                 .codeMirrorJs("go/go.js")
+                .runner(runner)
                 .build();
     }
 
