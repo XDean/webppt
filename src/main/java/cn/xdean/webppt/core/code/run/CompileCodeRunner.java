@@ -15,18 +15,25 @@ public abstract class CompileCodeRunner extends AbstractCodeRunner {
         return Single.fromCallable(() -> createSourceFile(code))
                 .flatMapObservable(sourceFile -> Single.fromCallable(() -> createCompileProcess(sourceFile).start())
                         .flatMapObservable(p -> CodeRunnerUtil.processToLineObservable(p)
-                                .startWith(Line.Type.STATUS.of("Compiling"))
+                                .startWith(Line.Type.STATUS.of("Compile"))
                                 .concatWith(Observable.fromCallable(() -> Line.Type.SYSTEM.of("Compile Exit Code: " + p.waitFor())))
-                                .concatWith(Single.just(Line.Type.STATUS.of("Compile Done")))
-                                .onErrorReturn(e -> Line.Type.SYSTEM.of("Compile Error Happened: " + e.getMessage()))
+                                .doFinally(() -> p.destroy())
                         )
+                        .onErrorResumeNext((Throwable e) -> Observable.just(
+                                Line.Type.STATUS.of("Compile Error"),
+                                Line.Type.SYSTEM.of(e.getMessage())
+                        ))
                         .concatWith(Single.fromCallable(() -> createRunProcess(sourceFile).start())
                                 .flatMapObservable(p -> CodeRunnerUtil.processToLineObservable(p)
-                                        .startWith(Line.Type.STATUS.of("Running"))
+                                        .startWith(Line.Type.STATUS.of("Run"))
+                                        .concatWith(Single.just(Line.Type.STATUS.of("Done")))
                                         .concatWith(Observable.fromCallable(() -> Line.Type.SYSTEM.of("Run Exit Code: " + p.waitFor())))
-                                        .concatWith(Single.just(Line.Type.STATUS.of("Run Done")))
-                                        .onErrorReturn(e -> Line.Type.SYSTEM.of("Run Error Happened: " + e.getMessage()))
+                                        .doFinally(() -> p.destroy())
                                 )
+                                .onErrorResumeNext((Throwable e) -> Observable.just(
+                                        Line.Type.STATUS.of("Run Error"),
+                                        Line.Type.SYSTEM.of("Run Error Happened: " + e.getMessage())
+                                ))
                         )
                 );
     }

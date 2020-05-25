@@ -16,9 +16,10 @@ public abstract class ScriptCodeRunner extends AbstractCodeRunner {
             return pb.start();
         })
                 .flatMapObservable(p -> CodeRunnerUtil.processToLineObservable(p)
-                        .concatWith(Observable.fromCallable(() -> Line.Type.SYSTEM.of("Exit Code: " + p.waitFor()))))
-                .startWith(Line.Type.STATUS.of("Running"))
-                .concatWith(Single.just(Line.Type.STATUS.of("Done")))
+                        .startWith(Line.Type.STATUS.of("Run"))
+                        .concatWith(Single.just(Line.Type.STATUS.of("Done")))
+                        .concatWith(Observable.fromCallable(() -> Line.Type.SYSTEM.of("Exit Code: " + p.waitFor())))
+                        .doFinally(() -> p.destroy()))
                 .onErrorReturn(e -> Line.Type.SYSTEM.of("Error Happened: " + e.getMessage()));
     }
 
