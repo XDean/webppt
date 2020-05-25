@@ -42,11 +42,21 @@
             lineNumbers: true,
             theme: '${_model.theme}',
             scrollbarStyle: "overlay",
-            play: ${_model.play?string},
+            <#if _model.play>
+            play: {
+                enable: true,
+                <#if _model.language??>
+                language: "${_model.language.name}",
+                runner:  ${_model.language.runner???string},
+                support: ${_model.language.runner???then(_model.language.runner.support, false)?string},
+                </#if>
+            },
+            </#if>
             <#if _model.readonly>
             readOnly: true,
             </#if>
             <#if _model.language??>
+            language: "${_model.language.name}",
             mode: "${_model.language.mime}",
             <#else >
             mode: null,

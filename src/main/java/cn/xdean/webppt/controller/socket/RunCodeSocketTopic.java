@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,14 +61,20 @@ public class RunCodeSocketTopic implements WebSocketTopic {
                     if (runner == null) {
                         throw new IllegalArgumentException("language cannot be run: " + runRequest.language);
                     }
+                    if (!runner.isSupport()) {
+                        throw new IllegalArgumentException("language is not supported on server: " + runRequest.language);
+                    }
                     if (runs.containsKey(runRequest.id)) {
                         throw new IllegalArgumentException("id duplicate");
                     }
                     Disposable d = runner.run(runRequest.content)
                             .subscribeOn(Schedulers.computation())
-                            .doFinally(() -> runs.remove(runRequest.id))
+                            .doFinally(() -> {
+                                helper.sendEvent(session, "code", "close", runRequest.id);
+                                runs.remove(runRequest.id);
+                            })
                             .subscribe(e -> {
-                                helper.sendEvent(session, "code", "run", RunResponse.builder()
+                                helper.sendEvent(session, "code", "line", LineResponse.builder()
                                         .id(runRequest.id)
                                         .type(e.getType().toString())
                                         .message(e.getMessage())
@@ -103,7 +110,7 @@ public class RunCodeSocketTopic implements WebSocketTopic {
 
     @Data
     @Builder
-    private static class RunResponse {
+    private static class LineResponse {
         int id;
 
         String type;

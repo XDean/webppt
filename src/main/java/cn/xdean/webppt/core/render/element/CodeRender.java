@@ -67,6 +67,13 @@ public class CodeRender extends TemplateElementRender {
             ctx.scripts.add("/static/webjars/codemirror/5.53.2/mode/" + language.getCodeMirrorJs());
         }
 
+        boolean play = resolveParameter(element, boolean.class, "play", false);
+        if (play) {
+            ctx.scripts.add("/static/js/socket.js");
+            ctx.scripts.add("/static/js/play.js");
+            ctx.styles.add("/static/css/play.css");
+        }
+
         return CodeModel.builder()
                 .id(element.getRawInfo().getStartLineIndex())
                 .type(type)
@@ -75,7 +82,7 @@ public class CodeRender extends TemplateElementRender {
                 .theme(theme)
                 .common(CommonElementModel.from(element))
                 .readonly(resolveParameter(element, boolean.class, "readonly", false))
-                .play(resolveParameter(element, boolean.class, "play", false))
+                .play(play)
                 .resize(resolveParameter(element, boolean.class, "resize", false))
                 .build();
     }
@@ -90,7 +97,6 @@ public class CodeRender extends TemplateElementRender {
 
         context.scripts.add("/static/webjars/codemirror/5.53.2/addon/display/panel.js");
 
-        context.scripts.add("/static/js/code.js");
         context.styles.add("/static/css/code.css");
     }
 
