@@ -47,6 +47,10 @@ function createPlayPanel(cm, option) {
         minWidth: 100,
     });
 
+    const outputContent = document.createElement("div");
+    outputContent.classList.add("code-output-content");
+    output.appendChild(outputContent);
+
     panel.appendChild(playButton);
     panel.appendChild(runButton);
     panel.appendChild(stopButton);
@@ -64,7 +68,7 @@ function createPlayPanel(cm, option) {
 
     runButton.addEventListener("click", ev => {
         let myId = runId++;
-        output.innerHTML = "";
+        outputContent.innerHTML = "";
         topicWebsocket.addHandler("code", event => {
             switch (event.event) {
                 case "line":
@@ -74,7 +78,7 @@ function createPlayPanel(cm, option) {
                     let line = document.createElement("div");
                     line.classList.add("output-line", event.payload.type.toLowerCase());
                     line.innerText = event.payload.message;
-                    output.appendChild(line);
+                    outputContent.appendChild(line);
                     break;
                 case "close":
                     panel.classList.toggle("run");

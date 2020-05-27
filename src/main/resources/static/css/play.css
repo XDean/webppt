@@ -59,9 +59,11 @@
 .code-run-panel.open + .code-output {
     z-index: 10;
     background-color: inherit;
-    filter: invert(1);
     padding: 5px 10px;
+
+    border: 1px solid;
     border-radius: 10px;
+
     width: 50%;
     height: 70%;
     resize: both;
@@ -69,15 +71,24 @@
     position: absolute;
     top: 28px;
     right: 10px;
+    left: auto !important;
+}
+
+.code-output-content {
+    overflow: auto;
+    height: 100%;
+    width: 100%;
 }
 
 .code-output .output-line {
     font-size: 16px;
+    font-family: monospace, monospace;
 }
 
 .code-output .output-line.status {
     width: 100%;
     font-size: 20px;
+    font-weight: bold;
 
     display: grid;
     grid-template-columns: 1fr auto 1fr;
@@ -99,10 +110,9 @@
 
 .code-output .output-line.stderr {
     color: #d20962;
-    filter: invert(1);
 }
 
 .code-output .output-line.system {
-    font-style: italic;
+    color: #1a95e0;
 }
 
