@@ -1,19 +1,23 @@
 package cn.xdean.webppt.core.code.run;
 
+import cn.xdean.webppt.core.process.ProcessExecutor;
 import cn.xdean.webppt.support.IOUtil;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public abstract class CompileCodeRunner extends AbstractCodeRunner {
+    @Autowired ProcessExecutor processExecutor;
+
     @Override
     public Observable<Line> run(String code) {
         return Single.fromCallable(() -> createSourceFile(code))
-                .flatMapObservable(sourceFile -> Single.fromCallable(() -> createCompileProcess(sourceFile).start())
+                .flatMapObservable(sourceFile -> Single.fromCallable(() -> processExecutor.execute(createCompileProcess(sourceFile)))
                         .flatMapObservable(p -> CodeRunnerUtil.processToLineObservable(p)
                                 .startWith(Line.Type.STATUS.of("Compile"))
                                 .concatWith(Observable.fromCallable(() -> Line.Type.SYSTEM.of("Compile Exit Code: " + p.waitFor())))
@@ -23,7 +27,7 @@ public abstract class CompileCodeRunner extends AbstractCodeRunner {
                                 Line.Type.STATUS.of("Compile Error"),
                                 Line.Type.SYSTEM.of(e.getMessage())
                         ))
-                        .concatWith(Single.fromCallable(() -> createRunProcess(sourceFile).start())
+                        .concatWith(Single.fromCallable(() -> processExecutor.execute(createRunProcess(sourceFile)))
                                 .flatMapObservable(p -> CodeRunnerUtil.processToLineObservable(p)
                                         .startWith(Line.Type.STATUS.of("Run"))
                                         .concatWith(Single.just(Line.Type.STATUS.of("Done")))

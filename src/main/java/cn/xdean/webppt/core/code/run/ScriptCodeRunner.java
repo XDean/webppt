@@ -1,19 +1,24 @@
 package cn.xdean.webppt.core.code.run;
 
+import cn.xdean.webppt.core.process.ProcessExecutor;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public abstract class ScriptCodeRunner extends AbstractCodeRunner {
+
+    @Autowired ProcessExecutor processExecutor;
+
     @Override
     public Observable<Line> run(String code) {
         return Single.fromCallable(() -> {
             Path file = createScriptFile(code);
             ProcessBuilder pb = createProcess(file);
-            return pb.start();
+            return processExecutor.execute(pb);
         })
                 .flatMapObservable(p -> CodeRunnerUtil.processToLineObservable(p)
                         .startWith(Line.Type.STATUS.of("Run"))
