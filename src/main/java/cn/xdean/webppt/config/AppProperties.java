@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AppProperties {
-    Process process;
+    Process process = new Process();
 
     @Data
     public static class Process {
