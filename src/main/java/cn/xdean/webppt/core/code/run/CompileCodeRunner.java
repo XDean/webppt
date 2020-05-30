@@ -7,9 +7,11 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
 
 public abstract class CompileCodeRunner extends AbstractCodeRunner {
     @Autowired ProcessExecutor processExecutor;
@@ -42,8 +44,17 @@ public abstract class CompileCodeRunner extends AbstractCodeRunner {
                 );
     }
 
-    protected Path createSourceFile(String code) throws IOException {
+    protected Path createTempFolder() throws IOException {
         Path folder = Files.createTempDirectory("code-compile-");
+        File file = folder.toFile();
+        file.setReadable(true, false);
+        file.setWritable(true, false);
+        file.setExecutable(true, false);
+        return folder;
+    }
+
+    protected Path createSourceFile(String code) throws IOException {
+        Path folder = createTempFolder();
         Path file = Files.createFile(folder.resolve(scriptFileName()));
         return Files.write(file, code.getBytes());
     }

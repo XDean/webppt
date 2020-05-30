@@ -15,6 +15,5 @@ public class AppProperties {
 
         Type type = Type.NULL;
         String sudo = "nobody";
-        String runas = "/trustlevel:0x20000";
     }
 }

@@ -5,6 +5,7 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,8 +29,17 @@ public abstract class ScriptCodeRunner extends AbstractCodeRunner {
                 .onErrorReturn(e -> Line.Type.SYSTEM.of("Error Happened: " + e.getMessage()));
     }
 
-    protected Path createScriptFile(String code) throws IOException {
+    protected Path createTempFolder() throws IOException {
         Path folder = Files.createTempDirectory("code-script-");
+        File file = folder.toFile();
+        file.setReadable(true, false);
+        file.setWritable(true, false);
+        file.setExecutable(true, false);
+        return folder;
+    }
+
+    protected Path createScriptFile(String code) throws IOException {
+        Path folder = createTempFolder();
         Path file = Files.createFile(folder.resolve(scriptFileName()));
         return Files.write(file, code.getBytes());
     }
