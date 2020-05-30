@@ -73,6 +73,13 @@ public class RunCodeSocketTopic implements WebSocketTopic {
                                 helper.sendEvent(session, "code", "close", runRequest.id);
                                 runs.remove(runRequest.id);
                             })
+                            .doOnDispose(() -> {
+                                helper.sendEvent(session, "code", "line", LineResponse.builder()
+                                        .id(runRequest.id)
+                                        .type(CodeRunner.Line.Type.STATUS.toString())
+                                        .message("Stop")
+                                        .build());
+                            })
                             .subscribe(e -> {
                                 helper.sendEvent(session, "code", "line", LineResponse.builder()
                                         .id(runRequest.id)
@@ -87,6 +94,13 @@ public class RunCodeSocketTopic implements WebSocketTopic {
                     runs.put(runRequest.id, d);
                     break;
                 case "stop":
+                    StopRequest stopRequest = uncheck(() -> holder.getPayload(StopRequest.class));
+                    Assert.isTrue(stopRequest.id != 0, "id not given");
+                    Disposable disposable = runs.get(stopRequest.id);
+                    if (disposable == null) {
+                        throw new IllegalArgumentException("no such task to stop: " + stopRequest.id);
+                    }
+                    disposable.dispose();
                     break;
                 default:
                     throw new IllegalArgumentException("unknown event type: " + event);

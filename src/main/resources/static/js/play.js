@@ -66,8 +66,12 @@ function createPlayPanel(cm, option) {
         panel.classList.toggle("open");
     });
 
+    let myId = 0;
     runButton.addEventListener("click", ev => {
-        let myId = runId++;
+        if (myId !== 0) {
+            return;
+        }
+        myId = runId++;
         outputContent.innerHTML = "";
         topicWebsocket.addHandler("code", event => {
             switch (event.event) {
@@ -82,6 +86,7 @@ function createPlayPanel(cm, option) {
                     break;
                 case "close":
                     panel.classList.toggle("run");
+                    myId = 0;
                     return true;
             }
         });
@@ -94,7 +99,11 @@ function createPlayPanel(cm, option) {
     });
 
     stopButton.addEventListener("click", ev => {
-
+        if (myId !== 0) {
+            topicWebsocket.send("code", "stop", {
+                id: myId,
+            });
+        }
     });
 
     wrap.appendChild(panel);
