@@ -10,9 +10,9 @@
                     src="data:image/jpeg;base64,${_model.content}"
                     <#break >
             </#switch>
-            <#if common.width??>width="${common.width}"</#if>
-            <#if common.height??>height="${common.height}"</#if>
-            <#if common.style??>style="${common.style}"</#if>
+            style="<#if common.width??>width:${common.width};</#if>
+            <#if common.height??>height:${common.height};</#if>
+            <#if common.style??>${common.style}</#if>"
             <#if common.classes??>class="${common.classes}"</#if>
             <#if common.attributes??>${common.attributes?no_esc}</#if>
     >
