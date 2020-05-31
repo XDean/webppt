@@ -1,6 +1,6 @@
 <#-- @ftlvariable name="_model" type="cn.xdean.webppt.core.render.element.ImageRender.ImageModel" -->
 <#assign common = _model.common/>
-<div class="image">
+<div class="element-image">
     <img
             <#switch _model.type>
                 <#case "URL">

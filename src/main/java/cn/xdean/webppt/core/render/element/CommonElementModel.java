@@ -12,8 +12,8 @@ public class CommonElementModel {
     @Nullable String width;
     @Nullable String height;
     @Nullable String style;
-    @Nullable String attributes;
     @Nullable String classes;
+    @Nullable String attributes;
 
     public static CommonElementModel from(Element element) {
         return CommonElementModel.builder()
