@@ -1,11 +1,42 @@
 import React from 'react';
-import './App.css';
+import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import {Redirect, Route, Router, Switch} from "react-router-dom";
+import {createHashHistory} from "history";
+import SlideView from "./components/slide";
 
-function App() {
+const useStyles = makeStyles(theme =>
+    createStyles({
+        root: {
+            height: "100%",
+            display: "grid",
+            gridTemplateColumns: "100%",
+            gridTemplateRows: "auto 1fr",
+        },
+    }),
+);
+
+const App: React.FunctionComponent = () => {
+
+    const history = createHashHistory();
+    const classes = useStyles();
+
     return (
-        <div className="App">
-        </div>
+        <Router history={history}>
+            <Switch>
+                <Route exact path={"/"}>
+                    <div className="App">
+                        Welcome to WebPPT
+                    </div>
+                </Route>
+                <Route path={"/slide"}>
+                    <SlideView/>
+                </Route>
+                <Route path={"*"}>
+                    <Redirect to={"/"}/>
+                </Route>
+            </Switch>
+        </Router>
     );
-}
+};
 
 export default App;
