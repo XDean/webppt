@@ -1,6 +1,7 @@
 package cn.xdean.webppt.controller;
 
 import cn.xdean.webppt.controller.model.ElementDTO;
+import cn.xdean.webppt.core.error.AppException;
 import cn.xdean.webppt.core.model.Element;
 import cn.xdean.webppt.core.parse.ParseService;
 import cn.xdean.webppt.core.render.RenderService;
@@ -38,7 +39,10 @@ public class AppController {
             Element slide = parseService.parse(content);
             return ElementDTO.from(slide);
         } catch (IOException e) {
-            throw new IllegalArgumentException("Resource can't be load", e);
+            throw AppException.builder()
+                    .message("Resource can't be load")
+                    .cause(e)
+                    .build();
         }
     }
 
@@ -51,7 +55,10 @@ public class AppController {
             Element slide = parseService.parse(content);
             return renderService.renderElement(resource, slide);
         } catch (IOException e) {
-            throw new IllegalArgumentException("Resource can't be load", e);
+            throw AppException.builder()
+                    .message("Resource can't be load")
+                    .cause(e)
+                    .build();
         }
     }
 
