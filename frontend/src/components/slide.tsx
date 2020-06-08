@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {createStyles, makeStyles} from '@material-ui/core/styles';
 import {useQuery} from "../util/util";
-import {XElement} from "../model/parse";
+import {XElement} from "../model/model";
 import {XError} from "../model/error";
+import {renderElement} from "./elements";
+import {JElement} from "../model/json";
 
 const useStyles = makeStyles(theme => createStyles({}));
 
@@ -21,7 +23,7 @@ const SlideView: React.FunctionComponent<SlideProp> = (props) => {
             .then(r => {
                 if (r.ok) {
                     r.json().then(j => {
-                        setRootElement(j as XElement);
+                        setRootElement(XElement.fromJson(j as JElement));
                     });
                 } else {
                     r.json().then(j => {
@@ -45,7 +47,7 @@ const SlideView: React.FunctionComponent<SlideProp> = (props) => {
     if (rootElement) {
         return (
             <div>
-                Element {JSON.stringify(rootElement)}
+                {renderElement(rootElement)}
             </div>
         )
     }
