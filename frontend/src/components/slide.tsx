@@ -3,7 +3,7 @@ import {createStyles, makeStyles} from '@material-ui/core/styles';
 import {useQuery} from "../util/util";
 import {XElement} from "../model/model";
 import {XError} from "../model/error";
-import {renderElement} from "./elements";
+import {renderElement} from "./render";
 import {JElement} from "../model/json";
 
 const useStyles = makeStyles(theme => createStyles({}));
