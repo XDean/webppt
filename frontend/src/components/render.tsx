@@ -2,6 +2,7 @@ import RootView from "./element/root";
 import {XElement, XText} from "../model/model";
 import React, {FunctionComponent, ReactNode} from "react";
 import PlainTextView from "./text/plain";
+import {Pageview} from "@material-ui/icons";
 
 export interface Render {
     name: string[]
@@ -13,6 +14,10 @@ export const ElementRenders: Render[] = [
         name: ["root"],
         render: RootView,
     },
+    {
+        name: ["page"],
+        render: Pageview,
+    }
 ];
 
 export const TextRenders: Render[] = [
