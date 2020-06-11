@@ -3,6 +3,7 @@ import {XElement, XText} from "../model/model";
 import React, {FunctionComponent, ReactNode} from "react";
 import PlainTextView from "./text/plain";
 import {Pageview} from "@material-ui/icons";
+import PageView from "./element/page";
 
 export interface Render {
     name: string[]
@@ -16,7 +17,7 @@ export const ElementRenders: Render[] = [
     },
     {
         name: ["page"],
-        render: Pageview,
+        render: PageView,
     }
 ];
 
