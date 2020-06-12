@@ -12,6 +12,9 @@ const useStyles = makeStyles({
         height: "100vh",
         left: 0,
         top: 0,
+        overflow: "hidden",
+        backgroundColor: "#cccccc",
+        boxSizing: "border-box",
     }
 });
 
@@ -29,7 +32,9 @@ const RootView: React.FunctionComponent<RootProp> = (props) => {
     const nextPage = () => setCurrent(c => c < pages.length - 1 ? c + 1 : c);
 
     useEffect(() => {
-        document.addEventListener("keypress", event => {
+        console.log("effect")
+        document.addEventListener("keydown", event => {
+            console.log(event)
             switch (event.keyCode) {
                 case 37:// left arrow
                 case 8: // backspace
@@ -55,7 +60,7 @@ const RootView: React.FunctionComponent<RootProp> = (props) => {
                     break;
             }
         });
-    });
+    },[]);
 
     return (
         <Box className={classes.root}>

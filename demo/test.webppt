@@ -17,12 +17,12 @@ _italic_
 
 [MD Link](https://google.com)
 
-@text=plain
+@type@text=plain
 Hello World!
 
 - 1
     - 2
-        -3
+        - 3
 ```go
     package main
 
@@ -31,7 +31,7 @@ Hello World!
     }
 ```
 
-@text=md
+@type@text=md
 - item 1
     - sub 1
     - sub 2
@@ -68,7 +68,7 @@ Hello World!
 }
 
 .page{
-@text=html
+@type@text=html
 <div id="myContainer">
 
     <div id="mySidepanel" class="sidepanel">

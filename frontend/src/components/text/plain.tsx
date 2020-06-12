@@ -19,7 +19,7 @@ const PlainView: React.FunctionComponent<PlainProp> = (props) => {
                 paragraph = [];
             }
         } else {
-            paragraph.push(line.replace(" ", "\u00A0"));
+            paragraph.push(line.split(" ").join("\u00A0"));
         }
     });
     if (paragraph.length != 0) {
@@ -29,7 +29,11 @@ const PlainView: React.FunctionComponent<PlainProp> = (props) => {
         <Box>
             {paragraphs.map(p => (
                 <p>
-                    {p.map(line => line + <br/>)}
+                    {p.map(line => <React.Fragment>
+                            {line}
+                            <br/>
+                        </React.Fragment>
+                    )}
                 </p>
             ))}
         </Box>

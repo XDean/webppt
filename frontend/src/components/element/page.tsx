@@ -5,7 +5,7 @@ import {XElement} from "../../model/model";
 import {renderChildren} from "../render";
 
 const useStyles = makeStyles<Theme, PageProp>(theme => createStyles({
-    page: {
+    root: {
         position: "absolute",
         width: "100vw",
         height: "100vh",
@@ -20,12 +20,31 @@ const useStyles = makeStyles<Theme, PageProp>(theme => createStyles({
             const offset = props.index - props.current;
             if (offset == 0) {
                 return "translate(0)";
-            } else if (offset > 0) {
+            } else if (offset == 1) {
                 return "translate(100vw)";
-            } else {
+            } else if (offset == -1) {
                 return "translate(-100vw)";
+            } else if (offset > 0) {
+                return "translate(200vw)";
+            } else {
+                return "translate(-200vw)";
             }
         },
+    },
+    content: {
+        overflow: "auto",
+        width: "100vw",
+        height: "100vh",
+        padding: "5vh 5vw",
+        boxSizing: "border-box",
+    },
+    footer: {
+        color: "#8c8c8c",
+        fontSize: "75%",
+        position: "absolute",
+        bottom: 5,
+        right: 20,
+        pointerEvents: "none",
     }
 }));
 
@@ -39,11 +58,11 @@ type PageProp = {
 const PageView: React.FunctionComponent<PageProp> = (props) => {
     const classes = useStyles(props);
     return (
-        <Box className={classes.page}>
-            <Box className="page-content">
+        <Box className={classes.root}>
+            <Box className={classes.content}>
                 {renderChildren(props.element)}
             </Box>
-            <Box className="page-footer">
+            <Box className={classes.footer}>
                 {props.index + 1} / {props.total}
             </Box>
         </Box>

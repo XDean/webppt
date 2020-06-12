@@ -4,6 +4,8 @@ import React, {FunctionComponent, ReactNode} from "react";
 import PlainTextView from "./text/plain";
 import {Pageview} from "@material-ui/icons";
 import PageView from "./element/page";
+import MarkdownView from "./text/md";
+import HTMLView from "./text/html";
 
 export interface Render {
     name: string[]
@@ -26,6 +28,14 @@ export const TextRenders: Render[] = [
         name: ["plain"],
         render: PlainTextView,
     },
+    {
+        name: ["md", "markdown"],
+        render: MarkdownView,
+    },
+    {
+        name: ["html"],
+        render: HTMLView,
+    },
 ];
 
 export function renderElement(element: XElement): ReactNode | null {
@@ -38,8 +48,8 @@ export function renderElement(element: XElement): ReactNode | null {
 }
 
 export function renderText(text: XText): ReactNode {
-    const type = text.getParam("type")?.value;
-    const render = TextRenders.find(e => (type && e.name.includes(type)) || PlainTextView);
+    const type = text.getParam("type")?.value || 'md';
+    const render = TextRenders.find(e => (type && e.name.includes(type)));
     if (render) {
         return <render.render text={text}/>
     } else {

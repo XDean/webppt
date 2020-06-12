@@ -109,7 +109,7 @@ export class XParam implements XNode {
 
 export class XText implements XNode {
     parent: XElement;
-    readonly name: string = "parameter";
+    readonly name: string = "text";
     readonly lines: string[] = [];
     readonly raw: XRawInfo;
 
