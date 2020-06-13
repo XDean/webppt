@@ -15,6 +15,11 @@ const useStyles = makeStyles<Theme, PageProp>(theme => createStyles({
         color: "#000",
         backgroundColor: "#fff",
 
+        fontFamily: "'Times New Roman', sans-serif",
+        fontSize: 26,
+        textShadow: "0 1px 1px rgba(0, 0, 0, .1)",
+        letterSpacing: -1,
+
         transition: "transform .3s ease-out",
         transform: props => {
             const offset = props.index - props.current;

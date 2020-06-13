@@ -1,8 +1,8 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import {Box} from "@material-ui/core";
-import {XElement, XText} from "../../model/model";
+import {XText} from "../../model/model";
 import ReactMarkdown from "react-markdown";
+import "./md.css"
 
 const useStyles = makeStyles({});
 
@@ -12,7 +12,7 @@ type MarkdownProps = {
 
 const MarkdownView: React.FunctionComponent<MarkdownProps> = (props) => {
     return (
-        <ReactMarkdown source={props.text.lines.join("\n")} linkTarget={"_blank"}/>
+        <ReactMarkdown className={"markdown-body"} source={props.text.lines.join("\n")} linkTarget={"_blank"}/>
     )
 };
 
