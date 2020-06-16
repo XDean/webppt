@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 import {createStyles, makeStyles} from '@material-ui/core/styles';
 import {useQuery} from "../util/util";
 import {XElement} from "../model/model";
@@ -10,11 +10,19 @@ const useStyles = makeStyles(theme => createStyles({}));
 
 type SlideProp = {}
 
+export type SlideContext = {
+    sourceURL?: URL
+    sourceContent?: string
+    resourceURL?: URL
+    rootElement?: XElement
+}
+const Context = createContext<SlideContext>({});
+
 const SlideView: React.FunctionComponent<SlideProp> = (props) => {
     const query = useQuery();
     const path = query.get("path");
-    const [rootElement, setRootElement] = useState<XElement>();
     const [error, setError] = useState("");
+    const [ctx, setCtx] = useState<SlideContext>({});
 
     useEffect(() => {
         fetch(`/parse/?path=${path}`, {
@@ -23,7 +31,9 @@ const SlideView: React.FunctionComponent<SlideProp> = (props) => {
             .then(r => {
                 if (r.ok) {
                     r.json().then(j => {
-                        setRootElement(XElement.fromJson(j as JElement));
+                        setCtx({
+                            rootElement: XElement.fromJson(j as JElement),
+                        });
                     });
                 } else {
                     r.json().then(j => {
@@ -44,11 +54,13 @@ const SlideView: React.FunctionComponent<SlideProp> = (props) => {
         )
     }
 
-    if (rootElement) {
+    if (ctx.rootElement) {
         return (
-            <div>
-                {renderElement(rootElement)}
-            </div>
+            <Context.Provider value={ctx}>
+                <div>
+                    {renderElement(ctx.rootElement)}
+                </div>
+            </Context.Provider>
         )
     }
 

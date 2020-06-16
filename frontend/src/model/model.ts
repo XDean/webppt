@@ -56,6 +56,31 @@ export class XElement implements XNode {
         return node == this || this.children.some(c => c.contains(node));
     }
 
+    getElements(): XElement[] {
+        return this.children.filter(c => c instanceof XElement).map(c => c as XElement);
+    }
+
+    getParams(): XParam[] {
+        return this.children.filter(c => c instanceof XParam).map(c => c as XParam);
+    }
+
+    getTexts(): XText[] {
+        return this.children.filter(c => c instanceof XText).map(c => c as XText);
+    }
+
+    assertSingleTextLeaf() {
+        if (this.getElements().length != 0) {
+            throw `${this.name} must has no child`;
+        }
+        let params = this.getParams();
+        if (params[params.length - 1] != this.children[params.length - 1]) {
+            throw `${this.name}'s param must defined first`
+        }
+        if (this.getTexts().length != 1) {
+            throw `${this.name} must has single text`
+        }
+    }
+
     static fromJson(json: JElement): XElement {
         let element = new XElement(json.name, json.raw);
         let children = json.children.map(child => {
