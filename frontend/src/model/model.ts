@@ -1,13 +1,13 @@
 import {JElement, JParam, JText} from "./json";
 
-export type XRawInfo = {
-    startLineIndex: number
-    endLineIndex: number
+export class XRawInfo {
+    public startLineIndex = -1;
+    public endLineIndex = -1;
 }
 
 export interface XNode {
     readonly name: string;
-    parent: XElement;
+    readonly parent: XElement;
     readonly raw: XRawInfo;
 
     getParam(key: string): XParam | null
@@ -17,14 +17,9 @@ export interface XNode {
 
 export class XElement implements XNode {
     parent: XElement = this;
-    readonly name: string;
-    readonly children: XNode[] = [];
-    readonly raw: XRawInfo;
-
-    constructor(name: string, raw: XRawInfo) {
-        this.name = name;
-        this.raw = raw;
-    }
+    name: string = '';
+    children: XNode[] = [];
+    raw: XRawInfo = new XRawInfo();
 
     getParam(key: string): XParam | null {
         return this.getParamUntil(key, this);
@@ -80,39 +75,18 @@ export class XElement implements XNode {
             throw `${this.name} must has single text`
         }
     }
-
-    static fromJson(json: JElement): XElement {
-        let element = new XElement(json.name, json.raw);
-        let children = json.children.map(child => {
-            if ((<JElement>child).name) {
-                let e = XElement.fromJson(child as JElement);
-                e.parent = element;
-                return e;
-            } else if ((<JText>child).lines) {
-                return XText.fromJson(element, child as JText);
-            } else {
-                return XParam.fromJson(element, child as XParam);
-            }
-        });
-        element.children.push(...children);
-        return element;
-    }
 }
 
 export class XParam implements XNode {
-    parent: XElement;
     readonly name: string = "parameter";
-    readonly key: string;
-    readonly value: string;
-    readonly element: string;
-    readonly raw: XRawInfo;
+    raw: XRawInfo = new XRawInfo();
 
-    constructor(parent: XElement, key: string, value: string, element: string, raw: XRawInfo) {
-        this.parent = parent;
-        this.key = key;
-        this.value = value;
-        this.element = element;
-        this.raw = raw;
+    constructor(
+        public parent: XElement,
+        readonly key: string,
+        readonly value: string,
+        readonly element: string,
+    ) {
     }
 
     contains(node: XNode): boolean {
@@ -126,22 +100,16 @@ export class XParam implements XNode {
     support(node: XNode): boolean {
         return this.element == "" || this.element == node.name;
     }
-
-    static fromJson(parent: XElement, json: JParam): XParam {
-        return new XParam(parent, json.key, json.value, json.element, json.raw);
-    }
 }
 
 export class XText implements XNode {
-    parent: XElement;
     readonly name: string = "text";
     readonly lines: string[] = [];
-    readonly raw: XRawInfo;
+    raw: XRawInfo = new XRawInfo();
 
-    constructor(parent: XElement, lines: string[], raw: XRawInfo) {
-        this.parent = parent;
-        this.lines = lines;
-        this.raw = raw;
+    constructor(
+        public parent: XElement
+    ) {
     }
 
     contains(node: XNode): boolean {
@@ -150,9 +118,5 @@ export class XText implements XNode {
 
     getParam(key: string): XParam | null {
         return this.parent.getParamUntil(key, this);
-    }
-
-    static fromJson(parent: XElement, json: JText): XText {
-        return new XText(parent, json.lines, json.raw);
     }
 }
