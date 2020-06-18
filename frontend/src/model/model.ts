@@ -84,9 +84,10 @@ export class XParam implements XNode {
     constructor(
         public parent: XElement,
         readonly key: string,
-        readonly value: string,
-        readonly element: string,
+        readonly value?: string,
+        readonly element?: string,
     ) {
+        this.value = value || "true";
     }
 
     contains(node: XNode): boolean {

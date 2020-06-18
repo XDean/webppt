@@ -11,7 +11,8 @@ export class Parser {
 
     constructor(source: string) {
         this.lines = source.split(/\R/);
-        let root = new XElement("root");
+        let root = new XElement();
+        root.name = "root";
         root.raw.startLineIndex = 0;
         this.elemStack.push(root);
     }
@@ -25,9 +26,6 @@ export class Parser {
                         break;
                     case '@':
                         this.parseParameter();
-                        break;
-                    case '}':
-                        this.parseEndTag();
                         break;
                     case '/':
                         if (this.line.startsWith("//")) { // comment
@@ -96,52 +94,78 @@ export class Parser {
         this.consumed = true;
     }
 
-    static multiLineElementStart = /^\.(\w+)\s*{\s*$/;
     private parseElement() {
+        const multiLineElementEnd = /^\.}\s*$/;
+        if (this.line.match(multiLineElementEnd)) {
+            while (true) {
+                if (this.elemStack.length == 1) {
+                    throw new XError(this.index, "no element to close");
+                }
+                const node = this.elemStack.pop();
+                if (node instanceof XElement) {
+                    node.raw.endLineIndex = this.index;
+                    break;
+                }
+            }
+            this.consumed = true;
+            return;
+        }
+
         const last = this.getLastElement();
         const elem = new XElement();
         elem.parent = last;
         elem.raw.startLineIndex = this.index;
         last.children.push(elem);
-        let multiLineMatcher = this.line.match(Parser.multiLineElementStart);
-        if (multiLineMatcher){
+
+        // .<name> {
+        // group 1: name
+        const multiLineElementStart = /^\.(\w+)\s*{\s*$/;
+
+        let multiLineMatcher = this.line.match(multiLineElementStart);
+        if (multiLineMatcher) {
             elem.name = multiLineMatcher[1];
             this.elemStack.push(elem);
+            this.consumed = true;
+            return;
         }
-        int splitIndex = StringUtils.indexOfAny(line, "{ ");
-        if (splitIndex == -1) {
-            elem.setName(line.substring(1));
-            elem.getRawInfo().setEndLineIndex(index);
-        } else {
-            elem.setName(line.substring(1, splitIndex));
-            if (line.charAt(splitIndex) == ' ') {
-                String args = line.substring(splitIndex + 1);
-                parseSingleLineElement(elem, args);
-            } else {
-                if (!line.endsWith("{")) {
-                    throw AppException.builder()
-                        .line(index)
-                        .message("multi line element start tag can't has content")
-                        .build();
+
+        // .<name> [<param>*] <text>
+        // group 1: name
+        // group 2: params
+        // group 3: text
+        const singleLineElement = /^\.(\w+)((?:\s+@\w+(?:=(?:\w+|"(?:[^"\\]|\\.)*"))?)*)(?:\s+(.*))?$/;
+        const singleLineElementParam = /(?:\s+@(\w+)(?:=(\w+|"(?:[^"\\]|\\.)*"))?)/g;
+
+        let singleLineMatcher = this.line.match(singleLineElement);
+        if (singleLineMatcher) {
+            elem.name = singleLineMatcher[1];
+            elem.raw.endLineIndex = this.index;
+            if (singleLineMatcher[2]) {
+                for (let group in singleLineMatcher[2].matchAll(singleLineElementParam)) {
+                    const param = new XParam(elem, group[1], group[2]);
+                    param.raw.startLineIndex = this.index;
+                    param.raw.endLineIndex = this.index;
+                    elem.children.push(param);
                 }
-                elemStack.addLast(elem);
             }
+            if (singleLineMatcher[3]) {
+                const text = new XText(elem);
+                text.lines.push(singleLineMatcher[3]);
+                text.raw.startLineIndex = this.index;
+                text.raw.endLineIndex = this.index;
+                elem.children.push(text);
+            }
+            this.consumed = true;
+            return;
         }
-        consumed = true;
+
+        throw new XError(this.index, "unrecognized element grammar");
     }
 
-    private parseText() {
-
-    }
-
-    private parseEndTag() {
-
-    }
-
-    private static paramPattern = /^@(\w+)(@(\w*))?(=(.*))?$/;
 
     private parseParameterText(parent: XElement, line: string): XParam {
-        const matcher = line.match(Parser.paramPattern);
+        const paramPattern = /^@(\w+)(@(\w*))?(=(.*))?$/;
+        const matcher = line.match(paramPattern);
         if (!matcher) {
             throw new XError(this.index, "Invalid parameter: " + line);
         }
