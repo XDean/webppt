@@ -94,9 +94,19 @@ export class Parser {
     }
 
     private parseParameter() {
-        const last = this.getLastElement();
-        const parameter = this.parseParameterText(last, this.line);
-        last.children.push(parameter);
+        const paramPattern = /^@(\w+)(?:@(\w*))?(?:\s*=\s*(.*))?$/;
+        const matcher = this.line.match(paramPattern);
+        if (!matcher) {
+            throw new ParseError(this.index, "Invalid parameter: " + this.line);
+        }
+        const parent = this.getLastElement();
+        const key = matcher[1];
+        const element = matcher[2] || "";
+        const value = matcher[3] || "true";
+        const parameter = new XParam(parent, key, value, element);
+        parameter.raw.startLineIndex = this.index;
+        parameter.raw.endLineIndex = this.index;
+        parent.children.push(parameter);
         this.consumed = true;
     }
 
@@ -139,7 +149,7 @@ export class Parser {
         // group 1: name
         // group 2: params
         // group 3: text
-        const singleLineElement = /^\.(\w+)((?:\s+@\w+(?:=(?:\w+|"(?:[^"\\]|\\.)*"))?)*)(?:\s+(.*))?$/;
+        const singleLineElement = /^\.(\w+)((?:\s+@\w+(?:=(?:"(?:[^"\\]|\\.)*"|\S+))?)*)(?:\s+(.*))?$/;
         const singleLineElementParam = /(?:\s+@(\w+)(?:=(\w+|"(?:[^"\\]|\\.)*"))?)/g;
 
         let singleLineMatcher = this.line.match(singleLineElement);
@@ -166,21 +176,5 @@ export class Parser {
         }
 
         throw new ParseError(this.index, "unrecognized element grammar");
-    }
-
-
-    private parseParameterText(parent: XElement, line: string): XParam {
-        const paramPattern = /^@(\w+)(@(\w*))?(?:\s*=\s*(.*))?$/;
-        const matcher = line.match(paramPattern);
-        if (!matcher) {
-            throw new ParseError(this.index, "Invalid parameter: " + line);
-        }
-        const key = matcher[1];
-        const element = matcher[2] || "";
-        const value = matcher[3] || "true";
-        const parameter = new XParam(parent, key, value, element);
-        parameter.raw.startLineIndex = this.index;
-        parameter.raw.endLineIndex = this.index;
-        return parameter;
     }
 }

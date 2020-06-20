@@ -6,6 +6,8 @@ import {Pageview} from "@material-ui/icons";
 import PageView from "./element/page";
 import MarkdownView from "./text/md";
 import HTMLView from "./text/html";
+import HomeView from "./element/home";
+import ImageView from "./element/image";
 
 export interface Render {
     name: string[]
@@ -20,7 +22,15 @@ export const ElementRenders: Render[] = [
     {
         name: ["page"],
         render: PageView,
-    }
+    },
+    {
+        name: ["home", "homepage"],
+        render: HomeView,
+    },
+    {
+        name: ["image", "img"],
+        render: ImageView,
+    },
 ];
 
 export const TextRenders: Render[] = [

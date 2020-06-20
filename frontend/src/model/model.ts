@@ -63,7 +63,7 @@ export class XElement implements XNode {
         return this.children.filter(c => c instanceof XText).map(c => c as XText);
     }
 
-    assertSingleTextLeaf() {
+    assertSingleTextLeaf(): XText {
         if (this.getElements().length != 0) {
             throw `${this.name} must has no child`;
         }
@@ -71,9 +71,11 @@ export class XElement implements XNode {
         if (params[params.length - 1] != this.children[params.length - 1]) {
             throw `${this.name}'s param must defined first`
         }
-        if (this.getTexts().length != 1) {
+        let texts = this.getTexts();
+        if (texts.length != 1) {
             throw `${this.name} must has single text`
         }
+        return texts[0]
     }
 }
 

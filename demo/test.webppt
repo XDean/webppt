@@ -55,11 +55,11 @@ Hello World!
 @type=text
 @width=40%
 @attributes=title="what"
-    package main
+package main
 
-    func main(){
-        print("Hello World")
-    }
+func main(){
+    print("Hello World")
+}
 .}
 
 .code @theme=blackboard @type=url @resize @play code/java.java

@@ -6,24 +6,19 @@ import {ParseError} from "../model/error";
 import {renderElement} from "./render";
 import {JElement} from "../model/json";
 import {Parser} from "../model/parse";
+import {SlideContextData, SlideContext} from "../model/context";
+import Slide from "@material-ui/core/Slide";
 
 const useStyles = makeStyles(theme => createStyles({}));
 
 type SlideProp = {}
 
-export type SlideContext = {
-    sourceURL?: URL
-    sourceContent?: string
-    resourceURL?: URL
-    rootElement?: XElement
-}
-const Context = createContext<SlideContext>({});
 
 const SlideView: React.FunctionComponent<SlideProp> = (props) => {
     const query = useQuery();
     const path = query.get("path");
     const [error, setError] = useState("");
-    const [ctx, setCtx] = useState<SlideContext>({});
+    const [ctx, setCtx] = useState<SlideContextData>(SlideContextData.DEFAULT);
 
     useEffect(() => {
         if (path) {
@@ -45,12 +40,13 @@ const SlideView: React.FunctionComponent<SlideProp> = (props) => {
             })
                 .then(text => {
                     const root = Parser.parse(text);
-                    setCtx({
+                    setCtx(c => ({
+                        ...c,
                         rootElement: root,
                         sourceContent: text,
-                        sourceURL: url,
                         resourceURL: url,
-                    })
+                        sourceURL: url,
+                    }))
                 })
                 .catch(e => {
                     setError(e);
@@ -68,11 +64,11 @@ const SlideView: React.FunctionComponent<SlideProp> = (props) => {
 
     if (ctx.rootElement) {
         return (
-            <Context.Provider value={ctx}>
+            <SlideContext.Provider value={ctx}>
                 <div>
                     {renderElement(ctx.rootElement)}
                 </div>
-            </Context.Provider>
+            </SlideContext.Provider>
         )
     }
 
