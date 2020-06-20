@@ -69,12 +69,6 @@ public class AppController {
         return resolveResource(path.substring("/render/".length()), referer);
     }
 
-    @GetMapping("/resource/")
-    public ResponseEntity<?> redirect(@RequestParam("path") String path,
-                                      @RequestHeader(HttpHeaders.REFERER) URL referer) throws IOException {
-        return resolveResource(path, referer);
-    }
-
     private ResponseEntity<?> resolveResource(String path, URL referer) throws IOException {
         String query = referer.getQuery();
         Map<String, String> params = Splitter.on('&').trimResults().withKeyValueSeparator('=').split(query);

@@ -2,9 +2,10 @@ import React, {createContext, useEffect, useState} from 'react';
 import {createStyles, makeStyles} from '@material-ui/core/styles';
 import {useQuery} from "../util/util";
 import {XElement} from "../model/model";
-import {XError} from "../model/error";
+import {ParseError} from "../model/error";
 import {renderElement} from "./render";
 import {JElement} from "../model/json";
+import {Parser} from "../model/parse";
 
 const useStyles = makeStyles(theme => createStyles({}));
 
@@ -25,31 +26,42 @@ const SlideView: React.FunctionComponent<SlideProp> = (props) => {
     const [ctx, setCtx] = useState<SlideContext>({});
 
     useEffect(() => {
-        fetch(`/parse/?path=${path}`, {
-            method: "GET",
-        })
-            .then(r => {
+        if (path) {
+            const url = new URL(path);
+            let resource;
+            if (url.protocol.startsWith("http")) {
+                resource = fetch(path);
+            } else {
+                resource = fetch(`resource?path=${path}`)
+            }
+            resource.then(r => {
                 if (r.ok) {
-                    r.json().then(j => {
-                        setCtx({
-                            rootElement: XElement.fromJson(j as JElement),
-                        });
-                    });
+                    return r.text()
                 } else {
-                    r.json().then(j => {
-                        setError((j as XError).message);
+                    return r.text().then(t => {
+                        throw t;
                     });
                 }
             })
-            .catch(e => {
-                setError(e);
-            });
+                .then(text => {
+                    const root = Parser.parse(text);
+                    setCtx({
+                        rootElement: root,
+                        sourceContent: text,
+                        sourceURL: url,
+                        resourceURL: url,
+                    })
+                })
+                .catch(e => {
+                    setError(e);
+                });
+        }
     }, [path]);
 
     if (error) {
         return (
             <div>
-                Error {error}
+                Error {JSON.stringify(error)}
             </div>
         )
     }

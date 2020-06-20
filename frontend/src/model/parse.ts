@@ -1,5 +1,5 @@
 import {XElement, XNode, XParam, XText} from "./model";
-import {XError} from "./error";
+import {ParseError} from "./error";
 import {arrayRemove} from "../util/util";
 
 export class Parser {
@@ -10,14 +10,18 @@ export class Parser {
     elemStack: XNode[] = [];
 
     constructor(source: string) {
-        this.lines = source.split(/\R/);
+        this.lines = source.split("\n");
         let root = new XElement();
         root.name = "root";
         root.raw.startLineIndex = 0;
         this.elemStack.push(root);
     }
 
-    parse(): XElement | undefined {
+    static parse(text: string): XElement {
+        return new Parser(text).parse();
+    }
+
+    parse(): XElement {
         while (this.nextLine()) {
             if (this.line.length != 0) {
                 switch (this.line.charAt(0)) {
@@ -38,8 +42,10 @@ export class Parser {
                 }
             }
             if (!this.consumed) {
-                if (this.elemStack.length == 1) {
-                    throw new XError(this.index, "text can't define as top node");
+                if (this.elemStack.length === 1) {
+                    if (this.line.trim().length !== 0) {
+                        throw new ParseError(this.index, "text can't define as top node");
+                    }
                 } else {
                     const node = this.elemStack.slice(-1)[0];
                     if (node instanceof XText) {
@@ -57,8 +63,8 @@ export class Parser {
             }
         }
         if (this.elemStack.length > 1) {
-            const startLine = this.elemStack.slice(-1)[0].raw.startLineIndex;
-            throw new XError(startLine, "unclosed tag");
+            let node = this.elemStack.slice(-1)[0];
+            throw new ParseError(node.raw.startLineIndex, `unclosed tag: ${node.name}`);
         }
         return this.elemStack[0] as XElement
     }
@@ -84,7 +90,7 @@ export class Parser {
         } else if (last instanceof XElement) {
             return last;
         }
-        throw new XError(this.index, "getLastElement error never happen");
+        throw new ParseError(this.index, "getLastElement error never happen");
     }
 
     private parseParameter() {
@@ -99,7 +105,7 @@ export class Parser {
         if (this.line.match(multiLineElementEnd)) {
             while (true) {
                 if (this.elemStack.length == 1) {
-                    throw new XError(this.index, "no element to close");
+                    throw new ParseError(this.index, "no element to close");
                 }
                 const node = this.elemStack.pop();
                 if (node instanceof XElement) {
@@ -159,19 +165,19 @@ export class Parser {
             return;
         }
 
-        throw new XError(this.index, "unrecognized element grammar");
+        throw new ParseError(this.index, "unrecognized element grammar");
     }
 
 
     private parseParameterText(parent: XElement, line: string): XParam {
-        const paramPattern = /^@(\w+)(@(\w*))?(=(.*))?$/;
+        const paramPattern = /^@(\w+)(@(\w*))?(?:\s*=\s*(.*))?$/;
         const matcher = line.match(paramPattern);
         if (!matcher) {
-            throw new XError(this.index, "Invalid parameter: " + line);
+            throw new ParseError(this.index, "Invalid parameter: " + line);
         }
         const key = matcher[1];
-        const element = matcher[3] || "";
-        const value = matcher[5] || "true";
+        const element = matcher[2] || "";
+        const value = matcher[3] || "true";
         const parameter = new XParam(parent, key, value, element);
         parameter.raw.startLineIndex = this.index;
         parameter.raw.endLineIndex = this.index;

@@ -6,7 +6,7 @@
 
 .page{
 .homepage
-}
+.}
 
 .page{
 # Test Text
@@ -38,14 +38,14 @@ Hello World!
     - sub 3
 - item 2
 - item 3
-}
+.}
 
 .page{
 # Test Image
 
 .image @width=10% @attributes="title='google icon'" google.png
 .image https://user-images.githubusercontent.com/9050713/39107515-619773e0-46f5-11e8-9fa9-2859816f1c42.png
-}
+.}
 
 .page{
 # Test Code
@@ -60,12 +60,12 @@ Hello World!
     func main(){
         print("Hello World")
     }
-}
+.}
 
 .code @theme=blackboard @type=url @resize @play code/java.java
 
 .code @type=url @readonly https://raw.githubusercontent.com/XDean/Java-EX/master/pom.xml
-}
+.}
 
 .page{
 @type@text=html
@@ -79,76 +79,68 @@ Hello World!
     </div>
 
 </div>
-}
+.}
 
 .page{
 page 5
-}
+.}
 
 .page{
 page 6
-}
+.}
 
 .page{
 page 7
-}
+.}
 
 .page{
 page 8
-}
+.}
 
 .page{
 page 9
-}
+.}
 
 .page{
 page 10
-}
+.}
 
 .page{
 page 11
-}
+.}
 
 .page{
 page 12
-}
+.}
 
 .page{
 page 13
-}
+.}
 
 .page{
 page 14
-}
+.}
 
 .page{
 page 15
-}
+.}
 
 .page{
 page 16
-}
+.}
 
 .page{
 page 17
-}
+.}
 
 .page{
 page 18
-}
+.}
 
 .page{
 page 19
-}
+.}
 
 .page{
 page 20
-}
-
-.page{
-page 21
-}
-
-.page{
-page 22
-}
+.}
