@@ -27,9 +27,9 @@ const PlainView: React.FunctionComponent<PlainProp> = (props) => {
     }
     return (
         <Box>
-            {paragraphs.map(p => (
-                <p>
-                    {p.map(line => <React.Fragment>
+            {paragraphs.map((p, index) => (
+                <p key={index}>
+                    {p.map((line, i) => <React.Fragment key={i}>
                             {line}
                             <br/>
                         </React.Fragment>

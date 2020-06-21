@@ -17,10 +17,14 @@ const ImageView: React.FunctionComponent<ImageProp> = (props) => {
     // const url = new URL(props.el)
     return (
         <React.Fragment>
-            {text.lines.map(path => {
+            {text.lines.map((path, i) => {
                 const url = resolveURL(ctx, path);
                 if (url) {
-                    return <img src={url.href}/>;
+                    return (
+                        <div key={i}>
+                            <img src={url.href}/>
+                        </div>
+                    );
                 }
             })}
         </React.Fragment>

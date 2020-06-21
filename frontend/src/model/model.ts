@@ -25,6 +25,25 @@ export class XElement implements XNode {
         return this.getParamUntil(key, this);
     }
 
+    getBoolParam(key: string, def: boolean): boolean {
+        const param = this.getParam(key);
+        if (param) {
+            return param.value === "true";
+        } else {
+            return def;
+        }
+    }
+
+
+    getStrParam(key: string, def: string): string {
+        const param = this.getParam(key);
+        if (param) {
+            return param.value;
+        } else {
+            return def;
+        }
+    }
+
     getParamUntil(key: string, node: XNode): XParam | null {
         let param: XParam | null = null;
         for (const c of this.children) {
@@ -86,10 +105,9 @@ export class XParam implements XNode {
     constructor(
         public parent: XElement,
         readonly key: string,
-        readonly value?: string,
-        readonly element?: string,
+        readonly value: string = "true",
+        readonly element: string = "",
     ) {
-        this.value = value || "true";
     }
 
     contains(node: XNode): boolean {

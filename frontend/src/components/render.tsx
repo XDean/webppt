@@ -1,6 +1,6 @@
 import RootView from "./element/root";
 import {XElement, XText} from "../model/model";
-import React, {FunctionComponent, ReactNode} from "react";
+import React, {FunctionComponent, Key, ReactNode} from "react";
 import PlainTextView from "./text/plain";
 import {Pageview} from "@material-ui/icons";
 import PageView from "./element/page";
@@ -8,6 +8,7 @@ import MarkdownView from "./text/md";
 import HTMLView from "./text/html";
 import HomeView from "./element/home";
 import ImageView from "./element/image";
+import CodeView from "./element/code";
 
 export interface Render {
     name: string[]
@@ -31,6 +32,10 @@ export const ElementRenders: Render[] = [
         name: ["image", "img"],
         render: ImageView,
     },
+    {
+        name: ["code"],
+        render: CodeView,
+    }
 ];
 
 export const TextRenders: Render[] = [
@@ -48,33 +53,33 @@ export const TextRenders: Render[] = [
     },
 ];
 
-export function renderElement(element: XElement): ReactNode | null {
+export function renderElement(element: XElement, key?: Key): ReactNode | null {
     const render = ElementRenders.find(e => e.name.includes(element.name));
     if (render) {
-        return <render.render element={element}/>
+        return <render.render key={key} element={element}/>
     } else {
-        return <div>Unknown {element.name}</div>
+        return <div key={key}>Unknown {element.name}</div>
     }
 }
 
-export function renderText(text: XText): ReactNode {
+export function renderText(text: XText, key?: Key): ReactNode {
     const type = text.getParam("type")?.value || 'md';
     const render = TextRenders.find(e => (type && e.name.includes(type)));
     if (render) {
-        return <render.render text={text}/>
+        return <render.render key={key} text={text}/>
     } else {
-        return <div>Unknown {text.name}</div>
+        return <div key={key}>Unknown {text.name}</div>
     }
 }
 
 export function renderChildren(element: XElement): ReactNode {
     return (
         <React.Fragment>
-            {element.children.map(e => {
+            {element.children.map((e, i) => {
                 if (e instanceof XElement) {
-                    return renderElement(e);
+                    return renderElement(e, i);
                 } else if (e instanceof XText) {
-                    return renderText(e);
+                    return renderText(e, i);
                 } else {
                     return null;
                 }

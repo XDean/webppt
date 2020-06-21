@@ -150,15 +150,20 @@ export class Parser {
         // group 2: params
         // group 3: text
         const singleLineElement = /^\.(\w+)((?:\s+@\w+(?:=(?:"(?:[^"\\]|\\.)*"|\S+))?)*)(?:\s+(.*))?$/;
-        const singleLineElementParam = /(?:\s+@(\w+)(?:=(\w+|"(?:[^"\\]|\\.)*"))?)/g;
+        const singleLineElementParam = /(?:\s+@(\w+)(?:=("(?:[^"\\]|\\.)*"|\S+))?)/g;
 
         let singleLineMatcher = this.line.match(singleLineElement);
         if (singleLineMatcher) {
             elem.name = singleLineMatcher[1];
             elem.raw.endLineIndex = this.index;
             if (singleLineMatcher[2]) {
-                for (let group in singleLineMatcher[2].matchAll(singleLineElementParam)) {
-                    const param = new XParam(elem, group[1], group[2]);
+                while (true) {
+                    const matcher = singleLineElementParam.exec(singleLineMatcher[2]);
+                    if (!matcher) {
+                        break;
+                    }
+                    console.log(matcher);
+                    const param = new XParam(elem, matcher[1], matcher[2]);
                     param.raw.startLineIndex = this.index;
                     param.raw.endLineIndex = this.index;
                     elem.children.push(param);
