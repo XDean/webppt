@@ -11,9 +11,15 @@ export class Preference {
     }
 }
 
+export type PresentMode = "present" | "outline";
+
 export class State {
     readonly totalPage = new SimpleProperty(0);
     readonly currentPage = new SimpleProperty(0);
+
+    readonly presentMode = new SimpleProperty<PresentMode>("present");
+    readonly fullScreen = new SimpleProperty(false);
+    readonly lockToolbar = new SimpleProperty(true);
 
     prevPage = () => {
         this.currentPage.update(c => c > 0 ? c - 1 : c);

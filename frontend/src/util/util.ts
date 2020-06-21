@@ -23,3 +23,7 @@ export function useProperty<S extends (any | any[])>(p: Property<S>): S {
     }, [p]);
     return state
 }
+
+export function ifClass(condition: boolean, className: string): string {
+    return condition ? " " + className : "";
+}

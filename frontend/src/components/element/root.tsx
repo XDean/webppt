@@ -10,6 +10,7 @@ import {SlideContext} from "../../model/context";
 import {useProperty} from "../../util/util";
 import NavigatorView from "../tool/navigator";
 import PageNumberView from "../tool/page-number";
+import ToolbarView from "../tool/toolbar";
 
 const useStyles = makeStyles({
     root: {
@@ -80,6 +81,7 @@ const RootView: React.FunctionComponent<RootProp> = (props) => {
             })}
             <NavigatorView/>
             <PageNumberView/>
+            <ToolbarView/>
         </Box>
     )
 };
