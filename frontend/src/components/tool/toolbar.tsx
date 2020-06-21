@@ -4,7 +4,9 @@ import {Box} from "@material-ui/core";
 import NavigatorView from "./navigator";
 
 const useStyles = makeStyles({
-    root: {}
+    root: {
+
+    }
 });
 
 type ToolbarProp = {}

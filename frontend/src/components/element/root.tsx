@@ -9,6 +9,7 @@ import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import {SlideContext} from "../../model/context";
 import {useProperty} from "../../util/util";
 import NavigatorView from "../tool/navigator";
+import PageNumberView from "../tool/page-number";
 
 const useStyles = makeStyles({
     root: {
@@ -18,8 +19,15 @@ const useStyles = makeStyles({
         left: 0,
         top: 0,
         overflow: "hidden",
-        backgroundColor: "#cccccc",
         boxSizing: "border-box",
+
+
+        fontFamily: "'Times New Roman', sans-serif",
+        fontSize: 26,
+        textShadow: "0 1px 1px rgba(0, 0, 0, .1)",
+        letterSpacing: -1,
+        color: "#000",
+        backgroundColor: "#fff",
     },
 });
 
@@ -71,6 +79,7 @@ const RootView: React.FunctionComponent<RootProp> = (props) => {
                 );
             })}
             <NavigatorView/>
+            <PageNumberView/>
         </Box>
     )
 };

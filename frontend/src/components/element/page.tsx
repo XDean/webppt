@@ -11,14 +11,7 @@ const useStyles = makeStyles<Theme, PageProp>(theme => createStyles({
         height: "100vh",
         left: 0,
         top: 0,
-
-        color: "#000",
-        backgroundColor: "#fff",
-
-        fontFamily: "'Times New Roman', sans-serif",
-        fontSize: 26,
-        textShadow: "0 1px 1px rgba(0, 0, 0, .1)",
-        letterSpacing: -1,
+        padding: "5vh 5vw",
 
         transition: "transform .3s ease-out",
         transform: props => {
@@ -36,21 +29,6 @@ const useStyles = makeStyles<Theme, PageProp>(theme => createStyles({
             }
         },
     },
-    content: {
-        overflow: "auto",
-        width: "100vw",
-        height: "100vh",
-        padding: "5vh 5vw",
-        boxSizing: "border-box",
-    },
-    footer: {
-        color: "#8c8c8c",
-        fontSize: "75%",
-        position: "absolute",
-        bottom: 5,
-        right: 20,
-        pointerEvents: "none",
-    }
 }));
 
 type PageProp = {
@@ -64,12 +42,7 @@ const PageView: React.FunctionComponent<PageProp> = (props) => {
     const classes = useStyles(props);
     return (
         <Box className={classes.root}>
-            <Box className={classes.content}>
-                {renderChildren(props.element)}
-            </Box>
-            <Box className={classes.footer}>
-                {props.index + 1} / {props.total}
-            </Box>
+            {renderChildren(props.element)}
         </Box>
     )
 };
