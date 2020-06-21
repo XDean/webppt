@@ -1,5 +1,6 @@
 import {XElement} from "./model";
 import {createContext} from "react";
+import {SimpleProperty} from "xdean-util";
 
 export class Preference {
     static DEFAULT = new Preference(window.location.href);
@@ -10,8 +11,22 @@ export class Preference {
     }
 }
 
+export class State {
+    readonly totalPage = new SimpleProperty(0);
+    readonly currentPage = new SimpleProperty(0);
+
+    prevPage = () => {
+        this.currentPage.update(c => c > 0 ? c - 1 : c);
+    };
+    nextPage = () => {
+        this.currentPage.update(c => c < this.totalPage.value - 1 ? c + 1 : c);
+    };
+}
+
 export class SlideContextData {
     static DEFAULT = new SlideContextData(new XElement(), "", Preference.DEFAULT);
+
+    readonly state = new State();
 
     constructor(
         readonly rootElement: XElement,
