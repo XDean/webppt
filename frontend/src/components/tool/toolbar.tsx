@@ -1,6 +1,6 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import {Box, IconButton, Paper, Tooltip} from "@material-ui/core";
+import {Box, IconButton, Paper, Slide, Tooltip} from "@material-ui/core";
 import NavigatorView from "./navigator";
 import ViewModuleIcon from '@material-ui/icons/ViewModule';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
@@ -19,15 +19,10 @@ const useStyles = makeStyles({
         transform: "translateX(-50%)",
         borderRadius: 5,
         padding: "0px 5px",
-        // backgroundColor: "#cacaca",
-        opacity: 0,
         zIndex: 100,
-        "&:hover": {
-            opacity: 1,
-        }
     },
-    lock: {
-        opacity: 1,
+    content: {
+        position: "relative",
     },
     button: {
         textAlign: "center",
@@ -49,48 +44,53 @@ const ToolbarView: React.FunctionComponent<ToolbarProp> = (props) => {
     const mode = useProperty(context.state.presentMode);
     const full = useProperty(context.state.fullScreen);
     const lock = useProperty(context.state.lockToolbar);
+    const [show, setShow] = useState(false);
     return (
-        <Paper className={classes.root + ifClass(lock, classes.lock)} elevation={3}>
-            {mode === "present" ? (
-                <Tooltip title={"Outline Mode"}>
-                    <IconButton onClick={() => context.state.presentMode.value = "outline"}>
-                        <ViewModuleIcon/>
-                    </IconButton>
-                </Tooltip>
-            ) : (
-                <Tooltip title={"Present Mode"}>
-                    <IconButton onClick={() => context.state.presentMode.value = "present"}>
-                        <SlideshowIcon/>
-                    </IconButton>
-                </Tooltip>)
-            }
-            {full ? (
-                <Tooltip title={"Exit Full Screen"}>
-                    <IconButton onClick={() => context.state.fullScreen.value = false}>
-                        <FullscreenExitIcon/>
-                    </IconButton>
-                </Tooltip>
-            ) : (
-                <Tooltip title={"Full Screen"}>
-                    <IconButton onClick={() => context.state.fullScreen.value = true}>
-                        <FullscreenIcon/>
-                    </IconButton>
-                </Tooltip>
-            )}
-            {lock ? (
-                <Tooltip title={"Unlock Toolbar"}>
-                    <IconButton onClick={() => context.state.lockToolbar.value = false}>
-                        <LockOpenIcon/>
-                    </IconButton>
-                </Tooltip>
-            ) : (
-                <Tooltip title={"Lock Toolbar"}>
-                    <IconButton onClick={() => context.state.lockToolbar.value = true}>
-                        <LockIcon/>
-                    </IconButton>
-                </Tooltip>
-            )}
-        </Paper>
+        <Box className={classes.root} onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}>
+            <Slide in={show || lock}>
+                <Paper className={classes.content} elevation={3}>
+                    {mode === "present" ? (
+                        <Tooltip title={"Outline Mode"}>
+                            <IconButton onClick={() => context.state.presentMode.value = "outline"}>
+                                <ViewModuleIcon/>
+                            </IconButton>
+                        </Tooltip>
+                    ) : (
+                        <Tooltip title={"Present Mode"}>
+                            <IconButton onClick={() => context.state.presentMode.value = "present"}>
+                                <SlideshowIcon/>
+                            </IconButton>
+                        </Tooltip>)
+                    }
+                    {full ? (
+                        <Tooltip title={"Exit Full Screen"}>
+                            <IconButton onClick={() => context.state.fullScreen.value = false}>
+                                <FullscreenExitIcon/>
+                            </IconButton>
+                        </Tooltip>
+                    ) : (
+                        <Tooltip title={"Full Screen"}>
+                            <IconButton onClick={() => context.state.fullScreen.value = true}>
+                                <FullscreenIcon/>
+                            </IconButton>
+                        </Tooltip>
+                    )}
+                    {lock ? (
+                        <Tooltip title={"Unlock Toolbar"}>
+                            <IconButton onClick={() => context.state.lockToolbar.value = false}>
+                                <LockOpenIcon/>
+                            </IconButton>
+                        </Tooltip>
+                    ) : (
+                        <Tooltip title={"Lock Toolbar"}>
+                            <IconButton onClick={() => context.state.lockToolbar.value = true}>
+                                <LockIcon/>
+                            </IconButton>
+                        </Tooltip>
+                    )}
+                </Paper>
+            </Slide>
+        </Box>
     )
 };
 

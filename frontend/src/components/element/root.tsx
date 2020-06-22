@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import {Box} from "@material-ui/core";
+import {Box, RootRef} from "@material-ui/core";
 import {XElement, XParam, XText} from "../../model/model";
 import {renderChildren, renderElement, renderText} from "../render";
 import PageView from "./page";
@@ -11,6 +11,8 @@ import {useProperty} from "../../util/util";
 import NavigatorView from "../tool/navigator";
 import PageNumberView from "../tool/page-number";
 import ToolbarView from "../tool/toolbar";
+import useFullscreen from "../../util/fullscreen";
+import {Listener} from "xdean-util";
 
 const useStyles = makeStyles({
     root: {
@@ -44,6 +46,17 @@ const RootView: React.FunctionComponent<RootProp> = (props) => {
     const pages = props.element.children.filter(n => n instanceof XElement && n.name == "page").map(n => n as XElement);
     context.state.totalPage.value = pages.length;
 
+    const rootRef = useRef(null);
+    const [fullscreen, setFullScreen] = useFullscreen(rootRef);
+
+    useEffect(() => {
+        const listener: Listener<boolean> = (p, o, n) => {
+            setFullScreen(n);
+        };
+        context.state.fullScreen.addListener(listener);
+        return () => context.state.fullScreen.removeListener(listener);
+    }, [context]);
+
     useEffect(() => {
         document.addEventListener("keydown", event => {
             switch (event.keyCode) {
@@ -73,16 +86,18 @@ const RootView: React.FunctionComponent<RootProp> = (props) => {
         });
     }, []);
     return (
-        <Box className={classes.root}>
-            {pages.map((e, index) => {
-                return (
-                    <PageView key={index} element={e} index={index} total={pages.length} current={current}/>
-                );
-            })}
-            <NavigatorView/>
-            <PageNumberView/>
-            <ToolbarView/>
-        </Box>
+        <RootRef rootRef={rootRef}>
+            <Box className={classes.root}>
+                {pages.map((e, index) => {
+                    return (
+                        <PageView key={index} element={e} index={index} total={pages.length} current={current}/>
+                    );
+                })}
+                <NavigatorView/>
+                <PageNumberView/>
+                <ToolbarView/>
+            </Box>
+        </RootRef>
     )
 };
 
