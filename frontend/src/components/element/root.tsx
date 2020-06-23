@@ -35,7 +35,13 @@ const useStyles = makeStyles({
     },
     outline: {
         overflowY: "auto",
-        padding: "80px 5%",
+        display: "grid",
+        gridTemplateColumns: "repeat(4,auto)",
+        alignItems: "center",
+        justifyItems: "center",
+        gridRowGap: 15,
+        gridColumnGap: 20,
+        padding: "80px 50px",
     }
 });
 

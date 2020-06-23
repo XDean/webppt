@@ -41,7 +41,6 @@ const useStyles = makeStyles<Theme, PageProp>(theme => createStyles({
     outlineWrapper: {
         position: "relative",
         display: "inline-block",
-        margin: "15px 0.5%",
         width: "20vw",
         height: "20vh",
         "&:hover": {
