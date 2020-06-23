@@ -11,6 +11,7 @@ const useStyles = makeStyles({
         bottom: 5,
         right: 20,
         pointerEvents: "none",
+        zIndex: 100,
     }
 });
 
@@ -19,11 +20,10 @@ type PageNumberProp = {}
 const PageNumberView: React.FunctionComponent<PageNumberProp> = (props) => {
     const classes = useStyles();
     const context = useContext(SlideContext);
-    const total = useProperty(context.state.totalPage);
     const current = useProperty(context.state.currentPage);
     return (
         <Box className={classes.root}>
-            {current + 1} / {total}
+            {current + 1} / {context.getPages().length}
         </Box>
     )
 };

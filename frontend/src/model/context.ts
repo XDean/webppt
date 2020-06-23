@@ -3,10 +3,9 @@ import {createContext} from "react";
 import {SimpleProperty} from "xdean-util";
 
 export class Preference {
-    static DEFAULT = new Preference(window.location.href);
 
     constructor(
-        readonly serverURL: string,
+        readonly serverURL: string = window.location.href,
     ) {
     }
 }
@@ -14,34 +13,50 @@ export class Preference {
 export type PresentMode = "present" | "outline";
 
 export class State {
-    readonly totalPage = new SimpleProperty(0);
     readonly currentPage = new SimpleProperty(0);
 
     readonly presentMode = new SimpleProperty<PresentMode>("present");
     readonly fullScreen = new SimpleProperty(false);
     readonly lockToolbar = new SimpleProperty(true);
-
-    prevPage = () => {
-        this.currentPage.update(c => c > 0 ? c - 1 : c);
-    };
-    nextPage = () => {
-        this.currentPage.update(c => c < this.totalPage.value - 1 ? c + 1 : c);
-    };
 }
 
 export class SlideContextData {
-    static DEFAULT = new SlideContextData(new XElement(), "", Preference.DEFAULT);
+    static DEFAULT = new SlideContextData(new XElement(), "");
 
     readonly state = new State();
+    readonly preference = new Preference();
 
     constructor(
         readonly rootElement: XElement,
         readonly sourceContent: string,
-        readonly preference: Preference,
         readonly resourceURL?: URL,
         readonly sourceURL?: URL,
     ) {
     }
+
+    prevPage = () => {
+        this.state.currentPage.update(c => c > 0 ? c - 1 : c);
+    };
+    nextPage = () => {
+        this.state.currentPage.update(c => c < this.getPages().length - 1 ? c + 1 : c);
+    };
+    getPages = () => {
+        return this.rootElement.children.filter(n => n instanceof XElement && n.name == "page").map(n => n as XElement);
+    };
+    gotoPage = (page: XElement | number) => {
+        const pages = this.getPages();
+        let index = -1;
+        if (page instanceof XElement) {
+            index = pages.indexOf(page);
+        } else {
+            index = page;
+        }
+        if (index >= 0 && index < pages.length) {
+            this.state.currentPage.value = index;
+        } else {
+            console.warn("Invalid page to: ", page);
+        }
+    };
 }
 
 export function resolveURL(ctx: SlideContextData, rel: string): URL | null {

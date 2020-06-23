@@ -40,10 +40,10 @@ const NavigatorView: React.FunctionComponent<NavigatorProp> = (props) => {
 
     return (
         <Box>
-            <Box className={classes.navigator + " " + classes.navigatorLeft} onClick={context.state.prevPage}>
+            <Box className={classes.navigator + " " + classes.navigatorLeft} onClick={context.prevPage}>
                 <KeyboardArrowLeftIcon/>
             </Box>
-            <Box className={classes.navigator + " " + classes.navigatorRight} onClick={context.state.nextPage}>
+            <Box className={classes.navigator + " " + classes.navigatorRight} onClick={context.nextPage}>
                 <KeyboardArrowRightIcon/>
             </Box>
         </Box>

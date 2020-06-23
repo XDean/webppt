@@ -1,13 +1,11 @@
-import React, {createContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createStyles, makeStyles} from '@material-ui/core/styles';
 import {useQuery} from "../util/util";
-import {XElement} from "../model/model";
-import {ParseError} from "../model/error";
 import {renderElement} from "./render";
-import {JElement} from "../model/json";
 import {Parser} from "../model/parse";
-import {SlideContextData, SlideContext} from "../model/context";
-import Slide from "@material-ui/core/Slide";
+import {SlideContext, SlideContextData} from "../model/context";
+import {Listener} from "xdean-util";
+import {useHistory, useLocation} from "react-router";
 
 const useStyles = makeStyles(theme => createStyles({}));
 
@@ -17,8 +15,29 @@ type SlideProp = {}
 const SlideView: React.FunctionComponent<SlideProp> = (props) => {
     const query = useQuery();
     const path = query.get("path");
+    const page = Number(query.get("page")) || 1;
     const [error, setError] = useState("");
-    const [ctx, setCtx] = useState<SlideContextData>(SlideContextData.DEFAULT);
+    const [context, setContext] = useState<SlideContextData>(SlideContextData.DEFAULT);
+
+    useEffect(() => {
+        context.gotoPage(page - 1);
+    }, [page]);
+
+    const history = useHistory();
+    const location = useLocation();
+    useEffect(() => {
+        const currentListener: Listener<number> = (p, o, n) => {
+            const param = new URLSearchParams(location.search);
+            param.set("page", (n + 1).toString());
+            location.search = unescape(param.toString());
+            history.push(location);
+        };
+        context.state.currentPage.addListener(currentListener);
+
+        return () => {
+            context.state.currentPage.removeListener(currentListener);
+        };
+    }, [context, location.search]);
 
     useEffect(() => {
         if (path) {
@@ -40,13 +59,7 @@ const SlideView: React.FunctionComponent<SlideProp> = (props) => {
             })
                 .then(text => {
                     const root = Parser.parse(text);
-                    setCtx(c => ({
-                        ...c,
-                        rootElement: root,
-                        sourceContent: text,
-                        resourceURL: url,
-                        sourceURL: url,
-                    }))
+                    setContext(new SlideContextData(root, text, url, url));
                 })
                 .catch(e => {
                     setError(e);
@@ -62,11 +75,11 @@ const SlideView: React.FunctionComponent<SlideProp> = (props) => {
         )
     }
 
-    if (ctx.rootElement) {
+    if (context.rootElement) {
         return (
-            <SlideContext.Provider value={ctx}>
+            <SlideContext.Provider value={context}>
                 <div>
-                    {renderElement(ctx.rootElement)}
+                    {renderElement(context.rootElement)}
                 </div>
             </SlideContext.Provider>
         )

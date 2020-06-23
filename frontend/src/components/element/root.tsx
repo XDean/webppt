@@ -6,13 +6,15 @@ import {renderChildren, renderElement, renderText} from "../render";
 import PageView from "./page";
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import {SlideContext} from "../../model/context";
-import {useProperty} from "../../util/util";
+import {SlideContext, SlideContextData} from "../../model/context";
+import {ifClass, useProperty, useQuery} from "../../util/util";
 import NavigatorView from "../tool/navigator";
 import PageNumberView from "../tool/page-number";
 import ToolbarView from "../tool/toolbar";
 import useFullscreen from "../../util/fullscreen";
 import {Listener} from "xdean-util";
+import {useHistory} from "react-router";
+import {useLocation} from "react-router-dom";
 
 const useStyles = makeStyles({
     root: {
@@ -24,14 +26,17 @@ const useStyles = makeStyles({
         overflow: "hidden",
         boxSizing: "border-box",
 
-
         fontFamily: "'Times New Roman', sans-serif",
         fontSize: 26,
         textShadow: "0 1px 1px rgba(0, 0, 0, .1)",
         letterSpacing: -1,
         color: "#000",
-        backgroundColor: "#fff",
+        backgroundColor: "#ddd",
     },
+    outline: {
+        overflowY: "auto",
+        padding: "80px 5%",
+    }
 });
 
 type RootProp = {
@@ -43,62 +48,70 @@ const RootView: React.FunctionComponent<RootProp> = (props) => {
     const classes = useStyles();
 
     const current = useProperty(context.state.currentPage);
-    const pages = props.element.children.filter(n => n instanceof XElement && n.name == "page").map(n => n as XElement);
-    context.state.totalPage.value = pages.length;
+    const pages = context.getPages();
 
     const rootRef = useRef(null);
     const [fullscreen, setFullScreen] = useFullscreen(rootRef);
 
-    useEffect(() => {
-        const listener: Listener<boolean> = (p, o, n) => {
-            setFullScreen(n);
-        };
-        context.state.fullScreen.addListener(listener);
-        return () => context.state.fullScreen.removeListener(listener);
-    }, [context]);
+    const presentMode = useProperty(context.state.presentMode);
 
     useEffect(() => {
-        document.addEventListener("keydown", event => {
-            switch (event.keyCode) {
-                case 37:// left arrow
-                case 8: // backspace
-                case 38:// up arrow
-                // if (edit) {
-                //     break;
-                // }
-                // fallthrough
-                case 33:// PgDn
-                    context.state.prevPage();
-                    event.preventDefault();
-                    break;
-                case 39:// right arrow
-                case 32:// space
-                case 40:// down arrow
-                // if (edit) {
-                //     break;
-                // }
-                // fallthrough
-                case 34:// PgDn
-                    context.state.nextPage();
-                    event.preventDefault();
-                    break;
-            }
-        });
-    }, []);
+        const fullListener: Listener<boolean> = (p, o, n) => {
+            setFullScreen(n);
+        };
+        context.state.fullScreen.addListener(fullListener);
+        return () => {
+            context.state.fullScreen.removeListener(fullListener);
+        };
+    }, [context]);
+
+    useEffect(() => bindKeyEvent(context), [context]);
+
     return (
         <RootRef rootRef={rootRef}>
-            <Box className={classes.root}>
+            <Box className={classes.root + ifClass(presentMode === "outline", classes.outline)}>
                 {pages.map((e, index) => {
                     return (
                         <PageView key={index} element={e} index={index} total={pages.length} current={current}/>
                     );
                 })}
-                <NavigatorView/>
-                <PageNumberView/>
+                {presentMode === "present" && <NavigatorView/>}
+                {presentMode === "present" && <PageNumberView/>}
                 <ToolbarView/>
             </Box>
         </RootRef>
     )
 };
+
+function bindKeyEvent(context: SlideContextData) {
+    let listener = (event: KeyboardEvent) => {
+        switch (event.keyCode) {
+            case 37:// left arrow
+            case 8: // backspace
+            case 38:// up arrow
+            // if (edit) {
+            //     break;
+            // }
+            // fallthrough
+            case 33:// PgDn
+                context.prevPage();
+                event.preventDefault();
+                break;
+            case 39:// right arrow
+            case 32:// space
+            case 40:// down arrow
+            // if (edit) {
+            //     break;
+            // }
+            // fallthrough
+            case 34:// PgDn
+                context.nextPage();
+                event.preventDefault();
+                break;
+        }
+    };
+    document.addEventListener("keydown", listener);
+    return () => document.removeEventListener("keydown", listener);
+}
 
 export default RootView;
