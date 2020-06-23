@@ -59,7 +59,9 @@ const SlideView: React.FunctionComponent<SlideProp> = (props) => {
             })
                 .then(text => {
                     const root = Parser.parse(text);
-                    setContext(new SlideContextData(root, text, url, url));
+                    let c = new SlideContextData(root, text, url, url);
+                    c.state.currentPage.value = page - 1;
+                    setContext(c);
                 })
                 .catch(e => {
                     setError(e);

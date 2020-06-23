@@ -27,3 +27,7 @@ export function useProperty<S extends (any | any[])>(p: Property<S>): S {
 export function ifClass(condition: boolean, className: string): string {
     return condition ? " " + className : "";
 }
+
+export function getExtension(path: string): string {
+    return path.split('.').pop() || ""
+}

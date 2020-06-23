@@ -6,9 +6,9 @@ import {Controlled as CodeMirror} from 'react-codemirror2'
 import "codemirror/addon/scroll/simplescrollbars.css"
 import "codemirror/addon/scroll/simplescrollbars"
 import "codemirror/lib/codemirror.css"
-import "codemirror/theme/idea.css"
-import {fetchText, resolveURL, SlideContext} from "../../model/context";
-import {Resizable} from 're-resizable';
+import {fetchText, SlideContext} from "../../model/context";
+import {findLanguageByExt, findLanguageByName, Language} from "../../model/language";
+import {getExtension} from "../../util/util";
 
 const useStyles = makeStyles({
     wrapper: {
@@ -26,18 +26,12 @@ type CodeProp = {
 }
 
 const CodeView: React.FunctionComponent<CodeProp> = (props) => {
-    // int id;
-    // boolean readonly;
-    // boolean resize;
     // boolean play;
-    // CodeType type;
     // CodeLanguage language;
-    // String content;
-    // String theme;
-    // CommonElementModel common;
     const context = useContext(SlideContext);
     const editable = props.element.getBoolParam("edit", true);
-    const resizable = props.element.getBoolParam("resize", false);
+    // const resizable = props.element.getBoolParam("resize", false);
+    const language = props.element.getStrParam("lang", "");
     const playable = props.element.getBoolParam("play", false);
     const theme = props.element.getStrParam("theme", "idea");
     const useURL = props.element.getStrParam("type", "url") === "url";
@@ -45,8 +39,8 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
     const [value, setValue] = useState();
     const classes = useStyles();
 
+    const textNode = props.element.assertSingleTextLeaf();
     useEffect(() => {
-        const textNode = props.element.assertSingleTextLeaf();
         if (useURL) {
             fetchText(context, textNode.lines[0])
                 .then(t => setValue(t))
@@ -56,28 +50,41 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
         }
     }, [props.element]);
 
-    const box = <CodeMirror onBeforeChange={(editor, data, v) => setValue(v)} value={value} options={{
-        lineNumbers: true,
-        theme: theme,
-        scrollbarStyle: "overlay",
-        readOnly: !editable,
-
-    }}/>;
-    if (resizable) {
-        return (
-            <Resizable
-                defaultSize={{
-                    width:320,
-                    height:200,
-                }}
-            >
-                {box}
-            </Resizable>
-        )
+    // theme
+    try {
+        require(`codemirror/theme/${theme}.css`);
+    } catch (e) {
+        // TODO
+        console.error(e);
     }
+    // language
+    const lang = function () {
+        if (language !== "") {
+            return findLanguageByName(language);
+        } else if (useURL) {
+            return findLanguageByExt(getExtension(textNode.lines[0]))
+        } else {
+            return null;
+        }
+    }();
+    if (lang) {
+        try {
+            require(`codemirror/mode/${lang.codemirrorJs}`);
+        } catch (e) {
+            // TODO
+            console.error(e);
+        }
+    }
+
     return (
         <Box className={classes.wrapper}>
-            {box}
+            <CodeMirror onBeforeChange={(editor, data, v) => setValue(v)} value={value} options={{
+                lineNumbers: true,
+                theme: theme,
+                scrollbarStyle: "overlay",
+                readOnly: !editable,
+                mode: lang?.mime,
+            }}/>
         </Box>
     )
 };
