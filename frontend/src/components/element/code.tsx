@@ -1,23 +1,37 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import {Box} from "@material-ui/core";
+import {Box, Chip} from "@material-ui/core";
 import {XElement} from "../../model/model";
 import {Controlled as CodeMirror} from 'react-codemirror2'
 import "codemirror/addon/scroll/simplescrollbars.css"
 import "codemirror/addon/scroll/simplescrollbars"
 import "codemirror/lib/codemirror.css"
+import {Editor} from "codemirror"
 import {fetchText, SlideContext} from "../../model/context";
 import {findLanguageByExt, findLanguageByName, Language} from "../../model/language";
 import {getExtension} from "../../util/util";
+import ReactDOM from 'react-dom';
 
 const useStyles = makeStyles({
     wrapper: {
+        position: "relative",
         width: "70%",
         marginTop: 10,
         marginBottom: 10,
         overflow: "hidden",
 
         border: "1px solid rgb(224, 224, 224)",
+    },
+    panel: {},
+    topBar: {
+        position: "absolute",
+        top: 5,
+        right: 10,
+    },
+    tag: {
+        zIndex: 10,
+        color: "#000",
+        backgroundColor: "#fff",
     }
 });
 
@@ -36,7 +50,7 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
     const theme = props.element.getStrParam("theme", "idea");
     const useURL = props.element.getStrParam("type", "url") === "url";
 
-    const [value, setValue] = useState();
+    const [value, setValue] = useState("Loading...");
     const classes = useStyles();
 
     const textNode = props.element.assertSingleTextLeaf();
@@ -68,23 +82,33 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
         }
     }();
     if (lang) {
-        try {
-            require(`codemirror/mode/${lang.codemirrorJs}`);
-        } catch (e) {
-            // TODO
-            console.error(e);
-        }
+        require(`codemirror/mode/${lang.codemirrorJs}`);
     }
 
     return (
         <Box className={classes.wrapper}>
-            <CodeMirror onBeforeChange={(editor, data, v) => setValue(v)} value={value} options={{
-                lineNumbers: true,
-                theme: theme,
-                scrollbarStyle: "overlay",
-                readOnly: !editable,
-                mode: lang?.mime,
-            }}/>
+            <CodeMirror onBeforeChange={(editor, data, v) => setValue(v)} value={value}
+                        editorDidMount={editor => {
+                            const wrap = editor.getWrapperElement();
+                            const panel = document.createElement("div");
+                            panel.classList.add(classes.panel);
+                            wrap.appendChild(panel);
+                            ReactDOM.render((
+                                <Box className={classes.topBar}>
+                                    {lang &&
+                                    <Chip className={classes.tag} label={lang.name} variant={"outlined"} size={"small"}
+                                          clickable/>}
+                                </Box>
+                            ), panel);
+                        }}
+                        options={{
+                            lineNumbers: true,
+                            theme: theme,
+                            scrollbarStyle: "overlay",
+                            readOnly: !editable,
+                            mode: lang?.mime,
+                        }}/>
+
         </Box>
     )
 };
