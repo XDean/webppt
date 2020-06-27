@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import {Box, Button, Chip} from "@material-ui/core";
+import {Box, Button, Chip, Typography} from "@material-ui/core";
 import {XElement} from "../../model/model";
 import {Controlled as CodeMirror} from 'react-codemirror2'
 import "codemirror/addon/scroll/simplescrollbars.css"
@@ -12,6 +12,9 @@ import {findLanguageByExt, findLanguageByName, Language} from "../../model/langu
 import {getExtension} from "../../util/util";
 import ReactDOM from 'react-dom';
 import {Resizable} from "re-resizable";
+import {RunCodeEvent, RunLineEvent} from "../../model/ws-event";
+import {TopicEvent} from "../../model/socket";
+import {Scrollbars} from 'react-custom-scrollbars';
 
 const useStyles = makeStyles({
     wrapper: {
@@ -46,18 +49,34 @@ const useStyles = makeStyles({
             backgroundColor: "#fff",
         }
     },
-    playOutput: {
-        backgroundColor: "white",
+    playOutputWrapper: {
+        backgroundColor: "#222",
         zIndex: 10,
         position: "absolute",
         right: 5,
         bottom: 30,
+        borderRadius: 5,
+        color: "#fff",
+        overflow: "hidden",
+        border: "white 1px solid",
+    },
+    playOutputContent: {
+        margin: 10,
+        fontFamily: "monospace",
+        fontSize: 16,
+        color: "#22da26",
+    },
+    playOutputLog: {},
+    scrollbar: {
+        backgroundColor: "#eaeaea"
     }
 });
 
 type CodeProp = {
     element: XElement;
 }
+
+let globalRunCount = 0;
 
 const CodeView: React.FunctionComponent<CodeProp> = (props) => {
     const context = useContext(SlideContext);
@@ -104,6 +123,9 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
     }
 
     const [play, setPlay] = useState(false);
+    const [runId, setRunId] = useState(0);
+    const [running, setRunning] = useState(false);
+    const [outputs, setOutputs] = useState<RunLineEvent[]>([]);
 
     return (
         <Box className={classes.wrapper}>
@@ -121,27 +143,56 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
                         style={{textTransform: "capitalize"}}
                 >{lang.name}</Button>}
             </Box>
+            {playable &&
             <Box className={classes.bottomBar}>
                 {!play && <Button variant={"outlined"} size={"small"} onClick={() => setPlay(true)}
                                   className={classes.toolButton}>Play</Button>}
                 {play && (
                     <React.Fragment>
-                        <Resizable defaultSize={{width: 300, height: 200}} className={classes.playOutput}
-                                   minWidth={120} minHeight={60} style={{position:"absolute"}}
-                        >
-                            <Box>
-
-                            </Box>
+                        <Resizable defaultSize={{width: 300, height: 200}} className={classes.playOutputWrapper}
+                                   minWidth={120} minHeight={60} style={{position: "absolute"}}>
+                            <Scrollbars renderThumbVertical={({...props}) => <div
+                                className={classes.scrollbar} {...props}/>}>
+                                <Box className={classes.playOutputContent}>
+                                    {outputs.map(line => <Typography
+                                        className={classes.playOutputLog}>{line.message}</Typography>)}
+                                </Box>
+                            </Scrollbars>
                         </Resizable>
-                        <Button variant={"outlined"} size={"small"}
-                                className={classes.toolButton}>Run</Button>
+                        <Button variant={"outlined"} size={"small"} disabled={running} onClick={() => {
+                            const theId = ++globalRunCount;
+                            setRunId(theId);
+                            setRunning(true);
+                            context.ws.addHandler({
+                                topics: ["code"],
+                                handle(event: TopicEvent<any>): boolean {
+                                    switch (event.event) {
+                                        case "line":
+                                            const e = event.payload as RunLineEvent;
+                                            if (e.id === theId) {
+                                                setOutputs(o => [...o, e]);
+                                            }
+                                            break;
+                                        case "close":
+                                            setRunning(false);
+                                            return true;
+                                    }
+                                    return false;
+                                }
+                            });
+                            context.ws.send(new TopicEvent<RunCodeEvent>("code", "run", {
+                                id: theId,
+                                content: value,
+                                language: lang!.name,
+                            }))
+                        }} className={classes.toolButton}>Run</Button>
                         <Button variant={"outlined"} size={"small"}
                                 className={classes.toolButton}>Stop</Button>
                         <Button variant={"outlined"} size={"small"} onClick={() => setPlay(false)}
                                 className={classes.toolButton}>Close</Button>
                     </React.Fragment>
                 )}
-            </Box>
+            </Box>}
         </Box>
     )
 };

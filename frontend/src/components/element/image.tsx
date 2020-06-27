@@ -1,8 +1,7 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import {Box, Paper} from "@material-ui/core";
 import {XElement} from "../../model/model";
-import {SlideContext, resolveURL} from "../../model/context";
+import {resolveURL, SlideContext} from "../../model/context";
 
 const useStyles = makeStyles({});
 
@@ -18,14 +17,11 @@ const ImageView: React.FunctionComponent<ImageProp> = (props) => {
     return (
         <React.Fragment>
             {text.lines.map((path, i) => {
-                const url = resolveURL(ctx, path);
-                if (url) {
-                    return (
-                        <div key={i}>
-                            <img src={url.href}/>
-                        </div>
-                    );
-                }
+                return (
+                    <div key={i}>
+                        <img src={resolveURL(ctx, path).href}/>
+                    </div>
+                );
             })}
         </React.Fragment>
     )

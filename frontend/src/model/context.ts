@@ -1,9 +1,10 @@
 import {XElement} from "./model";
 import {createContext} from "react";
 import {SimpleProperty} from "xdean-util";
+import {TopicSocket} from "./socket";
+import {resolveWebsocketURL} from "../util/util";
 
 export class Preference {
-
     constructor(
         readonly serverURL: string = window.location.href,
     ) {
@@ -25,6 +26,7 @@ export class SlideContextData {
 
     readonly state = new State();
     readonly preference = new Preference();
+    readonly ws = new TopicSocket(resolveWebsocketURL(new URL("socket/topic", window.location.href).href));
 
     constructor(
         readonly rootElement: XElement,
@@ -59,38 +61,33 @@ export class SlideContextData {
     };
 }
 
-export function resolveURL(ctx: SlideContextData, rel: string): URL | null {
+export function resolveURL(ctx: SlideContextData, rel: string): URL {
     if (ctx.resourceURL) {
         const url = new URL(rel, ctx.resourceURL);
         if (url.protocol.startsWith("http")) {
             return url;
         } else {
-            return new URL(`resource?path=${url.href}`, ctx.preference.serverURL)
+            return new URL(`api/resource?path=${url.href}`, ctx.preference.serverURL)
         }
     } else {
-        return null
+        return new URL(`api/resource?path=${rel}`, ctx.preference.serverURL)
     }
 }
 
 export function fetchText(ctx: SlideContextData, rel: string): Promise<string> {
-    const url = resolveURL(ctx, rel);
-    if (url) {
-        return fetch(url.href)
-            .then(res => {
-                if (res.ok) {
-                    return res.text()
-                } else {
-                    return res.text().then(t => {
-                        throw `Resource Server Error, [${res.status} ${res.statusText}]: ${t}`
-                    })
-                }
-            })
-            .catch(e => {
-                throw `Fail to Fetch: ${e}`
-            })
-    } else {
-        return Promise.reject("Resource path is not specified");
-    }
+    return fetch(resolveURL(ctx, rel).href)
+        .then(res => {
+            if (res.ok) {
+                return res.text()
+            } else {
+                return res.text().then(t => {
+                    throw `Resource Server Error, [${res.status} ${res.statusText}]: ${t}`
+                })
+            }
+        })
+        .catch(e => {
+            throw `Fail to Fetch: ${e}`
+        })
 }
 
 export const SlideContext = createContext<SlideContextData>(SlideContextData.DEFAULT);

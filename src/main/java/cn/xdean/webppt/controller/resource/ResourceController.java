@@ -17,7 +17,7 @@ public class ResourceController {
 
     @Autowired ResourceLoader resourceLoader;
 
-    @GetMapping("/resource")
+    @GetMapping("/api/resource")
     public ResponseEntity<?> redirect(@RequestParam("path") String path) throws IOException {
         Resource resource = resourceLoader.getResource(path);
         if (resource.isFile()) {
