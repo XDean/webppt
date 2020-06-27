@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import {Box, Chip} from "@material-ui/core";
+import {Box, Button, Chip} from "@material-ui/core";
 import {XElement} from "../../model/model";
 import {Controlled as CodeMirror} from 'react-codemirror2'
 import "codemirror/addon/scroll/simplescrollbars.css"
@@ -11,6 +11,7 @@ import {fetchText, SlideContext} from "../../model/context";
 import {findLanguageByExt, findLanguageByName, Language} from "../../model/language";
 import {getExtension} from "../../util/util";
 import ReactDOM from 'react-dom';
+import {Resizable} from "re-resizable";
 
 const useStyles = makeStyles({
     wrapper: {
@@ -25,13 +26,32 @@ const useStyles = makeStyles({
     panel: {},
     topBar: {
         position: "absolute",
-        top: 5,
-        right: 10,
+        top: 2,
+        right: 5,
     },
-    tag: {
+    bottomBar: {
+        position: "absolute",
+        bottom: 4,
+        right: 5,
+    },
+    toolButton: {
         zIndex: 10,
         color: "#000",
         backgroundColor: "#fff",
+        textTransform: "none",
+        minWidth: 0,
+        padding: "2px 4px",
+        margin: "0 4px",
+        "&:hover": {
+            backgroundColor: "#fff",
+        }
+    },
+    playOutput: {
+        backgroundColor: "white",
+        zIndex: 10,
+        position: "absolute",
+        right: 5,
+        bottom: 30,
     }
 });
 
@@ -40,8 +60,6 @@ type CodeProp = {
 }
 
 const CodeView: React.FunctionComponent<CodeProp> = (props) => {
-    // boolean play;
-    // CodeLanguage language;
     const context = useContext(SlideContext);
     const editable = props.element.getBoolParam("edit", true);
     // const resizable = props.element.getBoolParam("resize", false);
@@ -85,22 +103,11 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
         require(`codemirror/mode/${lang.codemirrorJs}`);
     }
 
+    const [play, setPlay] = useState(false);
+
     return (
         <Box className={classes.wrapper}>
             <CodeMirror onBeforeChange={(editor, data, v) => setValue(v)} value={value}
-                        editorDidMount={editor => {
-                            const wrap = editor.getWrapperElement();
-                            const panel = document.createElement("div");
-                            panel.classList.add(classes.panel);
-                            wrap.appendChild(panel);
-                            ReactDOM.render((
-                                <Box className={classes.topBar}>
-                                    {lang &&
-                                    <Chip className={classes.tag} label={lang.name} variant={"outlined"} size={"small"}
-                                          clickable/>}
-                                </Box>
-                            ), panel);
-                        }}
                         options={{
                             lineNumbers: true,
                             theme: theme,
@@ -108,7 +115,33 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
                             readOnly: !editable,
                             mode: lang?.mime,
                         }}/>
+            <Box className={classes.topBar}>
+                {lang &&
+                <Button className={classes.toolButton} variant={"outlined"} size={"small"}
+                        style={{textTransform: "capitalize"}}
+                >{lang.name}</Button>}
+            </Box>
+            <Box className={classes.bottomBar}>
+                {!play && <Button variant={"outlined"} size={"small"} onClick={() => setPlay(true)}
+                                  className={classes.toolButton}>Play</Button>}
+                {play && (
+                    <React.Fragment>
+                        <Resizable defaultSize={{width: 300, height: 200}} className={classes.playOutput}
+                                   minWidth={120} minHeight={60} style={{position:"absolute"}}
+                        >
+                            <Box>
 
+                            </Box>
+                        </Resizable>
+                        <Button variant={"outlined"} size={"small"}
+                                className={classes.toolButton}>Run</Button>
+                        <Button variant={"outlined"} size={"small"}
+                                className={classes.toolButton}>Stop</Button>
+                        <Button variant={"outlined"} size={"small"} onClick={() => setPlay(false)}
+                                className={classes.toolButton}>Close</Button>
+                    </React.Fragment>
+                )}
+            </Box>
         </Box>
     )
 };
