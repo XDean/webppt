@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,8 +75,8 @@ public class RunCodeSocketTopic implements WebSocketTopic {
                             .doOnDispose(() -> {
                                 helper.sendEvent(session, "code", "line", LineResponse.builder()
                                         .id(runRequest.id)
-                                        .type(CodeRunner.Line.Type.STATUS.toString())
-                                        .message("Stop")
+                                        .type(CodeRunner.Line.Type.STOP.toString())
+                                        .message("")
                                         .build());
                             })
                             .subscribe(e -> {
@@ -129,6 +128,7 @@ public class RunCodeSocketTopic implements WebSocketTopic {
 
         String type;
 
-        String message;
+        @Builder.Default
+        String message = "";
     }
 }

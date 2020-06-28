@@ -16,17 +16,14 @@ public abstract class ScriptCodeRunner extends AbstractCodeRunner {
 
     @Override
     public Observable<Line> run(String code) {
-        return Single.fromCallable(() -> {
-            Path file = createScriptFile(code);
-            ProcessBuilder pb = createProcess(file);
-            return processExecutor.execute(pb);
-        })
-                .flatMapObservable(p -> CodeRunnerUtil.processToLineObservable(p)
-                        .startWith(Line.Type.STATUS.of("Run"))
-                        .concatWith(Single.just(Line.Type.STATUS.of("Done")))
-                        .concatWith(Observable.fromCallable(() -> Line.Type.SYSTEM.of("Exit Code: " + p.waitFor())))
-                        .doFinally(() -> p.destroy()))
-                .onErrorReturn(e -> Line.Type.SYSTEM.of("Error Happened: " + e.getMessage()));
+        return Single.fromCallable(() -> createScriptFile(code))
+                .map(f -> createProcess(f))
+                .flatMapObservable(pb -> Single.fromCallable(() -> processExecutor.execute(pb))
+                        .flatMapObservable(p -> CodeRunnerUtil.processToLineObservable(p)
+                                .startWith(Line.Type.START.of(String.join(" ", pb.command())))
+                                .concatWith(Observable.fromCallable(() -> Line.Type.DONE.of(p.waitFor())))
+                                .doFinally(() -> p.destroy())))
+                .onErrorReturn(e -> Line.Type.ERROR.of(e.getMessage()));
     }
 
     protected Path createTempFolder() throws IOException {

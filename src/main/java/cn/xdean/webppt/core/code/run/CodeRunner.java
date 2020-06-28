@@ -20,11 +20,17 @@ public interface CodeRunner {
             STDOUT,
             STDERR,
 
-            SYSTEM,
-            STATUS;
+            DONE,
+            ERROR,
+            START,
+            STOP;
 
             public Line of(String message) {
                 return Line.builder().type(this).message(message).build();
+            }
+
+            public Line of(int exitCode) {
+                return Line.builder().type(this).message(Integer.toString(exitCode)).build();
             }
         }
 

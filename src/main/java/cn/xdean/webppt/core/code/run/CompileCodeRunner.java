@@ -1,17 +1,15 @@
 package cn.xdean.webppt.core.code.run;
 
 import cn.xdean.webppt.core.process.ProcessExecutor;
-import cn.xdean.webppt.support.IOUtil;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileAttribute;
+import java.util.stream.Collectors;
 
 public abstract class CompileCodeRunner extends AbstractCodeRunner {
     @Autowired ProcessExecutor processExecutor;
@@ -19,28 +17,29 @@ public abstract class CompileCodeRunner extends AbstractCodeRunner {
     @Override
     public Observable<Line> run(String code) {
         return Single.fromCallable(() -> createSourceFile(code))
-                .flatMapObservable(sourceFile -> Single.fromCallable(() -> processExecutor.execute(createCompileProcess(sourceFile)))
-                        .flatMapObservable(p -> CodeRunnerUtil.processToLineObservable(p)
-                                .startWith(Line.Type.STATUS.of("Compile"))
-                                .concatWith(Observable.fromCallable(() -> Line.Type.SYSTEM.of("Compile Exit Code: " + p.waitFor())))
-                                .doFinally(() -> p.destroy())
-                        )
-                        .onErrorResumeNext((Throwable e) -> Observable.just(
-                                Line.Type.STATUS.of("Compile Error"),
-                                Line.Type.SYSTEM.of(e.getMessage())
-                        ))
-                        .concatWith(Single.fromCallable(() -> processExecutor.execute(createRunProcess(sourceFile)))
-                                .flatMapObservable(p -> CodeRunnerUtil.processToLineObservable(p)
-                                        .startWith(Line.Type.STATUS.of("Run"))
-                                        .concatWith(Single.just(Line.Type.STATUS.of("Done")))
-                                        .concatWith(Observable.fromCallable(() -> Line.Type.SYSTEM.of("Run Exit Code: " + p.waitFor())))
-                                        .doFinally(() -> p.destroy())
-                                )
-                                .onErrorResumeNext((Throwable e) -> Observable.just(
-                                        Line.Type.STATUS.of("Run Error"),
-                                        Line.Type.SYSTEM.of("Run Error Happened: " + e.getMessage())
-                                ))
-                        )
+                .flatMapObservable(sourceFile -> {
+                            ProcessBuilder compileProcess = createCompileProcess(sourceFile);
+                            ProcessBuilder runProcess = createRunProcess(sourceFile);
+                            return Single.fromCallable(() -> processExecutor.execute(compileProcess))
+                                    .flatMapObservable(p -> CodeRunnerUtil.processToLineObservable(p)
+                                            .startWith(Line.Type.START.of(String.join(" ", compileProcess.command())))
+                                            .concatWith(Observable.fromCallable(() -> Line.Type.DONE.of(p.waitFor())))
+                                            .doFinally(() -> p.destroy())
+                                    )
+                                    .onErrorResumeNext((Throwable e) -> Observable.just(
+                                            Line.Type.ERROR.of(e.getMessage())
+                                    ))
+                                    .concatWith(Single.fromCallable(() -> processExecutor.execute(runProcess))
+                                            .flatMapObservable(p -> CodeRunnerUtil.processToLineObservable(p)
+                                                    .startWith(Line.Type.START.of(String.join(" ", runProcess.command())))
+                                                    .concatWith(Observable.fromCallable(() -> Line.Type.DONE.of(p.waitFor())))
+                                                    .doFinally(() -> p.destroy())
+                                            )
+                                            .onErrorResumeNext((Throwable e) -> Observable.just(
+                                                    Line.Type.ERROR.of(e.getMessage())
+                                            ))
+                                    );
+                        }
                 );
     }
 
