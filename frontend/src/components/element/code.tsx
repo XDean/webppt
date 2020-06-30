@@ -1,16 +1,13 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {makeStyles} from '@material-ui/core/styles';
-import {Box, Button, Chip, Typography} from "@material-ui/core";
+import {Box, Button, Typography} from "@material-ui/core";
 import {XElement} from "../../model/model";
 import {Controlled as CodeMirror} from 'react-codemirror2'
 import "codemirror/addon/scroll/simplescrollbars.css"
 import "codemirror/addon/scroll/simplescrollbars"
 import "codemirror/lib/codemirror.css"
-import {Editor} from "codemirror"
-import {fetchText, SlideContext} from "../../model/context";
-import {findLanguageByExt, findLanguageByName, Language} from "../../model/language";
+import {SlideContext} from "../../model/context";
+import {findLanguageByExt, findLanguageByName} from "../../model/language";
 import {getExtension} from "../../util/util";
-import ReactDOM from 'react-dom';
 import {Resizable} from "re-resizable";
 import {RunCodeEvent, RunLineEvent} from "../../model/ws-event";
 import {TopicEvent} from "../../model/socket";
@@ -37,7 +34,7 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
     const textNode = props.element.assertSingleTextLeaf();
     useEffect(() => {
         if (useURL) {
-            fetchText(context, textNode.lines[0])
+            context.fetchText(textNode.lines[0])
                 .then(t => setValue(t))
                 .catch(e => setValue(e));
         } else {

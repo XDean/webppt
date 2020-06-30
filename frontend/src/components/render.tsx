@@ -2,7 +2,6 @@ import RootView from "./element/root";
 import {XElement, XText} from "../model/model";
 import React, {FunctionComponent, Key, ReactNode} from "react";
 import PlainTextView from "./text/plain";
-import {Pageview} from "@material-ui/icons";
 import PageView from "./element/page";
 import MarkdownView from "./text/md";
 import HTMLView from "./text/html";

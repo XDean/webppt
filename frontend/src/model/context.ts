@@ -59,35 +59,33 @@ export class SlideContextData {
             console.warn("Invalid page to: ", page);
         }
     };
-}
-
-export function resolveURL(ctx: SlideContextData, rel: string): URL {
-    if (ctx.resourceURL) {
-        const url = new URL(rel, ctx.resourceURL);
-        if (url.protocol.startsWith("http")) {
-            return url;
-        } else {
-            return new URL(`api/resource?path=${url.href}`, ctx.preference.serverURL)
-        }
-    } else {
-        return new URL(`api/resource?path=${rel}`, ctx.preference.serverURL)
-    }
-}
-
-export function fetchText(ctx: SlideContextData, rel: string): Promise<string> {
-    return fetch(resolveURL(ctx, rel).href)
-        .then(res => {
-            if (res.ok) {
-                return res.text()
+    resolveURL = (rel: string): URL => {
+        if (this.resourceURL) {
+            const url = new URL(rel, this.resourceURL);
+            if (url.protocol.startsWith("http")) {
+                return url;
             } else {
-                return res.text().then(t => {
-                    throw `Resource Server Error, [${res.status} ${res.statusText}]: ${t}`
-                })
+                return new URL(`api/resource?path=${url.href}`, this.preference.serverURL)
             }
-        })
-        .catch(e => {
-            throw `Fail to Fetch: ${e}`
-        })
+        } else {
+            return new URL(`api/resource?path=${rel}`, this.preference.serverURL)
+        }
+    };
+    fetchText = (rel: string): Promise<string> => {
+        return fetch(this.resolveURL(rel).href)
+            .then(res => {
+                if (res.ok) {
+                    return res.text()
+                } else {
+                    return res.text().then(t => {
+                        throw `Resource Server Error, [${res.status} ${res.statusText}]: ${t}`
+                    })
+                }
+            })
+            .catch(e => {
+                throw `Fail to Fetch: ${e}`
+            })
+    }
 }
 
 export const SlideContext = createContext<SlideContextData>(SlideContextData.DEFAULT);

@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import {XElement} from "../../model/model";
-import {resolveURL, SlideContext} from "../../model/context";
+import {SlideContext} from "../../model/context";
 
 const useStyles = makeStyles({});
 
@@ -19,7 +19,7 @@ const ImageView: React.FunctionComponent<ImageProp> = (props) => {
             {text.lines.map((path, i) => {
                 return (
                     <div key={i}>
-                        <img src={resolveURL(ctx, path).href}/>
+                        <img src={ctx.resolveURL(path).href}/>
                     </div>
                 );
             })}

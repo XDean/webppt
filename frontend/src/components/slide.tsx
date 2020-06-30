@@ -3,7 +3,7 @@ import {createStyles, makeStyles} from '@material-ui/core/styles';
 import {useQuery} from "../util/util";
 import {renderElement} from "./render";
 import {Parser} from "../model/parse";
-import {fetchText, resolveURL, SlideContext, SlideContextData} from "../model/context";
+import {SlideContext, SlideContextData} from "../model/context";
 import {Listener} from "xdean-util";
 import {useHistory, useLocation} from "react-router";
 
@@ -41,10 +41,10 @@ const SlideView: React.FunctionComponent<SlideProp> = (props) => {
 
     useEffect(() => {
         if (path) {
-            fetchText(context, path)
+            context.fetchText(path)
                 .then(text => {
-                    const root = Parser.parse(text);
                     const url = new URL(path);
+                    const root = Parser.parse(text);
                     let c = new SlideContextData(root, text, url, url);
                     c.state.currentPage.value = page - 1;
                     setContext(c);
