@@ -1,13 +1,12 @@
-import {JElement, JParam, JText} from "./json";
-
 export class XRawInfo {
+    public parent?: XRawInfo;
     public startLineIndex = -1;
     public endLineIndex = -1;
 }
 
 export interface XNode {
-    readonly name: string;
-    readonly parent: XElement;
+    name: string;
+    parent: XElement;
     readonly raw: XRawInfo;
 
     getParam(key: string): XParam | null

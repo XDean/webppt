@@ -41,3 +41,19 @@ export function resolveWebsocketURL(url: string): string {
     }
     return url;
 }
+
+export function fetchText(url: URL): Promise<string> {
+    return fetch(url.href)
+        .then(res => {
+            if (res.ok) {
+                return res.text()
+            } else {
+                return res.text().then(t => {
+                    throw `Resource Server Error, [${res.status} ${res.statusText}]: ${t}`
+                })
+            }
+        })
+        .catch(e => {
+            throw `Fail to Fetch: ${e}`
+        })
+}

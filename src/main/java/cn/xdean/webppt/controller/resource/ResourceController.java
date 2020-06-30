@@ -18,7 +18,7 @@ public class ResourceController {
     @Autowired ResourceLoader resourceLoader;
 
     @GetMapping("/api/resource")
-    public ResponseEntity<?> redirect(@RequestParam("path") String path) throws IOException {
+    public ResponseEntity<?> resource(@RequestParam("path") String path) throws IOException {
         Resource resource = resourceLoader.getResource(path);
         if (resource.isFile()) {
             return ResponseEntity.ok(resource);
@@ -26,6 +26,16 @@ public class ResourceController {
             return ResponseEntity.status(HttpStatus.FOUND)
                     .header(HttpHeaders.LOCATION, resource.getURL().toString())
                     .build();
+        }
+    }
+
+    @GetMapping("/api/template")
+    public ResponseEntity<?> template(@RequestParam("name") String name) throws IOException {
+        Resource resource = resourceLoader.getResource(String.format("classpath:/static/template/%s.webppt", name));
+        if (resource.exists() && resource.isFile()) {
+            return ResponseEntity.ok(resource);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 

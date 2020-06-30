@@ -19,7 +19,7 @@ const ImageView: React.FunctionComponent<ImageProp> = (props) => {
             {text.lines.map((path, i) => {
                 return (
                     <div key={i}>
-                        <img src={ctx.resolveURL(path).href}/>
+                        <img src={ctx.resolveResourceURL(path).href}/>
                     </div>
                 );
             })}

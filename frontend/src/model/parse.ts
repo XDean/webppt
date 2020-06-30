@@ -1,6 +1,7 @@
 import {XElement, XNode, XParam, XText} from "./model";
 import {ParseError} from "./error";
-import {arrayRemove} from "../util/util";
+import {arrayRemove, fetchText} from "../util/util";
+import {SlideContextData} from "./context";
 
 export class Parser {
     lines: string[];
@@ -9,19 +10,19 @@ export class Parser {
     consumed: boolean = false;
     elemStack: XNode[] = [];
 
-    constructor(source: string) {
-        this.lines = source.split("\n");
+    constructor(private context: SlideContextData) {
+        this.lines = (context.sourceContent || "").split("\n");
         let root = new XElement();
         root.name = "root";
         root.raw.startLineIndex = 0;
         this.elemStack.push(root);
     }
 
-    static parse(text: string): XElement {
-        return new Parser(text).parse();
+    static parse(context: SlideContextData): Promise<XElement> {
+        return new Parser(context).parse();
     }
 
-    parse(): XElement {
+    async parse(): Promise<XElement> {
         while (this.nextLine()) {
             if (this.line.length != 0) {
                 switch (this.line.charAt(0)) {
@@ -29,7 +30,7 @@ export class Parser {
                         this.parseElement();
                         break;
                     case '@':
-                        this.parseParameter();
+                        await this.parseParameter();
                         break;
                     case '/':
                         if (this.line.startsWith("//")) { // comment
@@ -42,28 +43,26 @@ export class Parser {
                 }
             }
             if (!this.consumed) {
-                if (this.elemStack.length === 1) {
-                    if (this.line.trim().length !== 0) {
-                        throw new ParseError(this.index, "text can't define as top node");
-                    }
-                } else {
-                    const node = this.elemStack.slice(-1)[0];
-                    if (node instanceof XText) {
-                        node.lines.push(this.line);
-                        node.raw.endLineIndex = this.index;
-                    } else if (node instanceof XElement) {
-                        const newText = new XText(node);
-                        newText.lines.push(this.line);
-                        newText.raw.startLineIndex = this.index;
-                        newText.raw.endLineIndex = this.index;
-                        node.children.push(newText);
-                        this.elemStack.push(newText);
-                    }
+                const node = this.elemStack.slice(-1)[0];
+                if (node instanceof XText) {
+                    node.lines.push(this.line);
+                    node.raw.endLineIndex = this.index;
+                } else if (node instanceof XElement) {
+                    const newText = new XText(node);
+                    newText.lines.push(this.line);
+                    newText.raw.startLineIndex = this.index;
+                    newText.raw.endLineIndex = this.index;
+                    node.children.push(newText);
+                    this.elemStack.push(newText);
                 }
             }
         }
-        if (this.elemStack.length > 1) {
-            let node = this.elemStack.slice(-1)[0];
+        while (this.elemStack.length > 1) {
+            const node = this.elemStack.slice(-1)[0];
+            if (node instanceof XText) {
+                this.elemStack.pop();
+                continue;
+            }
             throw new ParseError(node.raw.startLineIndex, `unclosed tag: ${node.name}`);
         }
         return this.elemStack[0] as XElement
@@ -93,7 +92,7 @@ export class Parser {
         throw new ParseError(this.index, "getLastElement error never happen");
     }
 
-    private parseParameter() {
+    private async parseParameter() {
         const paramPattern = /^@(\w+)(?:@(\w*))?(?:\s*=\s*(.*))?$/;
         const matcher = this.line.match(paramPattern);
         if (!matcher) {
@@ -107,6 +106,7 @@ export class Parser {
         parameter.raw.startLineIndex = this.index;
         parameter.raw.endLineIndex = this.index;
         parent.children.push(parameter);
+        await this.handleIncludeCommand(parameter);
         this.consumed = true;
     }
 
@@ -181,5 +181,25 @@ export class Parser {
         }
 
         throw new ParseError(this.index, "unrecognized element grammar");
+    }
+
+    private async handleIncludeCommand(param: XParam) {
+        if (param.key !== "include") {
+            return;
+        }
+        let url, text;
+        if (param.value.startsWith("@")) {
+            url = new URL(`api/template?name=${param.value.substring(1)}`, this.context.preference.serverURL);
+            text = await fetchText(url)
+        } else {
+            url = this.context.resolveURL(param.value);
+            text = await this.context.fetchText(param.value);
+        }
+        const includeElement = await Parser.parse(new SlideContextData(new XElement(), text, url, url));
+        const index = param.parent.children.indexOf(param);
+        if (index != -1) {
+            param.parent.children.splice(index, 1, ...includeElement.children);
+            includeElement.children.forEach(c => c.parent = param.parent);
+        }
     }
 }

@@ -5,7 +5,7 @@
 @play@code
 
 .page{
-.homepage
+@include=@homepage
 .}
 
 .page{
