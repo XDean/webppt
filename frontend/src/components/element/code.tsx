@@ -15,62 +15,7 @@ import {Resizable} from "re-resizable";
 import {RunCodeEvent, RunLineEvent} from "../../model/ws-event";
 import {TopicEvent} from "../../model/socket";
 import {Scrollbars} from 'react-custom-scrollbars';
-
-const useStyles = makeStyles({
-    wrapper: {
-        position: "relative",
-        width: "70%",
-        marginTop: 10,
-        marginBottom: 10,
-        overflow: "hidden",
-
-        border: "1px solid rgb(224, 224, 224)",
-    },
-    panel: {},
-    topBar: {
-        position: "absolute",
-        top: 2,
-        right: 5,
-    },
-    bottomBar: {
-        position: "absolute",
-        bottom: 4,
-        right: 5,
-    },
-    toolButton: {
-        zIndex: 10,
-        color: "#000",
-        backgroundColor: "#fff",
-        textTransform: "none",
-        minWidth: 0,
-        padding: "2px 4px",
-        margin: "0 4px",
-        "&:hover": {
-            backgroundColor: "#fff",
-        }
-    },
-    playOutputWrapper: {
-        backgroundColor: "#222",
-        zIndex: 10,
-        position: "absolute",
-        right: 5,
-        bottom: 30,
-        borderRadius: 5,
-        color: "#fff",
-        overflow: "hidden",
-        border: "white 1px solid",
-    },
-    playOutputContent: {
-        margin: 10,
-        fontFamily: "monospace",
-        fontSize: 16,
-        color: "#22da26",
-    },
-    playOutputLog: {},
-    scrollbar: {
-        backgroundColor: "#eaeaea"
-    }
-});
+import "./code.scss"
 
 type CodeProp = {
     element: XElement;
@@ -88,7 +33,6 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
     const useURL = props.element.getStrParam("type", "url") === "url";
 
     const [value, setValue] = useState("Loading...");
-    const classes = useStyles();
 
     const textNode = props.element.assertSingleTextLeaf();
     useEffect(() => {
@@ -128,7 +72,7 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
     const [outputs, setOutputs] = useState<RunLineEvent[]>([]);
 
     return (
-        <Box className={classes.wrapper}>
+        <Box className={"wp-code-wrapper"}>
             <CodeMirror onBeforeChange={(editor, data, v) => setValue(v)} value={value}
                         options={{
                             lineNumbers: true,
@@ -137,25 +81,43 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
                             readOnly: !editable,
                             mode: lang?.mime,
                         }}/>
-            <Box className={classes.topBar}>
+            <Box className={"wp-code-topbar"}>
                 {lang &&
-                <Button className={classes.toolButton} variant={"outlined"} size={"small"}
-                        style={{textTransform: "capitalize"}}
+                <Button variant={"outlined"} size={"small"} style={{textTransform: "capitalize"}}
                 >{lang.name}</Button>}
             </Box>
             {playable &&
-            <Box className={classes.bottomBar}>
-                {!play && <Button variant={"outlined"} size={"small"} onClick={() => setPlay(true)}
-                                  className={classes.toolButton}>Play</Button>}
+            <Box className={"wp-code-bottom-bar"}>
+                {!play && <Button variant={"outlined"} size={"small"} onClick={() => setPlay(true)}>Play</Button>}
                 {play && (
                     <React.Fragment>
-                        <Resizable defaultSize={{width: 300, height: 200}} className={classes.playOutputWrapper}
+                        <Resizable defaultSize={{width: 300, height: 200}} className={"wp-code-output-wrapper"}
                                    minWidth={120} minHeight={60} style={{position: "absolute"}}>
                             <Scrollbars renderThumbVertical={({...props}) => <div
-                                className={classes.scrollbar} {...props}/>}>
-                                <Box className={classes.playOutputContent}>
-                                    {outputs.map(line => <Typography
-                                        className={classes.playOutputLog}>{line.message}</Typography>)}
+                                className={"scrollbar"} {...props}/>}>
+                                <Box className={"wp-code-output-content"}>
+                                    {outputs.map(line => {
+                                        switch (line.type) {
+                                            case "STDOUT":
+                                                return <Typography
+                                                    className={"stdout"}>{line.message}</Typography>;
+                                            case "STDERR":
+                                                return <Typography
+                                                    className={"stderr"}>{line.message}</Typography>;
+                                            case "START":
+                                                return <Typography
+                                                    className={"start"}>{line.message}</Typography>;
+                                            case "STOP":
+                                                return <Typography
+                                                    className={"stop"}>stopped</Typography>;
+                                            case "DONE":
+                                                return <Typography
+                                                    className={"done"}>exit code: {line.message}</Typography>;
+                                            case "ERROR":
+                                                return <Typography
+                                                    className={"error"}>{line.message}</Typography>;
+                                        }
+                                    })}
                                 </Box>
                             </Scrollbars>
                         </Resizable>
@@ -163,6 +125,7 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
                             const theId = ++globalRunCount;
                             setRunId(theId);
                             setRunning(true);
+                            setOutputs([]);
                             context.ws.addHandler({
                                 topics: ["code"],
                                 handle(event: TopicEvent<any>): boolean {
@@ -185,11 +148,9 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
                                 content: value,
                                 language: lang!.name,
                             }))
-                        }} className={classes.toolButton}>Run</Button>
-                        <Button variant={"outlined"} size={"small"}
-                                className={classes.toolButton}>Stop</Button>
-                        <Button variant={"outlined"} size={"small"} onClick={() => setPlay(false)}
-                                className={classes.toolButton}>Close</Button>
+                        }}>Run</Button>
+                        <Button variant={"outlined"} size={"small"}>Stop</Button>
+                        <Button variant={"outlined"} size={"small"} onClick={() => setPlay(false)}>Close</Button>
                     </React.Fragment>
                 )}
             </Box>}

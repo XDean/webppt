@@ -1,0 +1,90 @@
+.wp-code-wrapper {
+  position: relative;
+  width: 70%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  overflow: hidden;
+
+  border: 1px solid rgb(224, 224, 224);
+
+  button {
+    z-index: 10;
+    color: #000;
+    background-color: #fff;
+    text-transform: none;
+    min-width: 0;
+    padding: 2px 4px;
+    margin: 0 4px;
+
+    &:hover {
+      background-color: #fff;
+    }
+  }
+}
+
+.wp-code-topbar {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+}
+
+.wp-code-bottom-bar {
+  position: absolute;
+  bottom: 4px;
+  right: 5px;
+}
+
+.wp-code-output-wrapper {
+  background-color: #222;
+  z-index: 10;
+  position: absolute;
+  right: 5px;
+  bottom: 30px;
+  border-radius: 5px;
+  color: #fff;
+  overflow: hidden;
+  border: white 1px solid;
+
+  .scrollbar {
+    background-color: #eaeaea;
+  }
+}
+
+.wp-code-output-content {
+  margin: 10px;
+  font-family: monospace;
+  font-size: 16px;
+  color: #22da26;
+
+  .stdout {
+
+  }
+
+  .stderr {
+    color: #da2245;
+  }
+
+  .start {
+    margin: 10px 0;
+
+    &:before {
+      content: '$ ';
+      color: #22da26;
+    }
+  }
+
+  .done {
+    font-style: italic;
+    margin: 10px 0;
+  }
+
+  .stop {
+    font-style: italic;
+    margin: 10px 0;
+  }
+
+  .error {
+    font-style: italic;
+    margin: 10px 0;
+  }
+}

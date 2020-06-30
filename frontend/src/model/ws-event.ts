@@ -6,7 +6,7 @@ export type RunCodeEvent = {
 
 export type RunLineEvent = {
     id: number
-    type: string
+    type: "STDOUT" | "STDERR" | "START" | "STOP" | "DONE" | "ERROR" | string
     message: string
 }
 
