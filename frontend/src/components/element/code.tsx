@@ -9,7 +9,7 @@ import {SlideContext} from "../../model/context";
 import {findLanguageByExt, findLanguageByName} from "../../model/language";
 import {getExtension} from "../../util/util";
 import {Resizable} from "re-resizable";
-import {RunCodeEvent, RunLineEvent} from "../../model/ws-event";
+import {RunCodeEvent, RunLineEvent, RunStopEvent} from "../../model/ws-event";
 import {TopicEvent} from "../../model/socket";
 import {Scrollbars} from 'react-custom-scrollbars';
 import "./code.scss"
@@ -93,25 +93,25 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
                             <Scrollbars renderThumbVertical={({...props}) => <div
                                 className={"scrollbar"} {...props}/>}>
                                 <Box className={"wp-code-output-content"}>
-                                    {outputs.map(line => {
+                                    {outputs.map((line, index) => {
                                         switch (line.type) {
                                             case "STDOUT":
-                                                return <Typography
+                                                return <Typography key={index}
                                                     className={"stdout"}>{line.message}</Typography>;
                                             case "STDERR":
-                                                return <Typography
+                                                return <Typography key={index}
                                                     className={"stderr"}>{line.message}</Typography>;
                                             case "START":
-                                                return <Typography
+                                                return <Typography key={index}
                                                     className={"start"}>{line.message}</Typography>;
                                             case "STOP":
-                                                return <Typography
+                                                return <Typography key={index}
                                                     className={"stop"}>stopped</Typography>;
                                             case "DONE":
-                                                return <Typography
+                                                return <Typography key={index}
                                                     className={"done"}>exit code: {line.message}</Typography>;
                                             case "ERROR":
-                                                return <Typography
+                                                return <Typography key={index}
                                                     className={"error"}>{line.message}</Typography>;
                                         }
                                     })}
@@ -146,7 +146,9 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
                                 language: lang!.name,
                             }))
                         }}>Run</Button>
-                        <Button variant={"outlined"} size={"small"}>Stop</Button>
+                        <Button variant={"outlined"} size={"small"} disabled={!running} onClick={() => {
+                            context.ws.send(new TopicEvent<RunStopEvent>("code", "stop", {id:runId}))
+                        }}>Stop</Button>
                         <Button variant={"outlined"} size={"small"} onClick={() => setPlay(false)}>Close</Button>
                     </React.Fragment>
                 )}

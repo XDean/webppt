@@ -13,3 +13,7 @@ export type RunLineEvent = {
 export type RunCloseEvent = {
     id: number
 }
+
+export type RunStopEvent = {
+    id: number
+}
