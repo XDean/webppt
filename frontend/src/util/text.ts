@@ -1,5 +1,5 @@
-export function replaceDollarVar(input: string, lookup: (key: string) => string | undefined):string {
-    const pattern = /(?<!\$)\${(\w+)(?::((?:[^}\\]|\\.)*))?}/g;
+export function replaceDollarVar(input: string, lookup: (key: string, def: string) => string): string {
+    const pattern = /(?<!\$)\${(@|\w+)(?::((?:[^}\\]|\\.)*))?}/g;
     let res = input;
     while (true) {
         const matcher = pattern.exec(input);
@@ -7,7 +7,7 @@ export function replaceDollarVar(input: string, lookup: (key: string) => string 
             break;
         }
         const key = matcher[1];
-        const value = lookup(key) || matcher[2] || "";
+        const value = lookup(key, matcher[2] || "");
         const offset = res.length - input.length;
         res = replaceRange(res, matcher.index + offset, matcher[0].length, value);
     }

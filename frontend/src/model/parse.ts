@@ -204,12 +204,22 @@ export class Parser {
     }
 
     private postText(text: XText) {
-        const lookup = (key: string) => text.getParam(key)?.value;
+        const lookup = (key: string, value: string) => {
+            if (key === "@") {
+                return this.context.resolveResourceURL(value).href;
+            }
+            return text.getParam(key)?.value || value;
+        };
         text.lines.splice(0, text.lines.length, ...text.lines.map(line => replaceDollarVar(line, lookup)));
     }
 
     private postParam(param: XParam) {
-        const lookup = (key: string) => param.getParam(key)?.value;
+        const lookup = (key: string, value: string) => {
+            if (key === "@") {
+                return this.context.resolveResourceURL(value).href;
+            }
+            return param.getParam(key)?.value || value;
+        };
         param.value = replaceDollarVar(param.value, lookup);
     }
 
