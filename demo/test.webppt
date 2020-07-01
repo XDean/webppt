@@ -4,6 +4,10 @@
 @author   =  XDean
 @play@code
 
+.meta{
+@icon=images/google-icon.png
+.}
+
 .page{
 @include=@homepage
 .}

@@ -71,7 +71,10 @@ const RootView: React.FunctionComponent<RootProp> = (props) => {
         };
     }, [context]);
 
-    useEffect(() => bindKeyEvent(context), [context]);
+    useEffect(() => {
+        bindKeyEvent(context);
+        handleMeta(context);
+    }, [context]);
 
     return (
         <RootRef rootRef={rootRef}>
@@ -118,6 +121,25 @@ function bindKeyEvent(context: SlideContextData) {
     };
     document.addEventListener("keydown", listener);
     return () => document.removeEventListener("keydown", listener);
+}
+
+function handleMeta(context: SlideContextData) {
+    const meta = context.getMeta();
+    if (!meta) {
+        return;
+    }
+    const icon = meta.getStrParam("icon", "");
+    if (icon) {
+        const link = (document.querySelector("link[rel*='icon']") || document.createElement('link')) as HTMLLinkElement;
+        link.type = 'image/x-icon';
+        link.rel = 'shortcut icon';
+        link.href = context.resolveResourceURL(icon).href;
+        document.head.appendChild(link);
+    }
+    const title = meta.getStrParam("title", "");
+    if (title) {
+        document.title = title;
+    }
 }
 
 export default RootView;
