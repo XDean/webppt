@@ -13,8 +13,8 @@ const PlainView: React.FunctionComponent<PlainProp> = (props) => {
     const paragraphs: string[][] = [];
     let paragraph: string[] = [];
     props.text.lines.forEach(line => {
-        if (line.trim().length == 0) {
-            if (paragraph.length != 0) {
+        if (line.trim().length === 0) {
+            if (paragraph.length !== 0) {
                 paragraphs.push(paragraph);
                 paragraph = [];
             }
@@ -22,7 +22,7 @@ const PlainView: React.FunctionComponent<PlainProp> = (props) => {
             paragraph.push(line.split(" ").join("\u00A0"));
         }
     });
-    if (paragraph.length != 0) {
+    if (paragraph.length !== 0) {
         paragraphs.push(paragraph);
     }
     return (

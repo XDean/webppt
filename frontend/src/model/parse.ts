@@ -25,7 +25,7 @@ export class Parser {
 
     async parse(): Promise<XElement> {
         while (this.nextLine()) {
-            if (this.line.length != 0) {
+            if (this.line.length !== 0) {
                 switch (this.line.charAt(0)) {
                     case '.':
                         this.parseElement();
@@ -74,7 +74,7 @@ export class Parser {
     }
 
     private nextLine(): boolean {
-        if (this.index == this.lines.length - 1) {
+        if (this.index === this.lines.length - 1) {
             return false;
         }
         this.index++;
@@ -87,7 +87,7 @@ export class Parser {
         const last = this.elemStack.slice(-1)[0];
         if (last instanceof XText) {
             this.elemStack.pop();
-            if (last.lines.every(line => line.trim().length == 0)) {
+            if (last.lines.every(line => line.trim().length === 0)) {
                 arrayRemove(last.parent.children, last);
             }
             return this.getLastElement();
@@ -119,7 +119,7 @@ export class Parser {
         const multiLineElementEnd = /^\.}\s*$/;
         if (this.line.match(multiLineElementEnd)) {
             while (true) {
-                if (this.elemStack.length == 1) {
+                if (this.elemStack.length === 1) {
                     throw new ParseError(this.index, "no element to close");
                 }
                 const node = this.elemStack.pop();
@@ -237,7 +237,7 @@ export class Parser {
         }
         const includeElement = await Parser.parse(new SlideContextData(new XElement(), text, url, url), true);
         const index = param.parent.children.indexOf(param);
-        if (index != -1) {
+        if (index !== -1) {
             param.parent.children.splice(index, 1, ...includeElement.children);
             includeElement.children.forEach(c => c.parent = param.parent);
         }

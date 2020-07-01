@@ -24,11 +24,11 @@ const useStyles = makeStyles<Theme, PageProp>(theme => createStyles({
     presentWrapper: {
         transform: props => {
             const offset = props.index - props.current;
-            if (offset == 0) {
+            if (offset === 0) {
                 return "translate(0)";
-            } else if (offset == 1) {
+            } else if (offset === 1) {
                 return "translate(100vw)";
-            } else if (offset == -1) {
+            } else if (offset === -1) {
                 return "translate(-100vw)";
             } else if (offset > 0) {
                 return "translate(200vw)";
@@ -36,7 +36,7 @@ const useStyles = makeStyles<Theme, PageProp>(theme => createStyles({
                 return "translate(-200vw)";
             }
         },
-        zIndex: props => props.index - props.current == 0 ? 10 : 5,
+        zIndex: props => props.index - props.current === 0 ? 10 : 5,
     },
     outlineWrapper: {
         position: "relative",

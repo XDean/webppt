@@ -43,10 +43,10 @@ export class SlideContextData {
         this.state.currentPage.update(c => c < this.getPages().length - 1 ? c + 1 : c);
     };
     getPages = () => {
-        return this.rootElement!.children.filter(n => n instanceof XElement && n.name == "page").map(n => n as XElement);
+        return this.rootElement!.children.filter(n => n instanceof XElement && n.name === "page").map(n => n as XElement);
     };
     getMeta = () => {
-        return this.rootElement!.children.filter(n => n instanceof XElement && n.name == "meta").map(n => n as XElement).shift();
+        return this.rootElement!.children.filter(n => n instanceof XElement && n.name === "meta").map(n => n as XElement).shift();
     };
     gotoPage = (page: XElement | number) => {
         const pages = this.getPages();

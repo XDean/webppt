@@ -52,13 +52,13 @@ export class XElement implements XNode {
             if (!(c instanceof XParam)) {
                 continue;
             }
-            if (c.support(node) && c.key == key) {
+            if (c.support(node) && c.key === key) {
                 param = c;
             }
         }
         if (param) {
             return param
-        } else if (this.parent == this) {
+        } else if (this.parent === this) {
             return null;
         } else {
             return this.parent.getParamUntil(key, node);
@@ -66,7 +66,7 @@ export class XElement implements XNode {
     }
 
     contains(node: XNode): boolean {
-        return node == this || this.children.some(c => c.contains(node));
+        return node === this || this.children.some(c => c.contains(node));
     }
 
     getElements(): XElement[] {
@@ -82,15 +82,15 @@ export class XElement implements XNode {
     }
 
     assertSingleTextLeaf(): XText {
-        if (this.getElements().length != 0) {
+        if (this.getElements().length !== 0) {
             throw `${this.name} must has no child`;
         }
         let params = this.getParams();
-        if (params[params.length - 1] != this.children[params.length - 1]) {
+        if (params[params.length - 1] !== this.children[params.length - 1]) {
             throw `${this.name}'s param must defined first`
         }
         let texts = this.getTexts();
-        if (texts.length != 1) {
+        if (texts.length !== 1) {
             throw `${this.name} must has single text`
         }
         return texts[0]
@@ -118,7 +118,7 @@ export class XParam implements XNode {
     }
 
     support(node: XNode): boolean {
-        return this.element == "" || this.element == node.name;
+        return this.element === "" || this.element === node.name;
     }
 }
 
