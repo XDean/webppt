@@ -1,6 +1,11 @@
-@type@text=md
-# Title
+@type@text=html
 
-## SubTitle
+<style>
+h2 {
+    color:red;
+}
+</style>
 
-**Author**
+<h1>${title}</h1>
+<h2>${subtitle}</h1>
+<b>${author}</b>

@@ -103,9 +103,9 @@ export class XParam implements XNode {
 
     constructor(
         public parent: XElement,
-        readonly key: string,
-        readonly value: string = "true",
-        readonly element: string = "",
+        public key: string,
+        public value: string = "true",
+        public element: string = "",
     ) {
     }
 

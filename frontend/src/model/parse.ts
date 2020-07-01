@@ -2,6 +2,7 @@ import {XElement, XNode, XParam, XText} from "./model";
 import {ParseError} from "./error";
 import {arrayRemove, fetchText} from "../util/util";
 import {SlideContextData} from "./context";
+import {replaceDollarVar} from "../util/text";
 
 export class Parser {
     lines: string[];
@@ -10,7 +11,7 @@ export class Parser {
     consumed: boolean = false;
     elemStack: XNode[] = [];
 
-    constructor(private context: SlideContextData) {
+    constructor(private context: SlideContextData, private nest: boolean) {
         this.lines = (context.sourceContent || "").split("\n");
         let root = new XElement();
         root.name = "root";
@@ -18,8 +19,8 @@ export class Parser {
         this.elemStack.push(root);
     }
 
-    static parse(context: SlideContextData): Promise<XElement> {
-        return new Parser(context).parse();
+    static parse(context: SlideContextData, nest: boolean = false): Promise<XElement> {
+        return new Parser(context, nest).parse();
     }
 
     async parse(): Promise<XElement> {
@@ -65,7 +66,11 @@ export class Parser {
             }
             throw new ParseError(node.raw.startLineIndex, `unclosed tag: ${node.name}`);
         }
-        return this.elemStack[0] as XElement
+        const root = this.elemStack[0] as XElement;
+        if (!this.nest) {
+            this.postResolve(root);
+        }
+        return root
     }
 
     private nextLine(): boolean {
@@ -162,7 +167,6 @@ export class Parser {
                     if (!matcher) {
                         break;
                     }
-                    console.log(matcher);
                     const param = new XParam(elem, matcher[1], matcher[2]);
                     param.raw.startLineIndex = this.index;
                     param.raw.endLineIndex = this.index;
@@ -183,6 +187,32 @@ export class Parser {
         throw new ParseError(this.index, "unrecognized element grammar");
     }
 
+    private postResolve(node: XNode) {
+        const lookup = (key: string) => node.getParam(key)?.value;
+        if (node instanceof XElement) {
+            this.postElement(node);
+            node.children.forEach(n => this.postResolve(n));
+        } else if (node instanceof XParam) {
+            this.postParam(node);
+        } else if (node instanceof XText) {
+            this.postText(node);
+        }
+    }
+
+    private postElement(element: XElement) {
+
+    }
+
+    private postText(text: XText) {
+        const lookup = (key: string) => text.getParam(key)?.value;
+        text.lines.splice(0, text.lines.length, ...text.lines.map(line => replaceDollarVar(line, lookup)));
+    }
+
+    private postParam(param: XParam) {
+        const lookup = (key: string) => param.getParam(key)?.value;
+        param.value = replaceDollarVar(param.value, lookup);
+    }
+
     private async handleIncludeCommand(param: XParam) {
         if (param.key !== "include") {
             return;
@@ -195,7 +225,7 @@ export class Parser {
             url = this.context.resolveURL(param.value);
             text = await this.context.fetchText(param.value);
         }
-        const includeElement = await Parser.parse(new SlideContextData(new XElement(), text, url, url));
+        const includeElement = await Parser.parse(new SlideContextData(new XElement(), text, url, url), true);
         const index = param.parent.children.indexOf(param);
         if (index != -1) {
             param.parent.children.splice(index, 1, ...includeElement.children);
