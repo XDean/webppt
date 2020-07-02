@@ -1,0 +1,14 @@
+.test-enter {
+  opacity: 0;
+}
+.test-enter-active {
+  opacity: 1;
+  transition: opacity 200ms;
+}
+.test-exit {
+  opacity: 1;
+}
+.test-exit-active {
+  opacity: 0;
+  transition: opacity 200ms;
+}

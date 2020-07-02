@@ -23,7 +23,7 @@ const PageNumberView: React.FunctionComponent<PageNumberProp> = (props) => {
     const current = useProperty(context.state.currentPage);
     return (
         <Box className={classes.root}>
-            {current + 1} / {context.getPages().length}
+            {current + 1} / {context.pages.length}
         </Box>
     )
 };

@@ -21,12 +21,42 @@ export class State {
     readonly lockToolbar = new SimpleProperty(true);
 }
 
+export class PageContext {
+    readonly animates = new SimpleProperty<XElement[]>([]);
+    readonly currentAnimate = new SimpleProperty(0); // 0 to len
+
+    constructor(
+        readonly index: number,
+        readonly element: XElement,
+    ) {
+    }
+
+    prevAnim(): boolean {
+        if (this.currentAnimate.value === 0) {
+            return false;
+        } else {
+            this.currentAnimate.update(v => v - 1);
+            return true;
+        }
+    }
+
+    nextAnim() {
+        if (this.currentAnimate.value === this.animates.value.length) {
+            return false;
+        } else {
+            this.currentAnimate.update(v => v + 1);
+            return true;
+        }
+    }
+}
+
 export class SlideContextData {
     static DEFAULT = new SlideContextData(new XElement());
 
     readonly state = new State();
     readonly preference = new Preference();
     readonly ws = new TopicSocket(resolveWebsocketURL(new URL("socket/topic", window.location.href).href));
+    readonly pages: PageContext[];
 
     constructor(
         readonly rootElement: XElement,
@@ -34,29 +64,40 @@ export class SlideContextData {
         readonly resourceURL?: URL,
         readonly sourceURL?: URL,
     ) {
+        let index = 0;
+        this.pages = this.rootElement?.children
+            .filter(n => n instanceof XElement && n.name === "page")
+            .map(n => n as XElement)
+            .map(e => new PageContext(index++, e));
     }
 
     prevPage = () => {
-        this.state.currentPage.update(c => c > 0 ? c - 1 : c);
+        if (!this.getCurrentPage().prevAnim()) {
+            this.state.currentPage.update(c => c > 0 ? c - 1 : c);
+        }
     };
     nextPage = () => {
-        this.state.currentPage.update(c => c < this.getPages().length - 1 ? c + 1 : c);
-    };
-    getPages = () => {
-        return this.rootElement!.children.filter(n => n instanceof XElement && n.name === "page").map(n => n as XElement);
+        if (!this.getCurrentPage().nextAnim()) {
+            this.state.currentPage.update(c => c < this.pages.length - 1 ? c + 1 : c);
+        }
     };
     getMeta = () => {
         return this.rootElement!.children.filter(n => n instanceof XElement && n.name === "meta").map(n => n as XElement).shift();
     };
+    getPage = (element: XElement): PageContext | undefined => {
+        return this.pages.find(e => e.element.contains(element))
+    };
+    getCurrentPage = (): PageContext => {
+        return this.pages[this.state.currentPage.value];
+    };
     gotoPage = (page: XElement | number) => {
-        const pages = this.getPages();
         let index = -1;
         if (page instanceof XElement) {
-            index = pages.indexOf(page);
+            index = this.pages.find(e => e.element === page)?.index || -1;
         } else {
             index = page;
         }
-        if (index >= 0 && index < pages.length) {
+        if (index >= 0 && index < this.pages.length) {
             this.state.currentPage.value = index;
         } else {
             console.warn("Invalid page to: ", page);

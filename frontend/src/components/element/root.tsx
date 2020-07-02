@@ -54,7 +54,6 @@ const RootView: React.FunctionComponent<RootProp> = (props) => {
     const classes = useStyles();
 
     const current = useProperty(context.state.currentPage);
-    const pages = context.getPages();
 
     const rootRef = useRef(null);
     const [fullscreen, setFullScreen] = useFullscreen(rootRef);
@@ -79,9 +78,9 @@ const RootView: React.FunctionComponent<RootProp> = (props) => {
     return (
         <RootRef rootRef={rootRef}>
             <Box className={classes.root + ifClass(presentMode === "outline", classes.outline)}>
-                {pages.map((e, index) => {
+                {context.pages.map((e, index) => {
                     return (
-                        <PageView key={index} element={e} index={index} total={pages.length} current={current}/>
+                        <PageView key={index} element={e.element} index={index} total={context.pages.length} current={current}/>
                     );
                 })}
                 {presentMode === "present" && <NavigatorView/>}

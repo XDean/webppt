@@ -8,6 +8,8 @@ import HTMLView from "./text/html";
 import HomeView from "./element/home";
 import ImageView from "./element/image";
 import CodeView from "./element/code";
+import AnimateView from "./animate/animate";
+import ElementView from "./element";
 
 export interface Render {
     name: string[]
@@ -55,7 +57,15 @@ export const TextRenders: Render[] = [
 export function renderElement(element: XElement, key?: Key): ReactNode | null {
     const render = ElementRenders.find(e => e.name.includes(element.name));
     if (render) {
-        return <render.render key={key} element={element}/>
+        const elem = <render.render element={element}/>;
+        if (element.name === "root") {
+            return elem
+        }
+        return (
+            <ElementView key={key} element={element}>
+                {elem}
+            </ElementView>
+        );
     } else {
         return <div key={key}>Unknown {element.name}</div>
     }
