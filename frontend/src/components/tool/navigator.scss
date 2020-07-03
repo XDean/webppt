@@ -1,0 +1,28 @@
+.wp-navigator {
+  position: absolute;
+  opacity: 0.7;
+  text-decoration: none;
+  display: flex;
+  padding: 4px 6px;
+  border-radius: 50%;
+  background-color: #ddd;
+  color: black;
+  z-index: 100;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #bbb;
+    color: black;
+  }
+
+  &.left {
+    left: 5px;
+    bottom: 3px;
+  }
+
+  &.right {
+    left: 50px;
+    bottom: 3px;
+  }
+}
+
