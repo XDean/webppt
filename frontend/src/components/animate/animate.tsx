@@ -30,11 +30,11 @@ const AnimateView: React.FunctionComponent<AnimateProp> = (props) => {
         });
     }, [context, props.element, page, setIndex]);
     return (
-        <CSSTransition in={isIn} timeout={1000} classNames={animate}>
-            <Box className={`${animate}-init`}>
+        <Box className={animate}>
+            <CSSTransition in={isIn} timeout={1000} classNames={""}>
                 {props.children}
-            </Box>
-        </CSSTransition>
+            </CSSTransition>
+        </Box>
     )
 };
 

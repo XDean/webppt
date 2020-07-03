@@ -1,26 +1,29 @@
-.fade-in-init,
-.fade-in-exit-done {
-  opacity: 0;
-}
+.fade-in {
 
-.fade-in-enter {
-  opacity: 0;
-}
+  .enter {
+    opacity: 0;
+  }
 
-.fade-in-enter-active {
-  opacity: 1;
-  transition: opacity 200ms;
-}
+  .enter-active {
+    opacity: 1;
+    transition: opacity 200ms;
+  }
 
-.fade-in-enter-done {
-  opacity: 1;
-}
+  .enter-done {
+    opacity: 1;
+  }
 
-.fade-in-exit {
-  opacity: 1;
-}
+  .exit {
+    opacity: 1;
+  }
 
-.fade-in-exit-active {
-  opacity: 0;
-  transition: opacity 200ms;
+  .exit-active {
+    opacity: 0;
+    transition: opacity 200ms;
+  }
+
+  .exit-done {
+    visibility: hidden;
+    opacity: 0;
+  }
 }
