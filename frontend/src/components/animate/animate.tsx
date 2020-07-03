@@ -19,6 +19,10 @@ const AnimateView: React.FunctionComponent<AnimateProp> = (props) => {
     const [index, setIndex] = useState(-1);
     const current = useProperty(page.currentAnimate);
     const isIn = current > index;
+    let animate = props.element.getStrParam("animate", "");
+    if (animate === "true") {
+        animate = "fade-in";
+    }
     useEffect(() => {
         setIndex(page.animates.value.length);
         page.animates.update(es => {
@@ -26,11 +30,11 @@ const AnimateView: React.FunctionComponent<AnimateProp> = (props) => {
         });
     }, [context, props.element, page, setIndex]);
     return (
-        <Box>
-            <CSSTransition in={isIn} timeout={1000} classNames="test" mountOnEnter unmountOnExit>
+        <CSSTransition in={isIn} timeout={1000} classNames={animate}>
+            <Box className={`${animate}-init`}>
                 {props.children}
-            </CSSTransition>
-        </Box>
+            </Box>
+        </CSSTransition>
     )
 };
 

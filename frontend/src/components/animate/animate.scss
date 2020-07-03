@@ -1,14 +1,26 @@
-.test-enter {
+.fade-in-init,
+.fade-in-exit-done {
   opacity: 0;
 }
-.test-enter-active {
+
+.fade-in-enter {
+  opacity: 0;
+}
+
+.fade-in-enter-active {
   opacity: 1;
   transition: opacity 200ms;
 }
-.test-exit {
+
+.fade-in-enter-done {
   opacity: 1;
 }
-.test-exit-active {
+
+.fade-in-exit {
+  opacity: 1;
+}
+
+.fade-in-exit-active {
   opacity: 0;
   transition: opacity 200ms;
 }

@@ -74,11 +74,14 @@ export class SlideContextData {
     prevPage = () => {
         if (!this.getCurrentPage().prevAnim()) {
             this.state.currentPage.update(c => c > 0 ? c - 1 : c);
+            const currentPage = this.getCurrentPage();
+            currentPage.currentAnimate.value = currentPage.animates.value.length;
         }
     };
     nextPage = () => {
         if (!this.getCurrentPage().nextAnim()) {
             this.state.currentPage.update(c => c < this.pages.length - 1 ? c + 1 : c);
+            this.getCurrentPage().currentAnimate.value = 0;
         }
     };
     getMeta = () => {

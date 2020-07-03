@@ -3,6 +3,7 @@
 @date     =  2020-05-03
 @author   =  XDean
 @play@code
+@animate
 
 .meta{
 @icon=images/google-icon.png
@@ -47,8 +48,8 @@ Hello World!
 .page{
 # Test Image
 
-.image @width=10% @animate @attributes="title='google icon'" google.png
-.image @animate https://user-images.githubusercontent.com/9050713/39107515-619773e0-46f5-11e8-9fa9-2859816f1c42.png
+.image @width=10% @attributes="title='google icon'" google.png
+.image https://user-images.githubusercontent.com/9050713/39107515-619773e0-46f5-11e8-9fa9-2859816f1c42.png
 .}
 
 .page{
