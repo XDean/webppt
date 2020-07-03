@@ -1,0 +1,58 @@
+.wp-page-wrapper {
+
+  .content {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    padding: 5vh 5vw;
+    background-color: #fff;
+    overflow: auto;
+    box-sizing: border-box;
+    z-index: 5;
+    transition: transform .3s ease;
+  }
+
+  &.present {
+    .offset--2 {
+      transform: translate(-200vw);
+    }
+
+    .offset--1 {
+      transform: translate(-100vw);
+    }
+
+    .offset-0 {
+      transform: translate(0);
+      z-index: 10;
+    }
+
+    .offset-1 {
+      transform: translate(100vw);
+    }
+
+    .offset-2 {
+      transform: translate(200vw);
+    }
+  }
+
+  &.outline {
+    position: relative;
+    display: inline-block;
+    width: 20vw;
+    height: 20vh;
+
+    &:hover {
+      box-shadow: 0 0 3px 4px #accaff;
+      cursor: pointer;
+    }
+
+    .content {
+      border-radius: 2%;
+      transition: transform .3s ease-out;
+      transform: scale(0.2);
+      transform-origin: 0 0;
+    }
+  }
+}
