@@ -5,10 +5,8 @@ import PlainTextView from "./text/plain";
 import PageView from "./element/page";
 import MarkdownView from "./text/md";
 import HTMLView from "./text/html";
-import HomeView from "./element/home";
 import ImageView from "./element/image";
 import CodeView from "./element/code";
-import AnimateView from "./animate/animate";
 import ElementView from "./element";
 
 export interface Render {
@@ -24,10 +22,6 @@ export const ElementRenders: Render[] = [
     {
         name: ["page"],
         render: PageView,
-    },
-    {
-        name: ["home", "homepage"],
-        render: HomeView,
     },
     {
         name: ["image", "img"],
