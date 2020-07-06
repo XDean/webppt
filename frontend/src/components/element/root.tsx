@@ -46,8 +46,7 @@ const RootView: React.FunctionComponent<RootProp> = (props) => {
             <Box className={"wp-root" + ifClass(presentMode === "outline", "outline")}>
                 {context.pages.map((e, index) => {
                     return (
-                        <PageView key={index} element={e.element} index={index} total={context.pages.length}
-                                  current={current}/>
+                        <PageView key={index} element={e.element} index={index}/>
                     );
                 })}
                 {presentMode === "present" && <NavigatorView/>}

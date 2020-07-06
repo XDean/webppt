@@ -9,14 +9,13 @@ import "./page.scss"
 type PageProp = {
     element: XElement
     index: number
-    total: number
-    current: number
 }
 
 const PageView: React.FunctionComponent<PageProp> = (props) => {
     const context = useContext(SlideContext);
     const mode = useProperty(context.state.presentMode);
-    const offset = Math.min(2, Math.max(-2, props.index - props.current));
+    const current = useProperty(context.state.currentPage);
+    const offset = Math.min(2, Math.max(-2, props.index - current));
     const children = renderChildren(props.element);
     return (
         <Box className={`wp-page-wrapper ${mode}`}>

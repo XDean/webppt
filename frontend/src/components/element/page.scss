@@ -34,6 +34,10 @@
     .offset-2 {
       transform: translate(200vw);
     }
+
+    .content {
+      transition: transform 1s ease;
+    }
   }
 
   &.outline {
