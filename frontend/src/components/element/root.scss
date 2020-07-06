@@ -1,0 +1,27 @@
+.wp-root {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  font-family: 'Times New Roman', sans-serif;
+  font-size: 26px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .1);
+  letter-spacing: -1;
+  color: #000;
+  background-color: #ddd;
+
+  &.outline {
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    align-items: center;
+    justify-items: center;
+    grid-row-gap: 15px;
+    grid-column-gap: 20px;
+    padding: 80px 50px;
+  }
+}

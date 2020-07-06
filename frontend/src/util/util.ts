@@ -1,5 +1,5 @@
 import {useLocation} from "react-router-dom";
-import {Property} from "xdean-util";
+import {Listener, Property} from "xdean-util";
 import {useEffect, useState} from "react";
 
 export function useQuery() {
@@ -17,9 +17,11 @@ export function useProperty<S extends (any | any[])>(p: Property<S>): S {
     let [state, setState] = useState<S>(() => p.value);
     useEffect(() => {
         setState(p.value);
-        p.addListener((ob, o, n) => {
+        const listener: Listener<S> = (ob, o, n) => {
             setState(n.slice ? n.slice() : n);
-        });
+        };
+        p.addListener(listener);
+        return () => p.removeListener(listener);
     }, [p]);
     return state
 }

@@ -1,49 +1,16 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import {Box, RootRef} from "@material-ui/core";
-import {XElement, XParam, XText} from "../../model/model";
-import {renderChildren, renderElement, renderText} from "../render";
+import {XElement} from "../../model/model";
 import PageView from "./page";
-import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import {SlideContext, SlideContextData} from "../../model/context";
-import {ifClass, useProperty, useQuery} from "../../util/util";
+import {ifClass, useProperty} from "../../util/util";
 import NavigatorView from "../tool/navigator";
 import PageNumberView from "../tool/page-number";
 import ToolbarView from "../tool/toolbar";
 import useFullscreen from "../../util/fullscreen";
 import {Listener} from "xdean-util";
-import {useHistory} from "react-router";
-import {useLocation} from "react-router-dom";
-
-const useStyles = makeStyles({
-    root: {
-        position: "absolute",
-        width: "100vw",
-        height: "100vh",
-        left: 0,
-        top: 0,
-        overflow: "hidden",
-        boxSizing: "border-box",
-
-        fontFamily: "'Times New Roman', sans-serif",
-        fontSize: 26,
-        textShadow: "0 1px 1px rgba(0, 0, 0, .1)",
-        letterSpacing: -1,
-        color: "#000",
-        backgroundColor: "#ddd",
-    },
-    outline: {
-        overflowY: "auto",
-        display: "grid",
-        gridTemplateColumns: "repeat(4,auto)",
-        alignItems: "center",
-        justifyItems: "center",
-        gridRowGap: 15,
-        gridColumnGap: 20,
-        padding: "80px 50px",
-    }
-});
+import "./root.scss"
 
 type RootProp = {
     element: XElement
@@ -51,7 +18,6 @@ type RootProp = {
 
 const RootView: React.FunctionComponent<RootProp> = (props) => {
     const context = useContext(SlideContext);
-    const classes = useStyles();
 
     const current = useProperty(context.state.currentPage);
 
@@ -77,10 +43,11 @@ const RootView: React.FunctionComponent<RootProp> = (props) => {
 
     return (
         <RootRef rootRef={rootRef}>
-            <Box className={classes.root + ifClass(presentMode === "outline", classes.outline)}>
+            <Box className={"wp-root" + ifClass(presentMode === "outline", "outline")}>
                 {context.pages.map((e, index) => {
                     return (
-                        <PageView key={index} element={e.element} index={index} total={context.pages.length} current={current}/>
+                        <PageView key={index} element={e.element} index={index} total={context.pages.length}
+                                  current={current}/>
                     );
                 })}
                 {presentMode === "present" && <NavigatorView/>}

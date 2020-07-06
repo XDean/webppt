@@ -24,10 +24,15 @@ const AnimateView: React.FunctionComponent<AnimateProp> = (props) => {
         animate = "fade-in";
     }
     useEffect(() => {
-        setIndex(page.animates.value.length);
-        page.animates.update(es => {
-            es.push(props.element);
-        });
+        const index = page.animates.value.indexOf(props.element);
+        if (index == -1) {
+            setIndex(page.animates.value.length);
+            page.animates.update(es => {
+                es.push(props.element);
+            });
+        } else {
+            setIndex(index);
+        }
     }, [context, props.element, page, setIndex]);
     return (
         <Box className={animate}>
