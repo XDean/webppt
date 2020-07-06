@@ -19,8 +19,6 @@ type RootProp = {
 const RootView: React.FunctionComponent<RootProp> = (props) => {
     const context = useContext(SlideContext);
 
-    const current = useProperty(context.state.currentPage);
-
     const rootRef = useRef(null);
     const [fullscreen, setFullScreen] = useFullscreen(rootRef);
 
@@ -59,13 +57,14 @@ const RootView: React.FunctionComponent<RootProp> = (props) => {
 
 function bindKeyEvent(context: SlideContextData) {
     let listener = (event: KeyboardEvent) => {
+        const edit = event.target instanceof HTMLTextAreaElement || (event.target instanceof HTMLElement && event.target.isContentEditable);
         switch (event.keyCode) {
             case 37:// left arrow
             case 8: // backspace
             case 38:// up arrow
-            // if (edit) {
-            //     break;
-            // }
+                if (edit) {
+                    break;
+                }
             // fallthrough
             case 33:// PgDn
                 context.prevPage();
@@ -74,9 +73,9 @@ function bindKeyEvent(context: SlideContextData) {
             case 39:// right arrow
             case 32:// space
             case 40:// down arrow
-            // if (edit) {
-            //     break;
-            // }
+                if (edit) {
+                    break;
+                }
             // fallthrough
             case 34:// PgDn
                 context.nextPage();
