@@ -33,6 +33,7 @@ const CodeView: React.FunctionComponent<CodeProp> = (props) => {
 
     const textNode = props.element.assertSingleTextLeaf();
     useEffect(() => {
+        console.log("effect", props.element);
         if (useURL) {
             context.fetchText(textNode.lines[0])
                 .then(t => setValue(t))

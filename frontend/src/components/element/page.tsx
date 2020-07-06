@@ -17,22 +17,16 @@ const PageView: React.FunctionComponent<PageProp> = (props) => {
     const context = useContext(SlideContext);
     const mode = useProperty(context.state.presentMode);
     const offset = Math.min(2, Math.max(-2, props.index - props.current));
+    const children = renderChildren(props.element);
     return (
-        <Box
-            className={`wp-page-wrapper ${mode}`}>
-            {mode === "present" ? (
-                <Box className={`content offset-${offset}`}>
-                    {renderChildren(props.element)}
-                </Box>
-            ) : (
-                <Paper className={"content"} elevation={3}
-                       onClick={() => {
-                           context.gotoPage(props.element);
-                           context.state.presentMode.value = "present";
-                       }}>
-                    {renderChildren(props.element)}
-                </Paper>
-            )}
+        <Box className={`wp-page-wrapper ${mode}`}>
+            <Paper className={`content offset-${offset}`} elevation={mode === "outline" ? 3 : 0}
+                   onClick={mode === "outline" ? () => {
+                       context.gotoPage(props.element);
+                       context.state.presentMode.value = "present";
+                   } : undefined}>
+                {children}
+            </Paper>
         </Box>
     );
 };

@@ -11,7 +11,6 @@
     overflow: auto;
     box-sizing: border-box;
     z-index: 5;
-    transition: transform .3s ease;
   }
 
   &.present {
@@ -42,15 +41,16 @@
     display: inline-block;
     width: 20vw;
     height: 20vh;
+    transition: box-shadow 1s ease;
 
     &:hover {
+      transition: box-shadow 0.3s ease;
       box-shadow: 0 0 3px 4px #accaff;
       cursor: pointer;
     }
 
     .content {
       border-radius: 2%;
-      transition: transform .3s ease-out;
       transform: scale(0.2);
       transform-origin: 0 0;
     }
