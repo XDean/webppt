@@ -88,7 +88,10 @@ func main(){
 .}
 
 .page{
-.latex{
+@type=md
+Test latex $a_b$ and $a^b$.
+
+$$
 \begin{aligned}
 {\rm Let} \quad  \Delta_{l,i,j}&=\delta_{l,j}a_{l-1,i} \\\\
 \delta_{l,j}&=\begin{cases}
@@ -97,7 +100,7 @@ func main(){
 \end{cases} \\\\
 \omega_{l,i,j}* &= \omega_{l,i,j} - \eta \Delta_{l,i,j}
 \end{aligned}
-.}
+$$
 .}
 
 .page{

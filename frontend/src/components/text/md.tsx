@@ -4,6 +4,11 @@ import {XText} from "../../model/model";
 import ReactMarkdown from "react-markdown";
 import "./md.scss"
 
+const MathJax = require("react-mathjax").default;
+const RemarkMathPlugin = require('remark-math');
+
+console.log(RemarkMathPlugin)
+
 const useStyles = makeStyles({});
 
 type MarkdownProps = {
@@ -12,7 +17,16 @@ type MarkdownProps = {
 
 const MarkdownView: React.FunctionComponent<MarkdownProps> = (props) => {
     return (
-        <ReactMarkdown className={"markdown-body"} source={props.text.lines.join("\n")} linkTarget={"_blank"}/>
+        <MathJax.Provider>
+            <ReactMarkdown className={"markdown-body"} source={props.text.lines.join("\n")} linkTarget={"_blank"}
+                           plugins={[RemarkMathPlugin]}
+                           renderers={{
+                               math: (props) =>
+                                   <MathJax.Node formula={props.value}/>,
+                               inlineMath: (props) =>
+                                   <MathJax.Node inline formula={props.value}/>
+                           }}/>
+        </MathJax.Provider>
     )
 };
 

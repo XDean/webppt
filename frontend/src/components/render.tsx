@@ -32,10 +32,6 @@ export const ElementRenders: Render[] = [
         name: ["code"],
         render: CodeView,
     },
-    {
-        name: ["latex"],
-        render: LatexView,
-    }
 ];
 
 export const TextRenders: Render[] = [
