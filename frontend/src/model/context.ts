@@ -96,7 +96,8 @@ export class SlideContextData {
     gotoPage = (page: XElement | number) => {
         let index = -1;
         if (page instanceof XElement) {
-            index = this.pages.find(e => e.element === page)?.index || -1;
+            const i = this.pages.find(e => e.element === page)?.index;
+            index = i === undefined ? -1 : i;
         } else {
             index = page;
         }
