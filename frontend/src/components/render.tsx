@@ -8,6 +8,7 @@ import HTMLView from "./text/html";
 import ImageView from "./element/image";
 import CodeView from "./element/code";
 import ElementView from "./element";
+import LatexView from "./element/latex";
 
 export interface Render {
     name: string[]
@@ -30,6 +31,10 @@ export const ElementRenders: Render[] = [
     {
         name: ["code"],
         render: CodeView,
+    },
+    {
+        name: ["latex"],
+        render: LatexView,
     }
 ];
 

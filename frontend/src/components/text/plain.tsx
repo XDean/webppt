@@ -1,9 +1,7 @@
 import React from 'react';
-import {makeStyles} from '@material-ui/core/styles';
 import {Box} from "@material-ui/core";
-import {XElement, XText} from "../../model/model";
-
-const useStyles = makeStyles({});
+import {XText} from "../../model/model";
+import "./plain.scss"
 
 type PlainProp = {
     text: XText
@@ -26,7 +24,7 @@ const PlainView: React.FunctionComponent<PlainProp> = (props) => {
         paragraphs.push(paragraph);
     }
     return (
-        <Box>
+        <Box className={"wp-text-plain"}>
             {paragraphs.map((p, index) => (
                 <p key={index}>
                     {p.map((line, i) => <React.Fragment key={i}>

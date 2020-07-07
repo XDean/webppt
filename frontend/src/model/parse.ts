@@ -38,9 +38,6 @@ export class Parser {
                             this.consumed = true;
                         }
                         break;
-                    case '\\':
-                        this.line = this.line.substring(1);
-                        break;
                 }
             }
             if (!this.consumed) {

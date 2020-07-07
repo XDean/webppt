@@ -3,7 +3,6 @@
 @date     =  2020-05-03
 @author   =  XDean
 @play@code
-@animate
 
 .meta{
 @icon=images/google-icon.png
@@ -46,6 +45,7 @@ Hello World!
 .}
 
 .page{
+@animate
 # Test Image
 
 .image @width=10% @attributes="title='google icon'" google.png
@@ -53,6 +53,7 @@ Hello World!
 .}
 
 .page{
+@animate
 # Test Code
 
 .code{
@@ -87,7 +88,16 @@ func main(){
 .}
 
 .page{
-page 5
+.latex{
+\begin{aligned}
+{\rm Let} \quad  \Delta_{l,i,j}&=\delta_{l,j}a_{l-1,i} \\\\
+\delta_{l,j}&=\begin{cases}
+(a_{L,j} - t_j)a_{L,j}(1-a_{L,j}),\quad l=L \\\\
+\sum_{k=0}^{n_{l+1}}\delta_{l+1,k}\omega_{l+1,j,k}a_{l,j}(1-a_{l,j}), \quad l \not= L
+\end{cases} \\\\
+\omega_{l,i,j}* &= \omega_{l,i,j} - \eta \Delta_{l,i,j}
+\end{aligned}
+.}
 .}
 
 .page{

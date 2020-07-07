@@ -2,7 +2,7 @@ import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import {XText} from "../../model/model";
 import ReactMarkdown from "react-markdown";
-import "./md.css"
+import "./md.scss"
 
 const useStyles = makeStyles({});
 
