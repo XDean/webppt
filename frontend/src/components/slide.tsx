@@ -1,23 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {createStyles, makeStyles} from '@material-ui/core/styles';
-import {useQuery} from "../util/util";
 import {renderElement} from "./render";
 import {Parser} from "../model/parse";
 import {SlideContext, SlideContextData} from "../model/context";
 import {Listener} from "xdean-util";
-import {useHistory, useLocation} from "react-router";
-import Slide from "@material-ui/core/Slide";
 import {XElement} from "../model/model";
-
-const useStyles = makeStyles(theme => createStyles({}));
 
 type SlideProp = {}
 
-
 const SlideView: React.FunctionComponent<SlideProp> = (props) => {
-    const query = useQuery();
-    const path = query.get("path");
-    const page = Number(query.get("page")) || 1;
+    const path = new URLSearchParams(window.location.search).get("path");
+    const page = Number(window.location.hash.substring(1)) || 1;
     const [error, setError] = useState("");
     const [context, setContext] = useState<SlideContextData>(SlideContextData.DEFAULT);
 
@@ -25,21 +17,16 @@ const SlideView: React.FunctionComponent<SlideProp> = (props) => {
         context.gotoPage(page - 1);
     }, [page]);
 
-    const history = useHistory();
-    const location = useLocation();
     useEffect(() => {
         const currentListener: Listener<number> = (p, o, n) => {
-            const param = new URLSearchParams(location.search);
-            param.set("page", (n + 1).toString());
-            location.search = unescape(param.toString());
-            history.push(location);
+            window.location.hash = (n + 1).toString();
         };
         context.state.currentPage.addListener(currentListener);
 
         return () => {
             context.state.currentPage.removeListener(currentListener);
         };
-    }, [context, location.search]);
+    }, [context]);
 
     useEffect(() => {
         if (path) {

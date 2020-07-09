@@ -2,10 +2,6 @@ import {useLocation} from "react-router-dom";
 import {Listener, Property} from "xdean-util";
 import {useEffect, useState} from "react";
 
-export function useQuery() {
-    return new URLSearchParams(useLocation().search);
-}
-
 export function arrayRemove<T>(array: Array<T>, value: T) {
     let index = array.indexOf(value);
     if (index !== -1) {
@@ -20,6 +16,17 @@ export function useProperty<S extends (any | any[])>(p: Property<S>): S {
         const listener: Listener<S> = (ob, o, n) => {
             setState(n.slice ? n.slice() : n);
         };
+        p.addListener(listener);
+        return () => p.removeListener(listener);
+    }, [p]);
+    return state
+}
+
+export function usePropertyMap<S, T>(p: Property<S>, f: (s: S) => T): T {
+    let [state, setState] = useState<T>(() => f(p.value));
+    useEffect(() => {
+        setState(f(p.value));
+        const listener: Listener<S> = (ob, o, n) => setState(f(n));
         p.addListener(listener);
         return () => p.removeListener(listener);
     }, [p]);

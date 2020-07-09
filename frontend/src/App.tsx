@@ -1,7 +1,7 @@
 import React from 'react';
-import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {Redirect, Route, Router, Switch} from "react-router-dom";
-import {createHashHistory} from "history";
+import {createBrowserHistory} from "history";
 import SlideView from "./components/slide";
 
 const useStyles = makeStyles(theme =>
@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme =>
 
 const App: React.FunctionComponent = () => {
 
-    const history = createHashHistory();
+    const history = createBrowserHistory();
     const classes = useStyles();
 
     return (
