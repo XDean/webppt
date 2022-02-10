@@ -18,7 +18,7 @@
     "@types/react-router-dom": "^5.1.5",
     "codemirror": "^5.54.0",
     "http-proxy-middleware": "^1.0.4",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "re-resizable": "^6.5.0",
     "react": "^16.13.1",
     "react-codemirror2": "^7.2.1",
